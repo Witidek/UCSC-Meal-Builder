@@ -1,5 +1,4 @@
-# UCSC-Meal-Builder
-===========
+# UCSC Meal Builder
 
 ### Team CHAMP
  * Dishen Zhao
