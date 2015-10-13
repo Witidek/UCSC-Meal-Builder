@@ -1,5 +1,6 @@
 package com.example.sam.ucsc_meal_builder;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -44,5 +45,8 @@ public class BudgetActivity extends AppCompatActivity {
         flexiText.setText(Double.toString(flexidollars));
     }
 
-
+    public void onClickArrow(View view) {
+        Intent intent = new Intent(BudgetActivity.this, RestaurantActivity.class);
+        startActivity(intent);
+    }
 }

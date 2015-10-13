@@ -17,6 +17,8 @@
         </activity>
         <activity android:name=".BudgetActivity" >
         </activity>
+        <activity android:name=".RestaurantActivity" >
+        </activity>
     </application>
 
 </manifest>
