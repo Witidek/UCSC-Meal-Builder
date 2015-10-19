@@ -19,6 +19,8 @@
         </activity>
         <activity android:name=".RestaurantActivity" >
         </activity>
+        <activity android:name=".BalanceActivity" >
+        </activity>
     </application>
 
 </manifest>

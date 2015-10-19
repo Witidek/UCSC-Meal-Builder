@@ -19,4 +19,9 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(MainActivity.this, BudgetActivity.class);
         startActivity(intent);
     }
+
+    public void onClickBalance(View view) {
+        Intent intent = new Intent(MainActivity.this, BalanceActivity.class);
+        startActivity(intent);
+    }
 }

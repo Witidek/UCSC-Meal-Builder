@@ -5,14 +5,14 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
-    tools:context="com.example.sam.ucsc_meal_builder.BudgetActivity">
+    tools:context="com.example.sam.ucsc_meal_builder.BalanceActivity">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="What&apos;s your budget?"
-        android:id="@+id/editBudgetText"
+        android:text="Edit your balance"
+        android:id="@+id/editBalanceText"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true" />
 
@@ -21,10 +21,10 @@
         android:layout_height="wrap_content"
         android:inputType="numberDecimal"
         android:ems="10"
-        android:id="@+id/flexiBudgetText"
+        android:id="@+id/flexiBalanceText"
         android:layout_alignParentBottom="true"
-        android:layout_alignLeft="@+id/mealBudgetText"
-        android:layout_alignStart="@+id/mealBudgetText"
+        android:layout_alignLeft="@+id/mealBalanceText"
+        android:layout_alignStart="@+id/mealBalanceText"
         android:layout_marginBottom="121dp"
         android:textAlignment="center" />
 
@@ -33,8 +33,8 @@
         android:layout_height="wrap_content"
         android:inputType="numberDecimal"
         android:ems="10"
-        android:id="@+id/mealBudgetText"
-        android:layout_below="@+id/editBudgetText"
+        android:id="@+id/mealBalanceText"
+        android:layout_below="@+id/editBalanceText"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="83dp"
         android:textAlignment="center" />
@@ -44,9 +44,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="+"
-        android:id="@+id/incrementMeals"
+        android:id="@+id/incrementMealsBalance"
         android:onClick="incrementMeals"
-        android:layout_alignBottom="@+id/mealBudgetText"
+        android:layout_alignBottom="@+id/mealBalanceText"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
 
@@ -55,8 +55,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="-"
-        android:id="@+id/decrementMeals"
-        android:layout_alignBottom="@+id/incrementMeals"
+        android:id="@+id/decrementMealsBalance"
+        android:layout_alignBottom="@+id/incrementMealsBalance"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:onClick="decrementMeals" />
@@ -66,8 +66,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="+"
-        android:id="@+id/incrementFlexis"
-        android:layout_alignBottom="@+id/flexiBudgetText"
+        android:id="@+id/incrementFlexisBalance"
+        android:layout_alignBottom="@+id/flexiBalanceText"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:onClick="incrementFlexis" />
@@ -77,8 +77,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="-"
-        android:id="@+id/button7"
-        android:layout_alignBottom="@+id/incrementFlexis"
+        android:id="@+id/decrementFlexisBalance"
+        android:layout_alignBottom="@+id/incrementFlexisBalance"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:onClick="decrementFlexis" />
@@ -89,7 +89,7 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Meals"
         android:id="@+id/textView3"
-        android:layout_below="@+id/mealBudgetText"
+        android:layout_below="@+id/mealBalanceText"
         android:layout_centerHorizontal="true" />
 
     <TextView
@@ -98,18 +98,7 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Flexi-Dollars"
         android:id="@+id/textView4"
-        android:layout_below="@+id/incrementFlexis"
+        android:layout_below="@+id/incrementFlexisBalance"
         android:layout_centerHorizontal="true" />
-
-    <Button
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="-->"
-        android:id="@+id/button8"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:onClick = "onClickArrow"/>
 
 </RelativeLayout>

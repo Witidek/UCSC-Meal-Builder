@@ -8,6 +8,8 @@ import android.widget.TextView;
 
 public class BudgetActivity extends AppCompatActivity {
 
+    /* TODO: fix id naming, comment code, add aesthetics */
+
     int meals = 0;
     double flexidollars = 0;
 
@@ -18,8 +20,8 @@ public class BudgetActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_budget);
-        mealText = (TextView) findViewById(R.id.mealText);
-        flexiText = (TextView) findViewById(R.id.flexiText);
+        mealText = (TextView) findViewById(R.id.mealBudgetText);
+        flexiText = (TextView) findViewById(R.id.flexiBudgetText);
 
         mealText.setText(Integer.toString(meals));
         flexiText.setText(Double.toString(flexidollars));
