@@ -21,6 +21,8 @@
         </activity>
         <activity android:name=".BalanceActivity" >
         </activity>
+        <activity android:name=".MenuActivity" >
+        </activity>
     </application>
 
 </manifest>

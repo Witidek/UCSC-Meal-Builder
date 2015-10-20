@@ -34,6 +34,7 @@ public class BalanceActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_balance);
 
+        //balance is a Preference that contains values 'meals' and 'flexis'
         sharedPrefs = getSharedPreferences("balance", MODE_PRIVATE);
         editPrefs = sharedPrefs.edit();
 
