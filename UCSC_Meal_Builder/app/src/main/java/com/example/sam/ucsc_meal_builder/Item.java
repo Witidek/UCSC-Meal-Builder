@@ -6,9 +6,9 @@ package com.example.sam.ucsc_meal_builder;
 public class Item {
 
     String name;
-    float price;
+    double price;
 
-    public Item(String n, float p){
+    public Item(String n, double p){
         name = n;
         price = p;
 
@@ -19,7 +19,7 @@ public class Item {
     }
 
     public String toString(){
-        return name + " " + Float.toString(price);
+        return name + " " + Double.toString(price);
     }
 
 }
