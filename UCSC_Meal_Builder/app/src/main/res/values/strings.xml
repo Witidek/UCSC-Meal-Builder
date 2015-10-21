@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">UCSC_Meal_Builder</string>
+    <string name="title_activity_cart">CartActivity</string>
 </resources>

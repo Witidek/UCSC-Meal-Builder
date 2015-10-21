@@ -18,6 +18,10 @@ public class Item {
         return price;
     }
 
+    public String getName(){
+        return name;
+    }
+
     public String toString(){
         return name + " : " + Double.toString(price);
     }

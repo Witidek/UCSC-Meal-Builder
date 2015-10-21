@@ -23,6 +23,8 @@
         </activity>
         <activity android:name=".MenuActivity" >
         </activity>
+        <activity android:name=".CartActivity" >
+        </activity>
     </application>
 
 </manifest>
