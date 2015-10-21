@@ -60,10 +60,10 @@ public class RestaurantActivity extends ListActivity {
         // click listener example
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                // When clicked, show a toast with the TextView text
                 Intent intent = new Intent(RestaurantActivity.this, MenuActivity.class);
                 // fill intent with restaurant object
                 startActivity(intent);
+                // When clicked, show a toast with the TextView text
                 Toast.makeText(getApplicationContext(), ((TextView) view).getText(), Toast.LENGTH_SHORT).show();
 
             }

@@ -1,10 +1,15 @@
 package com.example.sam.ucsc_meal_builder;
 
 import android.app.ListActivity;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -14,13 +19,12 @@ public class MenuActivity extends ListActivity {
     ArrayList<Item> itemList = new ArrayList<Item>();
     //DEFINING A Restaurant ADAPTER WHICH WILL HANDLE THE DATA OF THE LISTVIEW
     ArrayAdapter<Item> adapter;
+    Cart myCart;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_restaurant);
-
-        //restaurantList = (ListView) findViewById(R.id.list);
+        setContentView(R.layout.activity_menu);
 
         adapter = new ArrayAdapter<Item>(this,
                 android.R.layout.simple_list_item_1,
@@ -77,5 +81,36 @@ public class MenuActivity extends ListActivity {
         adapter.add(chimiPizala);
         adapter.add(acaiBowl);
 
+        ListView listView = getListView();
+
+        myCart = new Cart();
+
+        // When an item is clicked, the corresponding item is added to the cart.
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                //Take the name of the thing they selected, but cut off the price
+                String nameOfSelection = ((TextView) view).getText().toString();
+                int indexOfColon = nameOfSelection.indexOf(" : ");
+                nameOfSelection = nameOfSelection.substring(0, indexOfColon);
+
+
+                Toast.makeText(getApplicationContext(), nameOfSelection, Toast.LENGTH_SHORT).show();
+                //Iterate through all items in adapter
+                for (int i = 0 ; i < adapter.getCount(); i++){
+                    //If the name matches, that's the selection
+                    if(adapter.getItem(i).name.equals(nameOfSelection)){
+                        Item foundSelection = adapter.getItem(i);
+                        myCart.addItem(foundSelection);
+                    }
+                }
+            }
+        });
+
     }
+
+    public void onCartPressed(View view){
+        Toast.makeText(getApplicationContext(), Double.toString(myCart.getTotal()), Toast.LENGTH_SHORT).show();
+    }
+
 }
