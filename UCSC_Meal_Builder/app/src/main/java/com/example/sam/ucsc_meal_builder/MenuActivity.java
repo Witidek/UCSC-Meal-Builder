@@ -2,6 +2,7 @@ package com.example.sam.ucsc_meal_builder;
 
 import android.app.ListActivity;
 import android.content.Intent;
+import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -11,6 +12,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 public class MenuActivity extends ListActivity {
@@ -19,7 +21,7 @@ public class MenuActivity extends ListActivity {
     ArrayList<Item> itemList = new ArrayList<Item>();
     //DEFINING A Restaurant ADAPTER WHICH WILL HANDLE THE DATA OF THE LISTVIEW
     ArrayAdapter<Item> adapter;
-    public static Cart myCart;
+    Cart myCart;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,6 +91,7 @@ public class MenuActivity extends ListActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
+                /* Old code that uses getText to grab name and search through ArrayList
                 //Take the name of the thing they selected, but cut off the price
                 String nameOfSelection = ((TextView) view).getText().toString();
                 int indexOfColon = nameOfSelection.indexOf(" : ");
@@ -103,7 +106,11 @@ public class MenuActivity extends ListActivity {
                         Item foundSelection = adapter.getItem(i);
                         myCart.addItem(foundSelection);
                     }
-                }
+                }*/
+
+                // New code that grabs item based on position in ArrayList
+                Item foundSelection = adapter.getItem(position);
+                myCart.addItem(foundSelection);
             }
         });
 
@@ -111,18 +118,9 @@ public class MenuActivity extends ListActivity {
 
     public void onCartPressed(View view){
         Intent intent = new Intent(MenuActivity.this, CartActivity.class);
-        // Pack up intent with number of items in cart
-        /*intent.putExtra("numItems",Integer.toString(myCart.getSize()));
-        // Pack up intent with name and price of every item in cart
-        for (int i = 0 ; i < myCart.getSize(); i ++){
-            //Store name of an item in an extra
-            intent.putExtra("itemName"+Integer.toString(i),myCart.getItem(i).getName());
-            //Store price of an item in an extra
-            intent.putExtra("itemPrice"+Integer.toString(i),myCart.getItem(i).getPrice());
-        }*/
+        // Pack cart object into intent
+        intent.putExtra("cart", myCart);
         startActivity(intent);
-        // When clicked, show a toast with the TextView text
-        //Toast.makeText(getApplicationContext(), Double.toString(myCart.getTotal()), Toast.LENGTH_SHORT).show();
     }
 
 }

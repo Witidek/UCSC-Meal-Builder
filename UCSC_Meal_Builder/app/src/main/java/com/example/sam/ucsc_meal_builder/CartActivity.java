@@ -4,10 +4,16 @@ import android.app.ListActivity;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
-public class CartActivity extends AppCompatActivity {
+import org.w3c.dom.Text;
+
+public class CartActivity extends ListActivity {
 
     ArrayAdapter<Item> adapter;
 
@@ -16,16 +22,28 @@ public class CartActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cart);
 
-        /*adapter = new ArrayAdapter<Item>(this,
+        Intent intent = getIntent();
+        final Cart checkoutCart = intent.getExtras().getParcelable("cart");
+
+        adapter = new ArrayAdapter<Item>(this,
                 android.R.layout.simple_list_item_1,
-                MenuActivity.myCart.items);
-        setListAdapter(adapter);*/
+                checkoutCart.items);
+        setListAdapter(adapter);
 
-        //Intent intent = getIntent();
-        //Cart checkoutCart = new Cart();
-        //String message = intent.getStringExtra("numItems");
+        //Toast.makeText(getApplicationContext(), Integer.toString(MenuActivity.myCart.getSize()), Toast.LENGTH_SHORT).show();
 
-        Toast.makeText(getApplicationContext(), Integer.toString(MenuActivity.myCart.getSize()), Toast.LENGTH_SHORT).show();
+        final TextView textView = (TextView) findViewById(R.id.totalText);
+        ListView listView = getListView();
+
+        textView.setText("Total: $" + String.format("%.2f", checkoutCart.getTotal()));
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                checkoutCart.deleteItem(position);
+                adapter.notifyDataSetChanged();
+                textView.setText("Total: $" + String.format("%.2f", checkoutCart.getTotal()));
+            }
+        });
+
 
 
     }
