@@ -31,7 +31,7 @@
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:inputType="numberDecimal"
+        android:inputType="number"
         android:ems="10"
         android:id="@+id/mealBudgetText"
         android:layout_below="@+id/editBudgetText"

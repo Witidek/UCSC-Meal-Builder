@@ -16,7 +16,6 @@ public class Item implements Parcelable {
     public Item(String n, double p){
         name = n;
         price = p;
-
     }
 
     // Methods

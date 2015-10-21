@@ -56,8 +56,26 @@ public class BalanceActivity extends AppCompatActivity {
         mealBalanceText = (TextView) findViewById(R.id.mealBalanceText);
         flexiBalanceText = (TextView) findViewById(R.id.flexiBalanceText);
 
+        // Save number values to local variable when EditText focus is lost (done editing)
+        mealBalanceText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus) {
+                    meals = Integer.valueOf(mealBalanceText.getText().toString());
+                }
+            }
+        });
+        flexiBalanceText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus) {
+                    flexis = Float.valueOf(flexiBalanceText.getText().toString());
+                }
+            }
+        });
+
         // Set fields to data read from SharedPreferences
-        mealBalanceText.setText(Integer.toString(meals));
+        mealBalanceText.setText(String.format("%d", meals));
         flexiBalanceText.setText(String.format("%.2f", flexis));
 
     }
@@ -65,7 +83,7 @@ public class BalanceActivity extends AppCompatActivity {
     // Save SharedPreference changes when android back button is pressed
     @Override
     public void onBackPressed() {
-        meals = Integer.parseInt(mealBalanceText.getText().toString());
+        meals = Integer.valueOf(mealBalanceText.getText().toString());
         flexis = Float.valueOf(flexiBalanceText.getText().toString());
         editPrefs.putInt("meals", meals);
         editPrefs.putFloat("flexis", flexis);
@@ -74,20 +92,23 @@ public class BalanceActivity extends AppCompatActivity {
     }
 
     public void incrementMeals (View view) {
+        meals = Integer.valueOf(mealBalanceText.getText().toString());
         meals += 1;
-        mealBalanceText.setText(Integer.toString(meals));
+        mealBalanceText.setText(String.format("%d", meals));
         editPrefs.putInt("meals", meals);
         editPrefs.commit();
     }
 
     public void decrementMeals(View view) {
+        meals = Integer.valueOf(mealBalanceText.getText().toString());
         meals -= 1;
-        mealBalanceText.setText(Integer.toString(meals));
+        mealBalanceText.setText(String.format("%d", meals));
         editPrefs.putInt("meals", meals);
         editPrefs.commit();
     }
 
     public void incrementFlexis (View view) {
+        flexis = Float.valueOf(flexiBalanceText.getText().toString());
         flexis += 1;
         flexiBalanceText.setText(String.format("%.2f", flexis));
         editPrefs.putFloat("flexis", flexis);
@@ -95,6 +116,7 @@ public class BalanceActivity extends AppCompatActivity {
     }
 
     public void decrementFlexis(View view) {
+        flexis = Float.valueOf(flexiBalanceText.getText().toString());
         flexis -= 1;
         flexiBalanceText.setText(String.format("%.2f", flexis));
         editPrefs.putFloat("flexis", flexis);

@@ -25,8 +25,6 @@ public class RestaurantActivity extends ListActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_restaurant);
 
-        //restaurantList = (ListView) findViewById(R.id.list);
-
         adapter = new ArrayAdapter<Restaurant>(this,
                 android.R.layout.simple_list_item_1,
                 listItems);
@@ -57,15 +55,18 @@ public class RestaurantActivity extends ListActivity {
         adapter.add(vivas);
 
         ListView listView = getListView();
-        // click listener example
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(RestaurantActivity.this, MenuActivity.class);
-                // fill intent with restaurant object
-                startActivity(intent);
-                // When clicked, show a toast with the TextView text
-                Toast.makeText(getApplicationContext(), ((TextView) view).getText(), Toast.LENGTH_SHORT).show();
-
+                // Only allow Banana Joe's
+                if (position == 0) {
+                    Intent intent = new Intent(RestaurantActivity.this, MenuActivity.class);
+                    // fill intent with restaurant object
+                    startActivity(intent);
+                    // When clicked, show a toast with the TextView text
+                    Toast.makeText(getApplicationContext(), ((TextView) view).getText(), Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Coming soon!", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }

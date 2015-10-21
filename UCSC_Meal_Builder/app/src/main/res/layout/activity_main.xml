@@ -40,6 +40,7 @@
         android:layout_height="wrap_content"
         android:text="Favorites"
         android:id="@+id/button3"
+        android:onClick="onClickFavorites"
         android:layout_below="@+id/button2"
         android:layout_alignLeft="@+id/button2"
         android:layout_alignStart="@+id/button2"
