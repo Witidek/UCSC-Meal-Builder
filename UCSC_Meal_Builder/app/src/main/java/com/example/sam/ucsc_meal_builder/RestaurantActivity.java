@@ -15,58 +15,32 @@ import java.util.ArrayList;
 
 public class RestaurantActivity extends ListActivity {
 
-    //LIST OF Restaurants WHICH WILL SERVE AS LIST ITEMS
-    ArrayList<Restaurant> listItems = new ArrayList<Restaurant>();
-    //DEFINING A Restaurant ADAPTER WHICH WILL HANDLE THE DATA OF THE LISTVIEW
-    ArrayAdapter<Restaurant> adapter;
+    private DBHelper db;
+    private ArrayList<Restaurant> restaurantList;
+    private ArrayAdapter<Restaurant> adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_restaurant);
 
+        db = new DBHelper(this);
+        restaurantList = db.getRestaurants();
+
         adapter = new ArrayAdapter<Restaurant>(this,
                 android.R.layout.simple_list_item_1,
-                listItems);
+                restaurantList);
         setListAdapter(adapter);
-
-        //Declare and add two restaurants.
-        Restaurant bananaJoes = new Restaurant("Banana Joe's");
-        Restaurant owlsNest = new Restaurant("Owl's Nest");
-        Restaurant porterCafe = new Restaurant("Porter Slug Grill and Cafe");
-        Restaurant eightCafe = new Restaurant("College Eight Cafe");
-        Restaurant cowellCoffeeShop = new Restaurant("Cowell Coffee Shop");
-        Restaurant stevesonCoffeeHouse = new Restaurant("Stevenson Coffee House");
-        Restaurant globalCafe = new Restaurant("Global Village Cafe");
-        Restaurant terraFresca = new Restaurant("Terra Fresca");
-        Restaurant oakesCafe = new Restaurant("Oakes Cafe");
-        Restaurant vivas = new Restaurant("Vivas Restaurant");
-
-        //Add restaurant to adapter
-        adapter.add(bananaJoes);
-        adapter.add(owlsNest);
-        adapter.add(porterCafe);
-        adapter.add(eightCafe);
-        adapter.add(cowellCoffeeShop);
-        adapter.add(stevesonCoffeeHouse);
-        adapter.add(globalCafe);
-        adapter.add(terraFresca);
-        adapter.add(oakesCafe);
-        adapter.add(vivas);
 
         ListView listView = getListView();
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                // Only allow Banana Joe's
-                if (position == 0) {
-                    Intent intent = new Intent(RestaurantActivity.this, MenuActivity.class);
-                    // fill intent with restaurant object
-                    startActivity(intent);
-                    // When clicked, show a toast with the TextView text
-                    Toast.makeText(getApplicationContext(), ((TextView) view).getText(), Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(getApplicationContext(), "Coming soon!", Toast.LENGTH_SHORT).show();
-                }
+                Intent intent = new Intent(RestaurantActivity.this, MenuActivity.class);
+                intent.putExtra("restaurant", adapter.getItem(position));
+                startActivity(intent);
+
+                // When clicked, show a toast with restaurant name
+                Toast.makeText(getApplicationContext(), adapter.getItem(position).getName(), Toast.LENGTH_SHORT).show();
             }
         });
     }

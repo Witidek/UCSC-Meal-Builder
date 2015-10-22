@@ -30,8 +30,6 @@ public class CartActivity extends ListActivity {
                 checkoutCart.items);
         setListAdapter(adapter);
 
-        //Toast.makeText(getApplicationContext(), Integer.toString(MenuActivity.myCart.getSize()), Toast.LENGTH_SHORT).show();
-
         final TextView textView = (TextView) findViewById(R.id.totalText);
         ListView listView = getListView();
 

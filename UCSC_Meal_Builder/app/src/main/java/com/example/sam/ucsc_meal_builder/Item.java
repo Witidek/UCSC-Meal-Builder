@@ -8,23 +8,42 @@ import android.os.Parcelable;
  */
 public class Item implements Parcelable {
 
+    public static final String TABLE = "Item";
+
+    public static final String KEY_item_id = "item_id";
+    public static final String KEY_name = "name";
+    public static final String KEY_price = "price";
+    public static final String KEY_restaurant_id = "restaurant_id";
+
     // Fields
-    String name;
-    double price;
+    private int itemID;
+    private String name;
+    private double price;
+    private int restaurantID;
 
     // Constructor
-    public Item(String n, double p){
+    public Item(int id, String n, double p, int rid){
+        itemID = id;
         name = n;
         price = p;
+        restaurantID = rid;
     }
 
     // Methods
-    public double getPrice(){
-        return price;
+    public int getItemID() {
+        return itemID;
     }
 
     public String getName(){
         return name;
+    }
+
+    public double getPrice(){
+        return price;
+    }
+
+    public int getRestaurantID() {
+        return restaurantID;
     }
 
     public String toString(){
@@ -40,8 +59,10 @@ public class Item implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel out, int flags) {
+        out.writeInt(itemID);
         out.writeString(name);
         out.writeDouble(price);
+        out.writeInt(restaurantID);
     }
 
     public static final Parcelable.Creator<Item> CREATOR = new Parcelable.Creator<Item>() {
@@ -57,7 +78,9 @@ public class Item implements Parcelable {
     };
 
     private Item(Parcel in) {
+        itemID = in.readInt();
         name = in.readString();
         price = in.readDouble();
+        restaurantID = in.readInt();
     }
 }
