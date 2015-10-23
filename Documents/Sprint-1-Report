@@ -1,0 +1,24 @@
+Sprint #1 Report
+UCSC Meal Builder
+Team CHAMP
+10/21/15
+What things should we stop doing?
+	There aren’t really many things that we should stop doing. We’ve made good progress throughout the course of this first sprint, and we intend to keep on going. We’ve completed everything that we’ve planned for this sprint, so we see no reason to change what we’re doing.
+What should we start doing?
+	We need to begin communicating better. From what it seems like, we only really communicate during our scrum meetings which extend into long work periods which get a good majority of our work done.
+What is working well that we should continue to do?
+	We should continue to hold the long work periods post scrum meeting a lot of work gets completed quickly during those times.
+What work was completed, and not completed?
+	In the beginning of the sprint, we had planned on working on five user stories, and they are as follows:
+1.	As a hungry person, I would like to know when and where I can get food on campus.
+2.	As a student, I would like to keep track of, and conserve my meals/flexi dollars.
+3.	As a developer, I would like to have the menu for a single eatery available.
+4.	As a student, I would like to build meals to maximize the use of my meal-plan meals.
+5.	As a user, I want the app to be organized and easy to navigate.
+We broke these down into further tasks starting with user story 1. Here, we decided that we needed to create an activity to display the list of restaurants, as well as create a data structure for restaurants. We completed both of these, and we populated the activity with a list of all of the restaurants. 
+With user story 2, we developed an activity for checking and editing one’s total balance. This was implemented with fairly little effort, but does not have the complete functionality that we intend for it to have upon our final release. We did run into a single problem: when typing in a number for the balances, if the increment/decrement buttons were pressed, the entered value would revert to its previously saved value. This was remedied shortly afterwards following implementation of other user stories. 
+For user story 3, we split this up into two primary tasks: creating a database for menu items, and also creating a data structure for menu items. We currently have a local database set, as well as an online one, and will try to implement them in such a way that the app will pull information from the online database upon opening, and then store that information within the local database if anything has changed. 
+For user story 4, we decided to break this down into 3 tasks, creating and implementing a cart data structure, and an activity for each the cart and the budget. Creating the cart structure went smoothly, as well as creating the activity for it. The budget activity is created, but it still requires functionality in the way of interaction with the total balance to allow users to keep track of their meals and flexi dollars. This has been planned for a later sprint though. 
+For user story 5, we intended to make the app simple to navigate, and this was done as a result of implementing the previous 4 stories. 
+What is our rate of completing work?
+	Our rate of completing work was reasonably fast. We had planned for 17 story points, and we completed the majority of them over the course of what was probably 6 working days. The reason I say 6 working days is due to one weekend where no one was available to do any work due to some of us leaving town. This puts us at about 2.8 story points per day, which is a good baseline to start with. 
