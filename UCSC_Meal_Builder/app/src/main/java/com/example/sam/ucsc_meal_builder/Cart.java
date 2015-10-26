@@ -45,6 +45,10 @@ public class Cart implements Parcelable {
         this.items.remove(i);
     }
 
+    public void clearCart() {
+        this.items.clear();
+    }
+
     // Parcelable method implementations
     @Override
     public int describeContents() {

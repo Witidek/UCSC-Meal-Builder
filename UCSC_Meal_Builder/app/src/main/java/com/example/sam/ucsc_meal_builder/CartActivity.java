@@ -2,7 +2,7 @@ package com.example.sam.ucsc_meal_builder;
 
 import android.app.ListActivity;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -15,22 +15,30 @@ import org.w3c.dom.Text;
 
 public class CartActivity extends ListActivity {
 
+    Intent intent;
+    Cart checkoutCart;
     ArrayAdapter<Item> adapter;
+    TextView textView;
+    SharedPreferences sharedPrefs;
+    SharedPreferences.Editor editPrefs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cart);
 
-        Intent intent = getIntent();
-        final Cart checkoutCart = intent.getExtras().getParcelable("cart");
+        intent = getIntent();
+        checkoutCart = intent.getExtras().getParcelable("cart");
+
+        sharedPrefs = getSharedPreferences("balance", MODE_PRIVATE);
+        editPrefs = sharedPrefs.edit();
 
         adapter = new ArrayAdapter<Item>(this,
                 android.R.layout.simple_list_item_1,
                 checkoutCart.items);
         setListAdapter(adapter);
 
-        final TextView textView = (TextView) findViewById(R.id.totalText);
+        textView = (TextView) findViewById(R.id.totalText);
         ListView listView = getListView();
 
         textView.setText("Total: $" + String.format("%.2f", checkoutCart.getTotal()));
@@ -41,8 +49,22 @@ public class CartActivity extends ListActivity {
                 textView.setText("Total: $" + String.format("%.2f", checkoutCart.getTotal()));
             }
         });
-
-
-
     }
-}
+
+    public void onClickClearCart(View view) {
+        checkoutCart.clearCart();
+        adapter.notifyDataSetChanged();
+        textView.setText("Total: $" + String.format("%.2f", checkoutCart.getTotal()));
+    }
+
+    public void onClickCheckout(View view) {
+        float balance = sharedPrefs.getFloat("flexis", 0);
+        double total = checkoutCart.getTotal();
+        float result = balance - (float)total;
+        editPrefs.putFloat("flexis", result);
+        editPrefs.commit();
+        checkoutCart.clearCart();
+        adapter.notifyDataSetChanged();
+        textView.setText("Total: $" + String.format("%.2f", checkoutCart.getTotal()));
+    }
+ }
