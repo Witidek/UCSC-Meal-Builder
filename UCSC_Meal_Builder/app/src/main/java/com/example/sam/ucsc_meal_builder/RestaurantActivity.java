@@ -36,7 +36,7 @@ public class RestaurantActivity extends ListActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(RestaurantActivity.this, MenuActivity.class);
-                intent.putExtra("restaurant", adapter.getItem(position));
+                intent.putExtra("rid", adapter.getItem(position).getRestaurantID());
                 startActivity(intent);
 
                 // When clicked, show a toast with restaurant name
