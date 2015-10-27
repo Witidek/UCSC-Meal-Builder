@@ -13,6 +13,8 @@ import android.widget.Toast;
 
 import org.w3c.dom.Text;
 
+import java.math.BigDecimal;
+
 public class CartActivity extends ListActivity {
 
     Intent intent;
@@ -58,10 +60,10 @@ public class CartActivity extends ListActivity {
     }
 
     public void onClickCheckout(View view) {
-        float balance = sharedPrefs.getFloat("flexis", 0);
-        double total = checkoutCart.getTotal();
-        float result = balance - (float)total;
-        editPrefs.putFloat("flexis", result);
+        BigDecimal balance = new BigDecimal(sharedPrefs.getString("flexis", "0"));
+        BigDecimal total = checkoutCart.getTotal();
+        BigDecimal result = balance.subtract(total);
+        editPrefs.putString("flexis", result.toString());
         editPrefs.commit();
         checkoutCart.clearCart();
         adapter.notifyDataSetChanged();

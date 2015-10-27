@@ -11,6 +11,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.math.BigDecimal;
 
 public class BalanceActivity extends AppCompatActivity {
 
@@ -18,7 +19,7 @@ public class BalanceActivity extends AppCompatActivity {
 
     // Current meals and flexis value for this session (not auto-saved)
     int meals;
-    float flexis;
+    BigDecimal flexis = new BigDecimal(0);
 
     // Variables for the EditText fields
     TextView mealBalanceText;
@@ -43,14 +44,14 @@ public class BalanceActivity extends AppCompatActivity {
             editPrefs.putInt("meals", 0);
         }
         if(!sharedPrefs.contains("flexis")) {
-            editPrefs.putFloat("flexis", 0);
+            editPrefs.putString("flexis", "0");
         }
         // Save shared preferences
         editPrefs.commit();
 
         // Open shared preferences and fill EditText fields
         meals = sharedPrefs.getInt("meals", 0);
-        flexis = sharedPrefs.getFloat("flexis", 0);
+        flexis = new BigDecimal(sharedPrefs.getString("flexis", "0"));
 
         // Select the EditText fields
         mealBalanceText = (TextView) findViewById(R.id.mealBalanceText);
@@ -69,7 +70,7 @@ public class BalanceActivity extends AppCompatActivity {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus) {
-                    flexis = Float.valueOf(flexiBalanceText.getText().toString());
+                    flexis = new BigDecimal(flexiBalanceText.getText().toString());
                 }
             }
         });
@@ -84,9 +85,9 @@ public class BalanceActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         meals = Integer.valueOf(mealBalanceText.getText().toString());
-        flexis = Float.valueOf(flexiBalanceText.getText().toString());
+        flexis = new BigDecimal(flexiBalanceText.getText().toString());
         editPrefs.putInt("meals", meals);
-        editPrefs.putFloat("flexis", flexis);
+        editPrefs.putString("flexis", flexis.toString());
         editPrefs.commit();
         super.onBackPressed();
     }
@@ -108,18 +109,18 @@ public class BalanceActivity extends AppCompatActivity {
     }
 
     public void incrementFlexis (View view) {
-        flexis = Float.valueOf(flexiBalanceText.getText().toString());
-        flexis += 1;
+        flexis = new BigDecimal(flexiBalanceText.getText().toString());
+        flexis = flexis.add(new BigDecimal(1));
         flexiBalanceText.setText(String.format("%.2f", flexis));
-        editPrefs.putFloat("flexis", flexis);
+        editPrefs.putString("flexis", flexis.toString());
         editPrefs.commit();
     }
 
     public void decrementFlexis(View view) {
-        flexis = Float.valueOf(flexiBalanceText.getText().toString());
-        flexis -= 1;
+        flexis = new BigDecimal(flexiBalanceText.getText().toString());
+        flexis = flexis.subtract(new BigDecimal(1));
         flexiBalanceText.setText(String.format("%.2f", flexis));
-        editPrefs.putFloat("flexis", flexis);
+        editPrefs.putString("flexis", flexis.toString());
         editPrefs.commit();
     }
 }

@@ -6,12 +6,14 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
+import java.math.BigDecimal;
+
 public class BudgetActivity extends AppCompatActivity {
 
     /* TODO: fix id naming, comment code, add aesthetics */
 
     int meals = 0;
-    double flexis = 0;
+    BigDecimal flexis = new BigDecimal(0);
 
     TextView mealText;
     TextView flexiText;
@@ -38,7 +40,7 @@ public class BudgetActivity extends AppCompatActivity {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus) {
-                    flexis = Double.valueOf(flexiText.getText().toString());
+                    flexis = new BigDecimal(flexiText.getText().toString());
                 }
             }
         });
@@ -61,14 +63,14 @@ public class BudgetActivity extends AppCompatActivity {
     }
 
     public void incrementFlexis (View view) {
-        flexis = Double.valueOf(flexiText.getText().toString());
-        flexis += 1;
+        flexis = new BigDecimal(flexiText.getText().toString());
+        flexis = flexis.add(new BigDecimal(1));
         flexiText.setText(String.format("%.2f", flexis));
     }
 
     public void decrementFlexis(View view) {
-        flexis = Double.valueOf(flexiText.getText().toString());
-        flexis -= 1;
+        flexis = new BigDecimal(flexiText.getText().toString());
+        flexis = flexis.subtract(new BigDecimal(1));
         flexiText.setText(String.format("%.2f", flexis));
     }
 

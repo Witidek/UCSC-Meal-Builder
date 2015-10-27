@@ -8,6 +8,7 @@ import android.widget.Toast;
 
 import com.readystatesoftware.sqliteasset.SQLiteAssetHelper;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 
 /**
@@ -70,7 +71,7 @@ public class DBHelper extends SQLiteAssetHelper{
         while (cursor.moveToNext()) {
             int id = cursor.getInt(cursor.getColumnIndex(Item.KEY_item_id));
             String name = cursor.getString(cursor.getColumnIndex(Item.KEY_name));
-            double price = (double)cursor.getInt(cursor.getColumnIndex(Item.KEY_price)) / 100;
+            String price = String.format("%.2f", (cursor.getInt(cursor.getColumnIndex(Item.KEY_price)) / 100));
             Item item = new Item(id, name, price, 0);
             itemList.add(item);
         }

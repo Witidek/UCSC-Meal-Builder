@@ -3,6 +3,8 @@ package com.example.sam.ucsc_meal_builder;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.math.BigDecimal;
+
 /**
  * Created by Sam on 10/19/2015.
  */
@@ -18,11 +20,11 @@ public class Item implements Parcelable {
     // Fields
     private int itemID;
     private String name;
-    private double price;
+    private String price;
     private int restaurantID;
 
     // Constructor
-    public Item(int id, String n, double p, int rid){
+    public Item(int id, String n, String p, int rid){
         itemID = id;
         name = n;
         price = p;
@@ -38,8 +40,8 @@ public class Item implements Parcelable {
         return name;
     }
 
-    public double getPrice(){
-        return price;
+    public BigDecimal getPrice(){
+        return new BigDecimal(price);
     }
 
     public int getRestaurantID() {
@@ -47,7 +49,7 @@ public class Item implements Parcelable {
     }
 
     public String toString(){
-        return name + " : " + Double.toString(price);
+        return name + " : " + price.toString();
     }
 
     // Parcelable method implementations
@@ -61,7 +63,7 @@ public class Item implements Parcelable {
     public void writeToParcel(Parcel out, int flags) {
         out.writeInt(itemID);
         out.writeString(name);
-        out.writeDouble(price);
+        out.writeString(price);
         out.writeInt(restaurantID);
     }
 
@@ -80,7 +82,7 @@ public class Item implements Parcelable {
     private Item(Parcel in) {
         itemID = in.readInt();
         name = in.readString();
-        price = in.readDouble();
+        price = in.readString();
         restaurantID = in.readInt();
     }
 }

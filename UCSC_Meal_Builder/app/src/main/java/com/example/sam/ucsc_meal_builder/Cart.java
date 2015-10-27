@@ -3,6 +3,7 @@ package com.example.sam.ucsc_meal_builder;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 
 /**
@@ -19,10 +20,10 @@ public class Cart implements Parcelable {
     }
 
     //Returns sum worth of items in cart
-    public double getTotal() {
-        double total = 0.0;
+    public BigDecimal getTotal() {
+        BigDecimal total = new BigDecimal(0);
         for (int i = 0; i < items.size(); i++){
-            total += items.get(i).getPrice();
+            total = total.add(items.get(i).getPrice());
         }
         return total;
     }
