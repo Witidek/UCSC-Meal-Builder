@@ -18,9 +18,10 @@ import java.util.ArrayList;
 public class MenuActivity extends ListActivity {
 
     private DBHelper db;
-    private ArrayList<Item> itemList = new ArrayList<Item>();
+    private ArrayList<Item> itemList;
     private ArrayAdapter<Item> adapter;
-    private Cart myCart;
+    private Intent intent;
+    private int rid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,9 +29,9 @@ public class MenuActivity extends ListActivity {
         setContentView(R.layout.activity_menu);
 
         db = new DBHelper(this);
-        Intent intent = getIntent();
-        Restaurant restaurant = intent.getExtras().getParcelable("restaurant");
-        itemList = db.getMenu(restaurant.getRestaurantID());
+        intent = getIntent();
+        rid = intent.getIntExtra("rid", 0);
+        itemList = db.getMenu(rid);
 
         adapter = new ArrayAdapter<Item>(this,
                 android.R.layout.simple_list_item_1,
@@ -39,13 +40,11 @@ public class MenuActivity extends ListActivity {
 
         ListView listView = getListView();
 
-        myCart = new Cart();
-
         // When an item is clicked, the corresponding item is added to the cart.
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Item foundSelection = adapter.getItem(position);
-                myCart.addItem(foundSelection);
+                Item selectedItem = adapter.getItem(position);
+                db.addToCart(selectedItem);
                 Toast.makeText(getApplicationContext(), adapter.getItem(position).getName(), Toast.LENGTH_SHORT).show();
             }
         });
@@ -54,8 +53,7 @@ public class MenuActivity extends ListActivity {
 
     public void onCartPressed(View view){
         Intent intent = new Intent(MenuActivity.this, CartActivity.class);
-        // Pack cart object into intent
-        intent.putExtra("cart", myCart);
+        intent.putExtra("rid", rid);
         startActivity(intent);
     }
 

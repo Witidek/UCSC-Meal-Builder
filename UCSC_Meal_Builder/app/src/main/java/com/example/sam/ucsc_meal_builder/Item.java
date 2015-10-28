@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 /**
  * Created by Sam on 10/19/2015.
  */
-public class Item implements Parcelable {
+public class Item {
 
     public static final String TABLE = "Item";
 
@@ -20,69 +20,54 @@ public class Item implements Parcelable {
     // Fields
     private int itemID;
     private String name;
-    private String price;
+    private BigDecimal price;
     private int restaurantID;
+    private int quantity;
 
     // Constructor
-    public Item(int id, String n, String p, int rid){
-        itemID = id;
-        name = n;
-        price = p;
-        restaurantID = rid;
+    public Item(int id, String n, BigDecimal p, int rid){
+        this.itemID = id;
+        this.name = n;
+        this.price = p;
+        this.restaurantID = rid;
+        this.quantity = 0;
+    }
+
+    // Cart item with quantity constructor
+    public Item(int id, String n, BigDecimal p, int rid, int quantity){
+        this.itemID = id;
+        this.name = n;
+        this.price = p;
+        this.restaurantID = rid;
+        this.quantity = quantity;
     }
 
     // Methods
     public int getItemID() {
-        return itemID;
+        return this.itemID;
     }
 
     public String getName(){
-        return name;
+        return this.name;
     }
 
     public BigDecimal getPrice(){
-        return new BigDecimal(price);
+        return this.price;
     }
 
     public int getRestaurantID() {
-        return restaurantID;
+        return this.restaurantID;
     }
 
-    public String toString(){
-        return name + " : " + price.toString();
+    public int getQuantity() {
+        return this.quantity;
     }
 
-    // Parcelable method implementations
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel out, int flags) {
-        out.writeInt(itemID);
-        out.writeString(name);
-        out.writeString(price);
-        out.writeInt(restaurantID);
-    }
-
-    public static final Parcelable.Creator<Item> CREATOR = new Parcelable.Creator<Item>() {
-        @Override
-        public Item createFromParcel(Parcel in) {
-            return new Item(in);
+    public String toString() {
+        if (this.quantity > 0) {
+            return String.format("%dx %s : %s", this.quantity, this.name, this.price.toString());
+        } else {
+            return String.format("%s : %s", this.name, this.price.toString());
         }
-
-        @Override
-        public Item[] newArray(int size) {
-            return new Item[size];
-        }
-    };
-
-    private Item(Parcel in) {
-        itemID = in.readInt();
-        name = in.readString();
-        price = in.readString();
-        restaurantID = in.readInt();
     }
 }
