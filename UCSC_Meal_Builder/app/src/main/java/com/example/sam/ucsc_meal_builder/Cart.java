@@ -1,5 +1,7 @@
 package com.example.sam.ucsc_meal_builder;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -7,30 +9,21 @@ import java.util.ArrayList;
 /**
  * Created by Sam on 10/20/2015.
  */
-public class Cart {
-
-    public static final String TABLE = "Cart";
-
-    public static final String KEY_restaurant_id = "restaurant_id";
-    public static final String KEY_item_id = "item_id";
-    public static final String KEY_quantity = "quantity";
-
+public class Cart implements Parcelable {
 
     // Fields
     ArrayList<Item> items;
 
     // Constructor
-    public Cart(ArrayList<Item> itemList) {
-        this.items = itemList;
+    public Cart(){
+        this.items = new ArrayList<Item>();
     }
 
     //Returns sum worth of items in cart
     public BigDecimal getTotal() {
         BigDecimal total = new BigDecimal(0);
-        for (Item item : items){
-            int quantity = item.getQuantity();
-            BigDecimal subtotal = item.getPrice().multiply(new BigDecimal(quantity));
-            total = total.add(subtotal);
+        for (int i = 0; i < items.size(); i++){
+            total = total.add(items.get(i).getPrice());
         }
         return total;
     }
@@ -55,5 +48,33 @@ public class Cart {
 
     public void clearCart() {
         this.items.clear();
+    }
+
+    // Parcelable method implementations
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel out, int flags) {
+        out.writeTypedList(items);
+    }
+
+    public static final Parcelable.Creator<Cart> CREATOR = new Parcelable.Creator<Cart>() {
+        @Override
+        public Cart createFromParcel(Parcel in) {
+            return new Cart(in);
+        }
+
+        @Override
+        public Cart[] newArray(int size) {
+            return new Cart[size];
+        }
+    };
+
+    private Cart(Parcel in) {
+        items = new ArrayList<Item>();
+        in.readTypedList(items, Item.CREATOR);
     }
 }

@@ -18,10 +18,9 @@ import java.util.ArrayList;
 public class MenuActivity extends ListActivity {
 
     private DBHelper db;
-    private ArrayList<Item> itemList;
+    private ArrayList<Item> itemList = new ArrayList<Item>();
     private ArrayAdapter<Item> adapter;
-    private Intent intent;
-    private int rid;
+    private Cart myCart;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,9 +28,9 @@ public class MenuActivity extends ListActivity {
         setContentView(R.layout.activity_menu);
 
         db = new DBHelper(this);
-        intent = getIntent();
-        rid = intent.getIntExtra("rid", 0);
-        itemList = db.getMenu(rid);
+        Intent intent = getIntent();
+        Restaurant restaurant = intent.getExtras().getParcelable("restaurant");
+        itemList = db.getMenu(restaurant.getRestaurantID());
 
         adapter = new ArrayAdapter<Item>(this,
                 android.R.layout.simple_list_item_1,
@@ -40,11 +39,13 @@ public class MenuActivity extends ListActivity {
 
         ListView listView = getListView();
 
+        myCart = new Cart();
+
         // When an item is clicked, the corresponding item is added to the cart.
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Item selectedItem = adapter.getItem(position);
-                db.addToCart(selectedItem);
+                Item foundSelection = adapter.getItem(position);
+                myCart.addItem(foundSelection);
                 Toast.makeText(getApplicationContext(), adapter.getItem(position).getName(), Toast.LENGTH_SHORT).show();
             }
         });
@@ -53,7 +54,8 @@ public class MenuActivity extends ListActivity {
 
     public void onCartPressed(View view){
         Intent intent = new Intent(MenuActivity.this, CartActivity.class);
-        intent.putExtra("rid", rid);
+        // Pack cart object into intent
+        intent.putExtra("cart", myCart);
         startActivity(intent);
     }
 

@@ -9,82 +9,64 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import org.w3c.dom.Text;
 
 import java.math.BigDecimal;
 
 public class CartActivity extends ListActivity {
 
-    private Intent intent;
-    private int rid;
-    private DBHelper db;
-    private ArrayAdapter<Item> adapter;
-    private Cart cart;
-    private TextView textView;
-    private SharedPreferences sharedPrefs;
-    private SharedPreferences.Editor editPrefs;
+    Intent intent;
+    Cart checkoutCart;
+    ArrayAdapter<Item> adapter;
+    TextView textView;
+    SharedPreferences sharedPrefs;
+    SharedPreferences.Editor editPrefs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cart);
 
-        // Get restaurant_id from intent
         intent = getIntent();
-        rid = intent.getIntExtra("rid", 0);
+        checkoutCart = intent.getExtras().getParcelable("cart");
 
-        // Load SharedPreferences to get balance
         sharedPrefs = getSharedPreferences("balance", MODE_PRIVATE);
         editPrefs = sharedPrefs.edit();
 
-        // Grab cart items for specified restaurant from database
-        db = new DBHelper(this);
-        cart = db.getCart(rid);
-
-        // Create ListView adapter to display items in cart
         adapter = new ArrayAdapter<Item>(this,
                 android.R.layout.simple_list_item_1,
-                cart.items);
+                checkoutCart.items);
         setListAdapter(adapter);
 
-        // TextView for total
         textView = (TextView) findViewById(R.id.totalText);
-        textView.setText("Total: $" + cart.getTotal().toString());
-
-        // onClick event for ListView items
         ListView listView = getListView();
+
+        textView.setText("Total: $" + String.format("%.2f", checkoutCart.getTotal()));
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                cart.deleteItem(position);
+                checkoutCart.deleteItem(position);
                 adapter.notifyDataSetChanged();
-                textView.setText("Total: $" + cart.getTotal().toString());
+                textView.setText("Total: $" + String.format("%.2f", checkoutCart.getTotal()));
             }
         });
     }
 
     public void onClickClearCart(View view) {
-        // Clear local cart and database cart
-        cart.clearCart();
-        db.clearCart(rid);
-
-        // Update ListView and total text
+        checkoutCart.clearCart();
         adapter.notifyDataSetChanged();
-        textView.setText("Total: $" + cart.getTotal().toString());
+        textView.setText("Total: $" + String.format("%.2f", checkoutCart.getTotal()));
     }
 
     public void onClickCheckout(View view) {
-        // Subtract total from flexis balance
         BigDecimal balance = new BigDecimal(sharedPrefs.getString("flexis", "0"));
-        BigDecimal total = cart.getTotal();
+        BigDecimal total = checkoutCart.getTotal();
         BigDecimal result = balance.subtract(total);
         editPrefs.putString("flexis", result.toString());
         editPrefs.commit();
-
-        // Clear local cart and database cart
-        cart.clearCart();
-        db.clearCart(rid);
-
-        // Update ListView and total text
+        checkoutCart.clearCart();
         adapter.notifyDataSetChanged();
-        textView.setText("Total: $" + cart.getTotal().toString());
+        textView.setText("Total: $" + String.format("%.2f", checkoutCart.getTotal()));
     }
-}
+ }

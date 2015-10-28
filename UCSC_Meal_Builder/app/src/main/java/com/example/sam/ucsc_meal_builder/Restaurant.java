@@ -8,7 +8,7 @@ import java.util.ArrayList;
 /**
  * Created by Sam on 10/19/2015.
  */
-public class Restaurant implements Parcelable {
+public class Restaurant implements Parcelable{
 
     // DB table name
     public static final String TABLE = "Restaurant";
