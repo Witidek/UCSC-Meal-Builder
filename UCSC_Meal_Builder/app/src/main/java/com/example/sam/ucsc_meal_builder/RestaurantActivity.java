@@ -35,7 +35,8 @@ public class RestaurantActivity extends ListActivity {
         ListView listView = getListView();
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(RestaurantActivity.this, MenuActivity.class);
+                //rid will be passed to the next (Budget)Activity
+                Intent intent = new Intent(RestaurantActivity.this, BudgetActivity.class);
                 intent.putExtra("rid", adapter.getItem(position).getRestaurantID());
                 startActivity(intent);
 

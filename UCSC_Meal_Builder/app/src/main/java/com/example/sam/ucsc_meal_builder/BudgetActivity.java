@@ -18,10 +18,19 @@ public class BudgetActivity extends AppCompatActivity {
     TextView mealText;
     TextView flexiText;
 
+    //The rid needs to be carried from the previous
+    //(Restaurant)Activity to the next (Menu)Activity
+    private Intent intent;
+    private int rid;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_budget);
+
+        //Receive rid
+        intent = getIntent();
+        rid = intent.getIntExtra("rid", 0);
 
         // Grab TextViews
         mealText = (TextView) findViewById(R.id.mealBudgetText);
@@ -75,7 +84,9 @@ public class BudgetActivity extends AppCompatActivity {
     }
 
     public void onClickArrow(View view) {
-        Intent intent = new Intent(BudgetActivity.this, RestaurantActivity.class);
+        Intent intent = new Intent(BudgetActivity.this, MenuActivity.class);
+        //Send off rid again
+        intent.putExtra("rid", rid);
         startActivity(intent);
     }
 }

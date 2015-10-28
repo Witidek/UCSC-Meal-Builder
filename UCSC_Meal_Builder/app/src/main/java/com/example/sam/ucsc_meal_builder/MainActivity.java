@@ -17,7 +17,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onClickBuildMeal (View view) {
-        Intent intent = new Intent(MainActivity.this, BudgetActivity.class);
+        Intent intent = new Intent(MainActivity.this, RestaurantActivity.class);
         startActivity(intent);
     }
 
