@@ -85,8 +85,16 @@ public class BudgetActivity extends AppCompatActivity {
 
     public void onClickArrow(View view) {
         Intent intent = new Intent(BudgetActivity.this, MenuActivity.class);
+
         //Send off rid again
         intent.putExtra("rid", rid);
+
+        //Send off budget values
+        String flexisString = flexiText.getText().toString();
+        meals = Integer.valueOf(mealText.getText().toString());
+        intent.putExtra("flexis",flexisString);
+        intent.putExtra("meals",meals);
+
         startActivity(intent);
     }
 }

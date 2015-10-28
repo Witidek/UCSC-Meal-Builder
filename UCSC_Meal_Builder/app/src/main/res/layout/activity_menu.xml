@@ -26,4 +26,26 @@
         android:layout_alignParentTop="true"
         android:layout_alignRight="@android:id/list"
         android:layout_alignEnd="@android:id/list" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Meals: "
+        android:id="@+id/mealText"
+        android:layout_alignBottom="@+id/cartButton"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Flexis: "
+        android:id="@+id/flexiText"
+        android:layout_alignTop="@+id/mealText"
+        android:layout_toRightOf="@+id/mealText"
+        android:layout_toEndOf="@+id/mealText"
+        android:layout_marginLeft="62dp"
+        android:layout_marginStart="62dp" />
 </RelativeLayout>

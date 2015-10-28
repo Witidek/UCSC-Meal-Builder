@@ -13,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 
 public class MenuActivity extends ListActivity {
@@ -20,8 +21,15 @@ public class MenuActivity extends ListActivity {
     private DBHelper db;
     private ArrayList<Item> itemList;
     private ArrayAdapter<Item> adapter;
+
     private Intent intent;
     private int rid;
+    private String flexisString;
+    private int numMeals;
+    private BigDecimal numFlexis;
+
+    private TextView mealText;
+    private TextView flexiText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,8 +37,21 @@ public class MenuActivity extends ListActivity {
         setContentView(R.layout.activity_menu);
 
         db = new DBHelper(this);
+
+        //Unpack extras
         intent = getIntent();
         rid = intent.getIntExtra("rid", 0);
+        flexisString = intent.getStringExtra("flexis");
+        numFlexis = new BigDecimal(flexisString);
+        numMeals = intent.getIntExtra("meals", 0);
+
+        //set mealText and flexiText with approp. values
+        mealText = (TextView) findViewById(R.id.mealText);
+        flexiText = (TextView) findViewById(R.id.flexiText);
+        mealText.setText("Meals: " + Integer.toString(numMeals));
+        flexiText.setText("Flexis: " + numFlexis.toString());
+
+
         itemList = db.getMenu(rid);
 
         adapter = new ArrayAdapter<Item>(this,
