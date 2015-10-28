@@ -31,6 +31,10 @@ public class MenuActivity extends ListActivity {
     private TextView mealText;
     private TextView flexiText;
 
+    private BigDecimal totalDollars;
+
+    private BigDecimal totalSelection;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,6 +55,10 @@ public class MenuActivity extends ListActivity {
         mealText.setText("Meals: " + Integer.toString(numMeals));
         flexiText.setText("Flexis: " + numFlexis.toString());
 
+        //Here comes the money
+        totalDollars = numFlexis.add(new BigDecimal(numMeals));
+        Toast.makeText(getApplicationContext(), totalDollars.toString(), Toast.LENGTH_SHORT).show();
+        totalSelection = new BigDecimal(0);
 
         itemList = db.getMenu(rid);
 
@@ -65,6 +73,7 @@ public class MenuActivity extends ListActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Item selectedItem = adapter.getItem(position);
+                //Need to do check with total cart $$$ and totalDollars before add
                 db.addToCart(selectedItem);
                 Toast.makeText(getApplicationContext(), adapter.getItem(position).getName(), Toast.LENGTH_SHORT).show();
             }
