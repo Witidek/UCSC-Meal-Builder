@@ -15,8 +15,6 @@ import java.math.BigDecimal;
 
 public class BalanceActivity extends AppCompatActivity {
 
-    /* TODO: Tidy up code with a helper method, fix id naming, add save/cancel button, aesthetics */
-
     // Current meals and flexis value for this session (not auto-saved)
     int meals;
     BigDecimal flexis = new BigDecimal(0);

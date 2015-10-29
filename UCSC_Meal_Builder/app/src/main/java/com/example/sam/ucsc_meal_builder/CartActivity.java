@@ -48,30 +48,33 @@ public class CartActivity extends ListActivity {
 
         // TextView for total
         textView = (TextView) findViewById(R.id.totalText);
-        textView.setText("Total: $" + cart.getTotal().toString());
+        textView.setText(String.format("Total: $%s", cart.getTotal().toString()));
 
         // onClick event for ListView items
         ListView listView = getListView();
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                // PROMPT WARNING FOR DELETE FROM CART--------------------------
                 cart.deleteItem(position);
                 adapter.notifyDataSetChanged();
-                textView.setText("Total: $" + cart.getTotal().toString());
+                textView.setText(String.format("Total: $%s", cart.getTotal().toString()));
             }
         });
     }
 
     public void onClickClearCart(View view) {
+        // PROMPT WARNING FOR CLEAR CART------------------------------
         // Clear local cart and database cart
         cart.clearCart();
         db.clearCart(rid);
 
         // Update ListView and total text
         adapter.notifyDataSetChanged();
-        textView.setText("Total: $" + cart.getTotal().toString());
+        textView.setText(String.format("Total: $%s", cart.getTotal().toString()));
     }
 
     public void onClickCheckout(View view) {
+        // PROMPT CONFIRMATION FOR CHECKOUT----------------------------
         // Subtract total from flexis balance
         BigDecimal balance = new BigDecimal(sharedPrefs.getString("flexis", "0"));
         BigDecimal total = cart.getTotal();
@@ -85,6 +88,6 @@ public class CartActivity extends ListActivity {
 
         // Update ListView and total text
         adapter.notifyDataSetChanged();
-        textView.setText("Total: $" + cart.getTotal().toString());
+        textView.setText(String.format("Total: $%s", cart.getTotal().toString()));
     }
 }

@@ -10,8 +10,6 @@ import java.math.BigDecimal;
 
 public class BudgetActivity extends AppCompatActivity {
 
-    /* TODO: fix id naming, comment code, add aesthetics */
-
     int meals = 0;
     BigDecimal flexis = new BigDecimal(0);
 

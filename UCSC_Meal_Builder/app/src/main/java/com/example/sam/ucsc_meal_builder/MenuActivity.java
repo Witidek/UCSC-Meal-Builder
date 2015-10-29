@@ -52,8 +52,8 @@ public class MenuActivity extends ListActivity {
         //set mealText and flexiText with approp. values
         mealText = (TextView) findViewById(R.id.mealText);
         flexiText = (TextView) findViewById(R.id.flexiText);
-        mealText.setText("Meals: " + Integer.toString(numMeals));
-        flexiText.setText("Flexis: " + numFlexis.toString());
+        mealText.setText(String.format("Meals: %s", Integer.toString(numMeals)));
+        flexiText.setText(String.format("Flexis: %s", numFlexis.toString()));
 
         //Here comes the money
         totalDollars = numFlexis.add(new BigDecimal(numMeals));
@@ -75,7 +75,8 @@ public class MenuActivity extends ListActivity {
                 Item selectedItem = adapter.getItem(position);
                 //Need to do check with total cart $$$ and totalDollars before add
                 db.addToCart(selectedItem);
-                Toast.makeText(getApplicationContext(), adapter.getItem(position).getName(), Toast.LENGTH_SHORT).show();
+                String message = "Added " + adapter.getItem(position).getName() + " to cart";
+                Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
             }
         });
 

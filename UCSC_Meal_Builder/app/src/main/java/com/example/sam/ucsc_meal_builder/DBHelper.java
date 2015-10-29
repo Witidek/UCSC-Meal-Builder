@@ -5,7 +5,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
-import android.widget.Toast;
 
 import com.readystatesoftware.sqliteasset.SQLiteAssetHelper;
 
@@ -24,7 +23,7 @@ public class DBHelper extends SQLiteAssetHelper{
     // Constructor
     public DBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
-        setForcedUpgrade(2);
+        //setForcedUpgrade(2);
     }
 
     // Returns a list of all restaurants from DB
@@ -77,7 +76,10 @@ public class DBHelper extends SQLiteAssetHelper{
         while (cursor.moveToNext()) {
             int id = cursor.getInt(cursor.getColumnIndex(Item.KEY_item_id));
             String name = cursor.getString(cursor.getColumnIndex(Item.KEY_name));
-            BigDecimal price = new BigDecimal(cursor.getInt(cursor.getColumnIndex(Item.KEY_price)) / 100);
+            // Price in database is int, make it BigDecimal, set 2 decimal places, divide by 100
+            BigDecimal price = new BigDecimal(cursor.getInt(cursor.getColumnIndex(Item.KEY_price)));
+            price = price.setScale(2, BigDecimal.ROUND_HALF_UP);
+            price = price.divide(new BigDecimal(100), BigDecimal.ROUND_HALF_UP);
             Item item = new Item(id, name, price, rid);
             itemList.add(item);
         }
@@ -111,7 +113,10 @@ public class DBHelper extends SQLiteAssetHelper{
         while (cursor.moveToNext()) {
             int id = cursor.getInt(cursor.getColumnIndex(Item.KEY_item_id));
             String name = cursor.getString(cursor.getColumnIndex(Item.KEY_name));
-            BigDecimal price = new BigDecimal(cursor.getInt(cursor.getColumnIndex(Item.KEY_price)) / 100);
+            // Price in database is int, make it BigDecimal, set 2 decimal places, divide by 100
+            BigDecimal price = new BigDecimal(cursor.getInt(cursor.getColumnIndex(Item.KEY_price)));
+            price = price.setScale(2, BigDecimal.ROUND_HALF_UP);
+            price = price.divide(new BigDecimal(100), BigDecimal.ROUND_HALF_UP);
             int quantity = cursor.getInt(cursor.getColumnIndex(Cart.KEY_quantity));
             Item item = new Item(id, name, price, rid, quantity);
             itemList.add(item);
