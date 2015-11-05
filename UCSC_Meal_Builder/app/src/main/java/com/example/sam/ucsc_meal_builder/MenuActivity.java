@@ -27,6 +27,9 @@ public class MenuActivity extends ListActivity {
     private String flexisString;
     private int numMeals;
     private BigDecimal numFlexis;
+    private BigDecimal numCash;
+
+    private int whichBudgetActivity;
 
     private TextView mealText;
     private TextView flexiText;
@@ -44,10 +47,24 @@ public class MenuActivity extends ListActivity {
 
         //Unpack extras
         intent = getIntent();
+        whichBudgetActivity = intent.getIntExtra("whichBudgetActivity",1);
         rid = intent.getIntExtra("rid", 0);
+
         flexisString = intent.getStringExtra("flexis");
         numFlexis = new BigDecimal(flexisString);
-        numMeals = intent.getIntExtra("meals", 0);
+
+        //If we are coming from BudgetActivity, we are
+        //working with meals and not cash.
+        if (whichBudgetActivity == 1) {
+            numMeals = intent.getIntExtra("meals", 0);
+            numCash = new BigDecimal(0);
+        }
+        //If we are coming from BudgetActivity2, we are
+        //working with cash and not meals.
+        else {
+            numMeals = 0;
+            numCash = new BigDecimal(intent.getStringExtra("cash"));
+        }
 
         //set mealText and flexiText with approp. values
         mealText = (TextView) findViewById(R.id.mealText);

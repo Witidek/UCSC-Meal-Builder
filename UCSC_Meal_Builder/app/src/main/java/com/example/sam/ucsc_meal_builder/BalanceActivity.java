@@ -17,7 +17,7 @@ public class BalanceActivity extends AppCompatActivity {
 
     // Current meals and flexis value for this session (not auto-saved)
     int meals;
-    BigDecimal flexis = new BigDecimal(0);
+    BigDecimal flexis;
 
     // Variables for the EditText fields
     TextView mealBalanceText;

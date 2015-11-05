@@ -25,6 +25,8 @@
         </activity>
         <activity android:name=".CartActivity" >
         </activity>
+        <activity android:name=".BudgetActivity2" >
+        </activity>
     </application>
 
 </manifest>

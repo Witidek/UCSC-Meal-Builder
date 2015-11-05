@@ -36,9 +36,20 @@ public class RestaurantActivity extends ListActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 //rid will be passed to the next (Budget)Activity
-                Intent intent = new Intent(RestaurantActivity.this, BudgetActivity.class);
-                intent.putExtra("rid", adapter.getItem(position).getRestaurantID());
-                startActivity(intent);
+                int rid = adapter.getItem(position).getRestaurantID();
+                //If the restaurant is one of those that only accepts
+                //flexis and cash, open up the other budget activity
+                if (rid == 2 || rid == 4 || rid == 5 || rid ==9){
+                    Intent intent = new Intent(RestaurantActivity.this, BudgetActivity2.class);
+                    intent.putExtra("rid", rid);
+                    startActivity(intent);
+                }
+                //Otherwise open the reg budget activity
+                else {
+                    Intent intent = new Intent(RestaurantActivity.this, BudgetActivity.class);
+                    intent.putExtra("rid", rid);
+                    startActivity(intent);
+                }
 
                 // When clicked, show a toast with restaurant name
                 Toast.makeText(getApplicationContext(), adapter.getItem(position).getName(), Toast.LENGTH_SHORT).show();
