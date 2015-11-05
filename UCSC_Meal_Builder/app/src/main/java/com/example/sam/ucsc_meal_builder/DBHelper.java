@@ -171,6 +171,19 @@ public class DBHelper extends SQLiteAssetHelper{
         db.close();
     }
 
+    public void deleteItem(Item item) {
+        // Connect to database
+        SQLiteDatabase db = getWritableDatabase();
+
+        // Construct DELETE query
+        String sqlWhere = "item_id = ?";
+        String[] sqlWhereArgs = new String[]{String.valueOf(item.getItemID())};
+        db.delete(Cart.TABLE, sqlWhere, sqlWhereArgs);
+
+        // Close stuff
+        db.close();
+    }
+
     // Delete all Cart row items with matching restaurant_id
     public void clearCart(int rid) {
         // Connect to database

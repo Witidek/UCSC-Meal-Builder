@@ -46,6 +46,14 @@ public class Cart {
     }
 
     public void addItem(Item i){
+        // check for duplicate item ID
+        for (Item item: items) {
+            if (item.getItemID() == i.getItemID()) {
+                item.setQuantity(item.getQuantity() + 1);
+                return;
+            }
+        }
+        i.setQuantity(1);
         this.items.add(i);
     }
 

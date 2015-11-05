@@ -11,10 +11,10 @@ import java.math.BigDecimal;
 
 public class BudgetActivity2 extends AppCompatActivity {
 
-    BigDecimal meals = new BigDecimal(0);
+    BigDecimal cash = new BigDecimal(0);
     BigDecimal flexis = new BigDecimal(0);
 
-    TextView mealText;
+    TextView cashText;
     TextView flexiText;
 
     //The rid needs to be carried from the previous
@@ -34,15 +34,15 @@ public class BudgetActivity2 extends AppCompatActivity {
         Toast.makeText(getApplicationContext(), "#2!!!!", Toast.LENGTH_SHORT).show();
 
         // Grab TextViews
-        mealText = (TextView) findViewById(R.id.mealBudgetText);
+        cashText = (TextView) findViewById(R.id.cashBudgetText);
         flexiText = (TextView) findViewById(R.id.flexiBudgetText);
 
         // Save number values to local variable when EditText focus is lost (done editing)
-        mealText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        cashText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus) {
-                    meals = new BigDecimal(mealText.getText().toString());
+                    cash = new BigDecimal(cashText.getText().toString());
                 }
             }
         });
@@ -56,20 +56,20 @@ public class BudgetActivity2 extends AppCompatActivity {
         });
 
         // Display initial values
-        mealText.setText(String.format("%.2f", meals));
+        cashText.setText(String.format("%.2f", cash));
         flexiText.setText(String.format("%.2f", flexis));
     }
 
-    public void incrementMeals (View view) {
-        meals = new BigDecimal(mealText.getText().toString());
-        meals = meals.add(new BigDecimal(1));
-        mealText.setText(String.format("%.2f", meals));
+    public void incrementCash (View view) {
+        cash = new BigDecimal(cashText.getText().toString());
+        cash = cash.add(new BigDecimal(1));
+        cashText.setText(String.format("%.2f", cash));
     }
 
-    public void decrementMeals(View view) {
-        meals = new BigDecimal(mealText.getText().toString());
-        meals = meals.subtract(new BigDecimal(1));
-        mealText.setText(String.format("%.2f", meals));
+    public void decrementCash(View view) {
+        cash = new BigDecimal(cashText.getText().toString());
+        cash = cash.subtract(new BigDecimal(1));
+        cashText.setText(String.format("%.2f", cash));
     }
 
     public void incrementFlexis (View view) {
@@ -92,10 +92,10 @@ public class BudgetActivity2 extends AppCompatActivity {
 
         //Send off budget values
         String flexisString = flexiText.getText().toString();
-        String mealString = mealText.getText().toString();
+        String cashtring = cashText.getText().toString();
         intent.putExtra("whichBudgetActivity",2);
         intent.putExtra("flexis",flexisString);
-        intent.putExtra("cash",mealString);
+        intent.putExtra("cash",cashtring);
 
         startActivity(intent);
     }

@@ -21,6 +21,7 @@ public class MenuActivity extends ListActivity {
     private DBHelper db;
     private ArrayList<Item> itemList;
     private ArrayAdapter<Item> adapter;
+    private Cart cart;
 
     private Intent intent;
     private int rid;
@@ -31,12 +32,11 @@ public class MenuActivity extends ListActivity {
 
     private int whichBudgetActivity;
 
-    private TextView mealText;
-    private TextView flexiText;
+    private TextView budgetText;
+    private TextView subtotalText;
 
-    private BigDecimal totalDollars;
-
-    private BigDecimal totalSelection;
+    private BigDecimal budgetTotal;
+    private BigDecimal budgetRemaining;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,16 +66,17 @@ public class MenuActivity extends ListActivity {
             numCash = new BigDecimal(intent.getStringExtra("cash"));
         }
 
-        //set mealText and flexiText with approp. values
-        mealText = (TextView) findViewById(R.id.mealText);
-        flexiText = (TextView) findViewById(R.id.flexiText);
-        mealText.setText(String.format("Meals: %s", Integer.toString(numMeals)));
-        flexiText.setText(String.format("Flexis: %s", numFlexis.toString()));
-
         //Here comes the money
-        totalDollars = numFlexis.add(new BigDecimal(numMeals));
-        Toast.makeText(getApplicationContext(), totalDollars.toString(), Toast.LENGTH_SHORT).show();
-        totalSelection = new BigDecimal(0);
+        budgetTotal = numFlexis.add(new BigDecimal(numMeals * 8));
+        Toast.makeText(getApplicationContext(), budgetTotal.toString(), Toast.LENGTH_SHORT).show();
+        budgetRemaining = budgetTotal;
+
+        //set budgetText and subtotalText with approp. values
+        cart = db.getCart(rid);
+        budgetText = (TextView) findViewById(R.id.budgetText);
+        subtotalText = (TextView) findViewById(R.id.subtotalText);
+        budgetText.setText(String.format("Budget: %s", budgetTotal.toString()));
+        subtotalText.setText(String.format("Subtotal: %s", cart.getTotal().toString()));
 
         itemList = db.getMenu(rid);
 
@@ -90,8 +91,11 @@ public class MenuActivity extends ListActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Item selectedItem = adapter.getItem(position);
+
                 //Need to do check with total cart $$$ and totalDollars before add
+                cart.addItem(selectedItem);
                 db.addToCart(selectedItem);
+                subtotalText.setText(String.format("Subtotal: %s", cart.getTotal().toString()));
                 String message = "Added " + adapter.getItem(position).getName() + " to cart";
                 Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
             }
@@ -99,8 +103,21 @@ public class MenuActivity extends ListActivity {
 
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();  // Always call the superclass method first
+        cart = db.getCart(rid);
+        budgetRemaining = budgetTotal.subtract(cart.getTotal());
+        subtotalText.setText(String.format("Subtotal: %s", cart.getTotal().toString()));
+        Toast.makeText(this, "RESUMED FROM CART!", Toast.LENGTH_SHORT).show();
+        
+        // USE CUSTOM LISTADAPTER HERE, COMPARING BUDGETREMAINING TO EACH ITEM IN LISTVIEW
+        // DO COLORING/HIGHLIGHTING HERE
+    }
+
     public void onCartPressed(View view){
         Intent intent = new Intent(MenuActivity.this, CartActivity.class);
+        intent.putExtra("budgetTotal", budgetTotal.toString());
         intent.putExtra("rid", rid);
         startActivity(intent);
     }

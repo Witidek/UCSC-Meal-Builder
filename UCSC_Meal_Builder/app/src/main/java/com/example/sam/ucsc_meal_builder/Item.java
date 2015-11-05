@@ -63,6 +63,10 @@ public class Item {
         return this.quantity;
     }
 
+    public void setQuantity(int q) {
+        this.quantity = q;
+    }
+
     public String toString() {
         if (this.quantity > 0) {
             return String.format("%dx %s : %s", this.quantity, this.name, this.price.toString());

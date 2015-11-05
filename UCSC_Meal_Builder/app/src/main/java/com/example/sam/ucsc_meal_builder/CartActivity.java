@@ -16,8 +16,11 @@ public class CartActivity extends ListActivity {
 
     private Intent intent;
     private int rid;
+    private BigDecimal budgetTotal;
     private DBHelper db;
     private ArrayAdapter<Item> adapter;
+
+
     private Cart cart;
     private TextView textView;
     private SharedPreferences sharedPrefs;
@@ -31,6 +34,7 @@ public class CartActivity extends ListActivity {
         // Get restaurant_id from intent
         intent = getIntent();
         rid = intent.getIntExtra("rid", 0);
+        budgetTotal = new BigDecimal(intent.getStringExtra("budgetTotal"));
 
         // Load SharedPreferences to get balance
         sharedPrefs = getSharedPreferences("balance", MODE_PRIVATE);
@@ -55,6 +59,7 @@ public class CartActivity extends ListActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 // PROMPT WARNING FOR DELETE FROM CART--------------------------
+                db.deleteItem(adapter.getItem(position));
                 cart.deleteItem(position);
                 adapter.notifyDataSetChanged();
                 textView.setText(String.format("Total: $%s", cart.getTotal().toString()));

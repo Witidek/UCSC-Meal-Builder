@@ -23,8 +23,8 @@
         android:ems="10"
         android:id="@+id/flexiBudgetText"
         android:layout_alignParentBottom="true"
-        android:layout_alignLeft="@+id/mealBudgetText"
-        android:layout_alignStart="@+id/mealBudgetText"
+        android:layout_alignLeft="@+id/cashBudgetText"
+        android:layout_alignStart="@+id/cashBudgetText"
         android:layout_marginBottom="121dp"
         android:textAlignment="center" />
 
@@ -33,7 +33,7 @@
         android:layout_height="wrap_content"
         android:inputType="numberDecimal"
         android:ems="10"
-        android:id="@+id/mealBudgetText"
+        android:id="@+id/cashBudgetText"
         android:layout_below="@+id/editBudgetText"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="83dp"
@@ -44,9 +44,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="+"
-        android:id="@+id/incrementMeals"
-        android:onClick="incrementMeals"
-        android:layout_alignBottom="@+id/mealBudgetText"
+        android:id="@+id/incrementCash"
+        android:onClick="incrementCash"
+        android:layout_alignBottom="@+id/cashBudgetText"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
 
@@ -55,11 +55,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="-"
-        android:id="@+id/decrementMeals"
-        android:layout_alignBottom="@+id/incrementMeals"
+        android:id="@+id/decrementCash"
+        android:layout_alignBottom="@+id/incrementCash"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:onClick="decrementMeals" />
+        android:onClick="decrementCash" />
 
     <Button
         style="?android:attr/buttonStyleSmall"
@@ -89,7 +89,7 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Cash"
         android:id="@+id/textView3"
-        android:layout_below="@+id/mealBudgetText"
+        android:layout_below="@+id/cashBudgetText"
         android:layout_centerHorizontal="true" />
 
     <TextView
