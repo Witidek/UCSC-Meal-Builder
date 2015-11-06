@@ -15,6 +15,7 @@ import android.widget.Toast;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class MenuActivity extends ListActivity {
 
@@ -92,12 +93,22 @@ public class MenuActivity extends ListActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Item selectedItem = adapter.getItem(position);
 
+
                 //Need to do check with total cart $$$ and totalDollars before add
                 cart.addItem(selectedItem);
                 db.addToCart(selectedItem);
+                budgetRemaining = budgetTotal.subtract(cart.getTotal());
                 subtotalText.setText(String.format("Subtotal: %s", cart.getTotal().toString()));
                 String message = "Added " + adapter.getItem(position).getName() + " to cart";
                 Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(),budgetRemaining.toString(),Toast.LENGTH_SHORT).show();
+                Iterator<Item> iter = itemList.iterator();
+                while(iter.hasNext()) {
+                    if( iter.next().getPrice().compareTo(budgetRemaining) > 0){
+                        iter.remove();
+                    }
+                }
+                adapter.notifyDataSetChanged();
             }
         });
 
@@ -110,6 +121,14 @@ public class MenuActivity extends ListActivity {
         budgetRemaining = budgetTotal.subtract(cart.getTotal());
         subtotalText.setText(String.format("Subtotal: %s", cart.getTotal().toString()));
         Toast.makeText(this, "RESUMED FROM CART!", Toast.LENGTH_SHORT).show();
+
+        Iterator<Item> iter = itemList.iterator();
+        while(iter.hasNext()) {
+            if( iter.next().getPrice().compareTo(budgetRemaining) > 0){
+                iter.remove();
+            }
+        }
+        adapter.notifyDataSetChanged();
         
         // USE CUSTOM LISTADAPTER HERE, COMPARING BUDGETREMAINING TO EACH ITEM IN LISTVIEW
         // DO COLORING/HIGHLIGHTING HERE
