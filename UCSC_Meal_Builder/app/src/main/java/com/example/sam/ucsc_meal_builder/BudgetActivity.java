@@ -65,7 +65,7 @@ public class BudgetActivity extends AppCompatActivity {
 
     public void decrementMeals(View view) {
         meals = Integer.valueOf(mealText.getText().toString());
-        meals -= 1;
+        if (meals > 0) meals -= 1;
         mealText.setText(String.format("%d", meals));
     }
 
@@ -77,7 +77,9 @@ public class BudgetActivity extends AppCompatActivity {
 
     public void decrementFlexis(View view) {
         flexis = new BigDecimal(flexiText.getText().toString());
-        flexis = flexis.subtract(new BigDecimal(1));
+        if (flexis.compareTo(new BigDecimal(1)) != -1) {
+            flexis = flexis.subtract(new BigDecimal(1));
+        }
         flexiText.setText(String.format("%.2f", flexis));
     }
 

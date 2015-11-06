@@ -84,10 +84,15 @@ public class BalanceActivity extends AppCompatActivity {
     public void onBackPressed() {
         meals = Integer.valueOf(mealBalanceText.getText().toString());
         flexis = new BigDecimal(flexiBalanceText.getText().toString());
-        editPrefs.putInt("meals", meals);
-        editPrefs.putString("flexis", flexis.toString());
-        editPrefs.commit();
-        super.onBackPressed();
+        if (meals < 0 || flexis.compareTo(new BigDecimal(0))==-1) {
+            Toast.makeText(getApplicationContext(), "Cannot use negative.", Toast.LENGTH_SHORT).show();
+        }
+        else {
+            editPrefs.putInt("meals", meals);
+            editPrefs.putString("flexis", flexis.toString());
+            editPrefs.commit();
+            super.onBackPressed();
+        }
     }
 
     public void incrementMeals (View view) {
@@ -100,7 +105,7 @@ public class BalanceActivity extends AppCompatActivity {
 
     public void decrementMeals(View view) {
         meals = Integer.valueOf(mealBalanceText.getText().toString());
-        meals -= 1;
+        if (meals > 0) meals -= 1;
         mealBalanceText.setText(String.format("%d", meals));
         editPrefs.putInt("meals", meals);
         editPrefs.commit();
@@ -116,7 +121,9 @@ public class BalanceActivity extends AppCompatActivity {
 
     public void decrementFlexis(View view) {
         flexis = new BigDecimal(flexiBalanceText.getText().toString());
-        flexis = flexis.subtract(new BigDecimal(1));
+        if (flexis.compareTo(new BigDecimal(1)) != -1) {
+            flexis = flexis.subtract(new BigDecimal(1));
+        }
         flexiBalanceText.setText(String.format("%.2f", flexis));
         editPrefs.putString("flexis", flexis.toString());
         editPrefs.commit();

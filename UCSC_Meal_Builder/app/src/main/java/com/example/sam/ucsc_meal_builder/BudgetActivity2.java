@@ -68,7 +68,9 @@ public class BudgetActivity2 extends AppCompatActivity {
 
     public void decrementCash(View view) {
         cash = new BigDecimal(cashText.getText().toString());
-        cash = cash.subtract(new BigDecimal(1));
+        if (cash.compareTo(new BigDecimal(1)) != -1) {
+            cash = cash.subtract(new BigDecimal(1));
+        }
         cashText.setText(String.format("%.2f", cash));
     }
 
@@ -80,7 +82,9 @@ public class BudgetActivity2 extends AppCompatActivity {
 
     public void decrementFlexis(View view) {
         flexis = new BigDecimal(flexiText.getText().toString());
-        flexis = flexis.subtract(new BigDecimal(1));
+        if (flexis.compareTo(new BigDecimal(1)) != -1) {
+            flexis = flexis.subtract(new BigDecimal(1));
+        }
         flexiText.setText(String.format("%.2f", flexis));
     }
 
