@@ -27,6 +27,7 @@ public class MenuActivity extends ListActivity {
     private Intent intent;
     private int rid;
     private String flexisString;
+    private String cashString;
     private int numMeals;
     private BigDecimal numFlexis;
     private BigDecimal numCash;
@@ -58,17 +59,20 @@ public class MenuActivity extends ListActivity {
         //working with meals and not cash.
         if (whichBudgetActivity == 1) {
             numMeals = intent.getIntExtra("meals", 0);
-            numCash = new BigDecimal(0);
+            cashString = intent.getStringExtra("cash");
+            numCash = new BigDecimal(cashString);
+
         }
         //If we are coming from BudgetActivity2, we are
         //working with cash and not meals.
         else {
             numMeals = 0;
-            numCash = new BigDecimal(intent.getStringExtra("cash"));
+            cashString = intent.getStringExtra("cash");
+            numCash = new BigDecimal(cashString);
         }
 
         //Here comes the money
-        budgetTotal = numFlexis.add(new BigDecimal(numMeals * 8));
+        budgetTotal = numCash.add(numFlexis.add(new BigDecimal(numMeals * 8)));
         Toast.makeText(getApplicationContext(), budgetTotal.toString(), Toast.LENGTH_SHORT).show();
         budgetRemaining = budgetTotal;
 
@@ -137,6 +141,9 @@ public class MenuActivity extends ListActivity {
     public void onCartPressed(View view){
         Intent intent = new Intent(MenuActivity.this, CartActivity.class);
         intent.putExtra("budgetTotal", budgetTotal.toString());
+        intent.putExtra("meals",numMeals);
+        intent.putExtra("cash",cashString);
+        intent.putExtra("flexies",flexisString);
         intent.putExtra("rid", rid);
         startActivity(intent);
     }

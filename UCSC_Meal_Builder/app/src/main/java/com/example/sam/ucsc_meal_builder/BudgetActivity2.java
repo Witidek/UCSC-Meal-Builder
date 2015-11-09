@@ -96,10 +96,10 @@ public class BudgetActivity2 extends AppCompatActivity {
 
         //Send off budget values
         String flexisString = flexiText.getText().toString();
-        String cashtring = cashText.getText().toString();
+        String cashstring = cashText.getText().toString();
         intent.putExtra("whichBudgetActivity",2);
         intent.putExtra("flexis",flexisString);
-        intent.putExtra("cash",cashtring);
+        intent.putExtra("cash",cashstring);
 
         startActivity(intent);
     }

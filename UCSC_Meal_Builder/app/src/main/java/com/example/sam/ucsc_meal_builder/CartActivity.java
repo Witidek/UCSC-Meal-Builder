@@ -9,6 +9,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.math.BigDecimal;
 
@@ -17,6 +18,9 @@ public class CartActivity extends ListActivity {
     private Intent intent;
     private int rid;
     private BigDecimal budgetTotal;
+    private BigDecimal meals;
+    private BigDecimal cash;
+    private BigDecimal flexies;
     private DBHelper db;
     private ArrayAdapter<Item> adapter;
 
@@ -35,6 +39,9 @@ public class CartActivity extends ListActivity {
         intent = getIntent();
         rid = intent.getIntExtra("rid", 0);
         budgetTotal = new BigDecimal(intent.getStringExtra("budgetTotal"));
+        meals = new BigDecimal(intent.getIntExtra("meals", 0));
+        cash = new BigDecimal(intent.getStringExtra("cash"));
+        flexies = new BigDecimal(intent.getStringExtra("flexies"));
 
         // Load SharedPreferences to get balance
         sharedPrefs = getSharedPreferences("balance", MODE_PRIVATE);
@@ -80,11 +87,23 @@ public class CartActivity extends ListActivity {
 
     public void onClickCheckout(View view) {
         // PROMPT CONFIRMATION FOR CHECKOUT----------------------------
-        // Subtract total from flexis balance
-        BigDecimal balance = new BigDecimal(sharedPrefs.getString("flexis", "0"));
+        // Subtract total from meals and flexis balance
+        BigDecimal totalMeals = new BigDecimal(sharedPrefs.getInt("meals", 0));
+        BigDecimal totalFlexies = new BigDecimal(sharedPrefs.getString("flexis", "0"));
+        BigDecimal valueMeal = new BigDecimal(8);
         BigDecimal total = cart.getTotal();
-        BigDecimal result = balance.subtract(total);
-        editPrefs.putString("flexis", result.toString());
+        BigDecimal amountMeals = total.divideToIntegralValue(valueMeal);
+        BigDecimal compareMeal = amountMeals.min(meals);
+        BigDecimal remainAmount = total.subtract(compareMeal.multiply(valueMeal));
+        //Toast.makeText(getApplicationContext(), compareMeal.toString(), Toast.LENGTH_SHORT).show();
+        BigDecimal resultMeals = totalMeals.subtract(compareMeal);
+        BigDecimal resultflexies = totalFlexies.subtract(remainAmount.subtract(cash));
+
+        editPrefs.putInt("meals", resultMeals.intValue());
+        // If only using cash or meals don't change flexies
+        if(flexies.compareTo(new BigDecimal(0)) > 0) {
+            editPrefs.putString("flexis", resultflexies.toString());
+        }
         editPrefs.commit();
 
         // Clear local cart and database cart

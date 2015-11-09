@@ -22,11 +22,10 @@
         android:inputType="numberDecimal"
         android:ems="10"
         android:id="@+id/flexiBudgetText"
-        android:layout_alignParentBottom="true"
+        android:textAlignment="center"
+        android:layout_centerVertical="true"
         android:layout_alignLeft="@+id/mealBudgetText"
-        android:layout_alignStart="@+id/mealBudgetText"
-        android:layout_marginBottom="121dp"
-        android:textAlignment="center" />
+        android:layout_alignStart="@+id/mealBudgetText" />
 
     <EditText
         android:layout_width="wrap_content"
@@ -111,5 +110,53 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:onClick = "onClickArrow"/>
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/cashBudgetText"
+        android:layout_above="@+id/button8"
+        android:textAlignment="center"
+        android:layout_marginBottom="38dp"
+        android:layout_alignRight="@+id/editBudgetText"
+        android:layout_alignEnd="@+id/editBudgetText"
+        android:layout_alignLeft="@+id/editBudgetText"
+        android:layout_alignStart="@+id/editBudgetText"
+        android:inputType="numberDecimal" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Cash"
+        android:id="@+id/textView2"
+        android:layout_above="@+id/button8"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="+"
+        android:id="@+id/incrementCash"
+        android:layout_above="@+id/textView2"
+        android:layout_toEndOf="@+id/flexiBudgetText"
+        android:layout_alignTop="@+id/cashBudgetText"
+        android:layout_alignLeft="@+id/button8"
+        android:layout_alignStart="@+id/button8"
+        android:onClick="incrementCash" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="-"
+        android:id="@+id/decrementCash"
+        android:layout_above="@+id/textView2"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_toStartOf="@+id/flexiBudgetText"
+        android:layout_alignTop="@+id/cashBudgetText"
+        android:layout_alignRight="@+id/button7"
+        android:layout_alignEnd="@+id/button7"
+        android:onClick="decrementCash" />
 
 </RelativeLayout>
