@@ -2,6 +2,7 @@ package com.example.sam.ucsc_meal_builder;
 
 import android.app.ListActivity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -21,7 +22,8 @@ public class MenuActivity extends ListActivity {
 
     private DBHelper db;
     private ArrayList<Item> itemList;
-    private ArrayAdapter<Item> adapter;
+    private ListAdapter adapter;
+    private ListView listView;
     private Cart cart;
 
     private Intent intent;
@@ -76,6 +78,7 @@ public class MenuActivity extends ListActivity {
         Toast.makeText(getApplicationContext(), budgetTotal.toString(), Toast.LENGTH_SHORT).show();
         budgetRemaining = budgetTotal;
 
+
         //set budgetText and subtotalText with approp. values
         cart = db.getCart(rid);
         budgetText = (TextView) findViewById(R.id.budgetText);
@@ -83,35 +86,37 @@ public class MenuActivity extends ListActivity {
         budgetText.setText(String.format("Budget: %s", budgetTotal.toString()));
         subtotalText.setText(String.format("Subtotal: %s", cart.getTotal().toString()));
 
+        // Grab menu from database
         itemList = db.getMenu(rid);
 
-        adapter = new ArrayAdapter<Item>(this,
-                android.R.layout.simple_list_item_1,
-                itemList);
+        // Build ListAdapter
+        adapter = new ListAdapter(this, itemList);
         setListAdapter(adapter);
+        adapter.setBudgetRemaining(budgetRemaining);
 
-        ListView listView = getListView();
+        listView = getListView();
 
         // When an item is clicked, the corresponding item is added to the cart.
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Item selectedItem = adapter.getItem(position);
 
-
                 //Need to do check with total cart $$$ and totalDollars before add
+
+                // Add item to local cart and database cart (combine these two?)
                 cart.addItem(selectedItem);
                 db.addToCart(selectedItem);
+
+                // Recalculate budgetRemaining and pass to adapter as well
                 budgetRemaining = budgetTotal.subtract(cart.getTotal());
+                adapter.setBudgetRemaining(budgetRemaining);
+
+                // Update subtotal TextView and toast item addition
                 subtotalText.setText(String.format("Subtotal: %s", cart.getTotal().toString()));
                 String message = "Added " + adapter.getItem(position).getName() + " to cart";
                 Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
-                Toast.makeText(getApplicationContext(),budgetRemaining.toString(),Toast.LENGTH_SHORT).show();
-                Iterator<Item> iter = itemList.iterator();
-                while(iter.hasNext()) {
-                    if( iter.next().getPrice().compareTo(budgetRemaining) > 0){
-                        iter.remove();
-                    }
-                }
+
+                // Update ListAdapter
                 adapter.notifyDataSetChanged();
             }
         });
@@ -121,21 +126,19 @@ public class MenuActivity extends ListActivity {
     @Override
     public void onResume() {
         super.onResume();  // Always call the superclass method first
-        cart = db.getCart(rid);
-        budgetRemaining = budgetTotal.subtract(cart.getTotal());
-        subtotalText.setText(String.format("Subtotal: %s", cart.getTotal().toString()));
-        Toast.makeText(this, "RESUMED FROM CART!", Toast.LENGTH_SHORT).show();
 
-        Iterator<Item> iter = itemList.iterator();
-        while(iter.hasNext()) {
-            if( iter.next().getPrice().compareTo(budgetRemaining) > 0){
-                iter.remove();
-            }
-        }
-        adapter.notifyDataSetChanged();
-        
-        // USE CUSTOM LISTADAPTER HERE, COMPARING BUDGETREMAINING TO EACH ITEM IN LISTVIEW
-        // DO COLORING/HIGHLIGHTING HERE
+        // Refresh local cart
+        cart = db.getCart(rid);
+
+        // Recalculate budgetRemaining and pass to adapter as well
+        budgetRemaining = budgetTotal.subtract(cart.getTotal());
+        adapter.setBudgetRemaining(budgetRemaining);
+
+        // Update subtotal TextView
+        subtotalText.setText(String.format("Subtotal: %s", cart.getTotal().toString()));
+
+        // Redraw ListView
+        listView.invalidateViews();
     }
 
     public void onCartPressed(View view){
