@@ -20,7 +20,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:inputType="numberDecimal"
-        android:ems="10"
+        android:ems="5"
         android:id="@+id/flexiBalanceText"
         android:layout_alignParentBottom="true"
         android:layout_alignLeft="@+id/mealBalanceText"
@@ -32,7 +32,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:inputType="numberDecimal"
-        android:ems="10"
+        android:ems="5"
         android:id="@+id/mealBalanceText"
         android:layout_below="@+id/editBalanceText"
         android:layout_centerHorizontal="true"
@@ -47,8 +47,7 @@
         android:id="@+id/incrementMealsBalance"
         android:onClick="incrementMeals"
         android:layout_alignBottom="@+id/mealBalanceText"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_toEndOf="@id/mealBalanceText" />
 
     <Button
         style="?android:attr/buttonStyleSmall"
@@ -57,8 +56,7 @@
         android:text="-"
         android:id="@+id/decrementMealsBalance"
         android:layout_alignBottom="@+id/incrementMealsBalance"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
+        android:layout_toLeftOf="@+id/mealBalanceText"
         android:onClick="decrementMeals" />
 
     <Button
@@ -67,10 +65,10 @@
         android:layout_height="wrap_content"
         android:text="+"
         android:id="@+id/incrementFlexisBalance"
+        android:onClick="incrementFlexis"
         android:layout_alignBottom="@+id/flexiBalanceText"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:onClick="incrementFlexis" />
+        android:layout_toRightOf="@+id/flexiBalanceText"
+        android:layout_toEndOf="@+id/flexiBalanceText" />
 
     <Button
         style="?android:attr/buttonStyleSmall"
@@ -78,10 +76,10 @@
         android:layout_height="wrap_content"
         android:text="-"
         android:id="@+id/decrementFlexisBalance"
-        android:layout_alignBottom="@+id/incrementFlexisBalance"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:onClick="decrementFlexis" />
+        android:onClick="decrementFlexis"
+        android:layout_above="@+id/textView4"
+        android:layout_toLeftOf="@+id/flexiBalanceText"
+        android:layout_toStartOf="@+id/flexiBalanceText" />
 
     <TextView
         android:layout_width="wrap_content"

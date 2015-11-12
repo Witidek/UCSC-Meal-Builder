@@ -1,8 +1,11 @@
 package com.example.sam.ucsc_meal_builder;
 
+import android.app.Activity;
 import android.content.SharedPreferences;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -13,7 +16,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.math.BigDecimal;
 
-public class BalanceActivity extends AppCompatActivity {
+public class BalanceActivity extends Activity {
 
     // Current meals and flexis value for this session (not auto-saved)
     int meals;
@@ -32,6 +35,8 @@ public class BalanceActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_balance);
+        getActionBar().setHomeButtonEnabled(true);
+        getActionBar().setDisplayHomeAsUpEnabled(true);
 
         //balance is a Preference that contains values 'meals' and 'flexis'
         sharedPrefs = getSharedPreferences("balance", MODE_PRIVATE);
@@ -77,6 +82,17 @@ public class BalanceActivity extends AppCompatActivity {
         mealBalanceText.setText(String.format("%d", meals));
         flexiBalanceText.setText(String.format("%.2f", flexis));
 
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            // Respond to the action bar's Up/Home button
+            case android.R.id.home:
+                NavUtils.navigateUpFromSameTask(this);
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     // Save SharedPreference changes when android back button is pressed
