@@ -1,6 +1,8 @@
 package com.example.sam.ucsc_meal_builder;
 
+import android.app.AlertDialog;
 import android.app.ListActivity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -92,12 +94,30 @@ public class CartActivity extends ListActivity {
     public void onClickClearCart(View view) {
         // PROMPT WARNING FOR CLEAR CART------------------------------
         // Clear local cart and database cart
-        cart.clearCart();
-        db.clearCart(rid);
 
-        // Update ListView and total text
-        adapter.notifyDataSetChanged();
-        textView.setText(String.format("Total: $%s", cart.getTotal().toString()));
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+        alertDialog.setTitle("Clear Cart");
+        alertDialog.setMessage("Are you sure?");
+        alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                cart.clearCart();
+                db.clearCart(rid);
+
+                // Update ListView and total text
+                adapter.notifyDataSetChanged();
+                textView.setText(String.format("Total: $%s", cart.getTotal().toString()));
+            }
+        });
+
+        alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+        alertDialog.setIcon(android.R.drawable.ic_dialog_alert);
+        alertDialog.show();
+
+
     }
 
     public void onClickCheckout(View view) {
@@ -110,9 +130,14 @@ public class CartActivity extends ListActivity {
         BigDecimal amountMeals = total.divideToIntegralValue(valueMeal);
         BigDecimal compareMeal = amountMeals.min(meals);
         BigDecimal remainAmount = total.subtract(compareMeal.multiply(valueMeal));
+        BigDecimal resultflexies;
         //Toast.makeText(getApplicationContext(), compareMeal.toString(), Toast.LENGTH_SHORT).show();
         BigDecimal resultMeals = totalMeals.subtract(compareMeal);
-        BigDecimal resultflexies = totalFlexies.subtract(remainAmount.subtract(cash));
+        if(remainAmount.compareTo(flexies) >= 0) {
+            resultflexies = totalFlexies.subtract(flexies);
+        }else{
+            resultflexies = totalFlexies.subtract(remainAmount);
+        }
 
         editPrefs.putInt("meals", resultMeals.intValue());
         // If only using cash or meals don't change flexies or if cash covers it

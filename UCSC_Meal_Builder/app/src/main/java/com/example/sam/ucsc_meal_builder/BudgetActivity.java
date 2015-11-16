@@ -1,18 +1,20 @@
 package com.example.sam.ucsc_meal_builder;
 
+import android.app.ActionBar;
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
-<<<<<<< HEAD
+
 import android.content.SharedPreferences;
-=======
+
 import android.support.v4.app.NavUtils;
->>>>>>> 8eaf3f542b91db54f521b1a535e45121ea7ca5e4
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.app.AlertDialog;
 
 import java.math.BigDecimal;
 
@@ -37,8 +39,10 @@ public class BudgetActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_budget);
-        getActionBar().setHomeButtonEnabled(true);
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        ActionBar supportActionBar = getActionBar();
+        supportActionBar.setHomeButtonEnabled(true);
+        supportActionBar.setDisplayHomeAsUpEnabled(true);
+
 
         //Receive rid
         intent = getIntent();
@@ -156,7 +160,17 @@ public class BudgetActivity extends Activity {
 
             startActivity(intent);
         }else{
-            Toast.makeText(getApplicationContext(), "Exceeds actual Balance!", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getApplicationContext(), "Exceeds actual Balance!", Toast.LENGTH_SHORT).show();
+            AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+            alertDialog.setTitle("Oh No....!");
+            alertDialog.setMessage("You are over your Balance!");
+            alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    // here you can add functions
+                }
+            });
+            alertDialog.setIcon(android.R.drawable.ic_dialog_alert);
+            alertDialog.show();
         }
     }
 }
