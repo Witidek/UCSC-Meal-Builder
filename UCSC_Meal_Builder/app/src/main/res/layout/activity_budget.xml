@@ -7,6 +7,7 @@
     android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context="com.example.sam.ucsc_meal_builder.BudgetActivity">
 
+    <!-- Instructions on top -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -16,28 +17,30 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true" />
 
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="numberDecimal"
-        android:ems="10"
-        android:id="@+id/flexiBudgetText"
-        android:textAlignment="center"
-        android:layout_centerVertical="true"
-        android:layout_alignLeft="@+id/mealBudgetText"
-        android:layout_alignStart="@+id/mealBudgetText" />
-
+    <!-- EditText field for meals -->
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:inputType="number"
-        android:ems="10"
+        android:ems="5"
         android:id="@+id/mealBudgetText"
-        android:layout_below="@+id/editBudgetText"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="83dp"
+        android:textAlignment="center"
+        android:layout_below="@+id/editBudgetText"
+        android:layout_marginTop="83dp" />
+
+    <!-- EditText field for flexis -->
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="numberDecimal"
+        android:ems="5"
+        android:id="@+id/flexiBudgetText"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
         android:textAlignment="center" />
 
+    <!-- Increment meals -->
     <Button
         style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
@@ -46,42 +49,42 @@
         android:id="@+id/incrementMeals"
         android:onClick="incrementMeals"
         android:layout_alignBottom="@+id/mealBudgetText"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_toEndOf="@+id/mealBudgetText" />
 
+    <!-- Decrement meals -->
     <Button
         style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="-"
         android:id="@+id/decrementMeals"
-        android:layout_alignBottom="@+id/incrementMeals"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:onClick="decrementMeals" />
+        android:onClick="decrementMeals"
+        android:layout_alignBottom="@+id/mealBudgetText"
+        android:layout_alignStart="@+id/editBudgetText" />
 
+    <!-- Increment flexis -->
     <Button
         style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="+"
         android:id="@+id/incrementFlexis"
+        android:onClick="incrementFlexis"
         android:layout_alignBottom="@+id/flexiBudgetText"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:onClick="incrementFlexis" />
+        android:layout_toEndOf="@+id/flexiBudgetText" />
 
+    <!-- Decrement flexis -->
     <Button
         style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="-"
         android:id="@+id/button7"
-        android:layout_alignBottom="@+id/incrementFlexis"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:onClick="decrementFlexis" />
+        android:onClick="decrementFlexis"
+        android:layout_above="@+id/textView4"
+        android:layout_toStartOf="@+id/flexiBudgetText" />
 
+    <!-- TextView for meals -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -91,6 +94,7 @@
         android:layout_below="@+id/mealBudgetText"
         android:layout_centerHorizontal="true" />
 
+    <!-- TextView for flexis -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -100,8 +104,8 @@
         android:layout_below="@+id/incrementFlexis"
         android:layout_centerHorizontal="true" />
 
+    <!-- Continue button -->
     <Button
-        style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="-->"
@@ -111,18 +115,18 @@
         android:layout_alignParentEnd="true"
         android:onClick = "onClickArrow"/>
 
+    <!-- EditText for cash -->
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:inputType="numberDecimal"
+        android:ems="5"
         android:id="@+id/cashBudgetText"
-        android:layout_above="@+id/button8"
+        android:layout_centerHorizontal="true"
         android:textAlignment="center"
+        android:layout_above="@+id/button8"
         android:layout_marginBottom="38dp"
-        android:layout_alignRight="@+id/editBudgetText"
-        android:layout_alignEnd="@+id/editBudgetText"
-        android:layout_alignLeft="@+id/editBudgetText"
-        android:layout_alignStart="@+id/editBudgetText"
-        android:inputType="numberDecimal" />
+         />
 
     <TextView
         android:layout_width="wrap_content"
@@ -130,33 +134,27 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Cash"
         android:id="@+id/textView2"
-        android:layout_above="@+id/button8"
+        android:layout_below="@+id/incrementCash"
         android:layout_centerHorizontal="true" />
 
     <Button
+        style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="+"
         android:id="@+id/incrementCash"
-        android:layout_above="@+id/textView2"
-        android:layout_toEndOf="@+id/flexiBudgetText"
-        android:layout_alignTop="@+id/cashBudgetText"
-        android:layout_alignLeft="@+id/button8"
-        android:layout_alignStart="@+id/button8"
+        android:layout_alignBottom="@+id/cashBudgetText"
+        android:layout_toEndOf="@+id/cashBudgetText"
         android:onClick="incrementCash" />
 
     <Button
+        style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="-"
         android:id="@+id/decrementCash"
         android:layout_above="@+id/textView2"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_toStartOf="@+id/flexiBudgetText"
-        android:layout_alignTop="@+id/cashBudgetText"
-        android:layout_alignRight="@+id/button7"
-        android:layout_alignEnd="@+id/button7"
+        android:layout_toStartOf="@+id/cashBudgetText"
         android:onClick="decrementCash" />
 
 </RelativeLayout>

@@ -1,16 +1,22 @@
 package com.example.sam.ucsc_meal_builder;
 
+import android.app.Activity;
 import android.content.Intent;
+<<<<<<< HEAD
 import android.content.SharedPreferences;
+=======
+import android.support.v4.app.NavUtils;
+>>>>>>> 8eaf3f542b91db54f521b1a535e45121ea7ca5e4
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.math.BigDecimal;
 
-public class BudgetActivity extends AppCompatActivity {
+public class BudgetActivity extends Activity {
 
     int meals = 0;
     BigDecimal flexis = new BigDecimal(0);
@@ -31,6 +37,8 @@ public class BudgetActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_budget);
+        getActionBar().setHomeButtonEnabled(true);
+        getActionBar().setDisplayHomeAsUpEnabled(true);
 
         //Receive rid
         intent = getIntent();
@@ -74,6 +82,17 @@ public class BudgetActivity extends AppCompatActivity {
         mealText.setText(String.format("%d", meals));
         flexiText.setText(String.format("%.2f", flexis));
         cashText.setText(String.format("%.2f", cash));
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            // Respond to the action bar's Up/Home button
+            case android.R.id.home:
+                NavUtils.navigateUpFromSameTask(this);
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     public void incrementMeals (View view) {

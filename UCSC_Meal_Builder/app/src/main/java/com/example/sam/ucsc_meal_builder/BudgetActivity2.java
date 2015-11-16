@@ -1,15 +1,17 @@
 package com.example.sam.ucsc_meal_builder;
 
+import android.app.Activity;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.math.BigDecimal;
 
-public class BudgetActivity2 extends AppCompatActivity {
+public class BudgetActivity2 extends Activity {
 
     BigDecimal cash = new BigDecimal(0);
     BigDecimal flexis = new BigDecimal(0);
@@ -26,6 +28,8 @@ public class BudgetActivity2 extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_budget2);
+        getActionBar().setHomeButtonEnabled(true);
+        getActionBar().setDisplayHomeAsUpEnabled(true);
 
         //Receive rid
         intent = getIntent();
@@ -58,6 +62,17 @@ public class BudgetActivity2 extends AppCompatActivity {
         // Display initial values
         cashText.setText(String.format("%.2f", cash));
         flexiText.setText(String.format("%.2f", flexis));
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            // Respond to the action bar's Up/Home button
+            case android.R.id.home:
+                NavUtils.navigateUpFromSameTask(this);
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     public void incrementCash (View view) {
