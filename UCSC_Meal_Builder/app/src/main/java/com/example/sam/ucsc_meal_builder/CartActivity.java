@@ -100,7 +100,7 @@ public class CartActivity extends ListActivity {
         BigDecimal resultflexies = totalFlexies.subtract(remainAmount.subtract(cash));
 
         editPrefs.putInt("meals", resultMeals.intValue());
-        // If only using cash or meals don't change flexies
+        // If only using cash or meals don't change flexies or if cash covers it
         if(flexies.compareTo(new BigDecimal(0)) > 0) {
             editPrefs.putString("flexis", resultflexies.toString());
         }
