@@ -123,35 +123,54 @@ public class CartActivity extends ListActivity {
     public void onClickCheckout(View view) {
         // PROMPT CONFIRMATION FOR CHECKOUT----------------------------
         // Subtract total from meals and flexis balance
-        BigDecimal totalMeals = new BigDecimal(sharedPrefs.getInt("meals", 0));
-        BigDecimal totalFlexies = new BigDecimal(sharedPrefs.getString("flexis", "0"));
-        BigDecimal valueMeal = new BigDecimal(8);
-        BigDecimal total = cart.getTotal();
-        BigDecimal amountMeals = total.divideToIntegralValue(valueMeal);
-        BigDecimal compareMeal = amountMeals.min(meals);
-        BigDecimal remainAmount = total.subtract(compareMeal.multiply(valueMeal));
-        BigDecimal resultflexies;
-        //Toast.makeText(getApplicationContext(), compareMeal.toString(), Toast.LENGTH_SHORT).show();
-        BigDecimal resultMeals = totalMeals.subtract(compareMeal);
-        if(remainAmount.compareTo(flexies) >= 0) {
-            resultflexies = totalFlexies.subtract(flexies);
-        }else{
-            resultflexies = totalFlexies.subtract(remainAmount);
-        }
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+        alertDialog.setTitle("Checkout Cart");
+        String confirm ="Total is : $" +  cart.getTotal().toString()+"\n" + "Proceed?" ;
+        alertDialog.setMessage(confirm);
+        alertDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                BigDecimal totalMeals = new BigDecimal(sharedPrefs.getInt("meals", 0));
+                BigDecimal totalFlexies = new BigDecimal(sharedPrefs.getString("flexis", "0"));
+                BigDecimal valueMeal = new BigDecimal(8);
+                BigDecimal total = cart.getTotal();
+                BigDecimal amountMeals = total.divideToIntegralValue(valueMeal);
+                BigDecimal compareMeal = amountMeals.min(meals);
+                BigDecimal remainAmount = total.subtract(compareMeal.multiply(valueMeal));
+                BigDecimal resultflexies;
+                //Toast.makeText(getApplicationContext(), compareMeal.toString(), Toast.LENGTH_SHORT).show();
+                BigDecimal resultMeals = totalMeals.subtract(compareMeal);
+                if(remainAmount.compareTo(flexies) >= 0) {
+                    resultflexies = totalFlexies.subtract(flexies);
+                }else{
+                    resultflexies = totalFlexies.subtract(remainAmount);
+                }
 
-        editPrefs.putInt("meals", resultMeals.intValue());
-        // If only using cash or meals don't change flexies or if cash covers it
-        if(flexies.compareTo(new BigDecimal(0)) > 0) {
-            editPrefs.putString("flexis", resultflexies.toString());
-        }
-        editPrefs.commit();
+                editPrefs.putInt("meals", resultMeals.intValue());
+                // If only using cash or meals don't change flexies or if cash covers it
+                if(flexies.compareTo(new BigDecimal(0)) > 0) {
+                    editPrefs.putString("flexis", resultflexies.toString());
+                }
+                editPrefs.commit();
 
-        // Clear local cart and database cart
-        cart.clearCart();
-        db.clearCart(rid);
+                // Clear local cart and database cart
+                cart.clearCart();
+                db.clearCart(rid);
 
-        // Update ListView and total text
-        adapter.notifyDataSetChanged();
-        textView.setText(String.format("Total: $%s", cart.getTotal().toString()));
+                // Update ListView and total text
+                adapter.notifyDataSetChanged();
+                textView.setText(String.format("Total: $%s", cart.getTotal().toString()));
+
+            }
+        });
+
+        alertDialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                // Leaving Blank
+            }
+        });
+        alertDialog.setIcon(android.R.drawable.ic_dialog_alert);
+        alertDialog.show();
+
+
     }
 }

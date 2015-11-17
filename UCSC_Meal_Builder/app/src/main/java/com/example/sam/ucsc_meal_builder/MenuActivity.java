@@ -1,6 +1,8 @@
 package com.example.sam.ucsc_meal_builder;
 
+import android.app.AlertDialog;
 import android.app.ListActivity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Parcelable;
@@ -104,7 +106,23 @@ public class MenuActivity extends ListActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Item selectedItem = adapter.getItem(position);
-
+                if (selectedItem.getPrice().compareTo(budgetRemaining) > 0) {
+                    AlertDialog.Builder alertDialog = new AlertDialog.Builder(MenuActivity.this);
+                    alertDialog.setTitle("You Are Over Your Budget!");
+                    alertDialog.setMessage("Would you like to change your budget?");
+                    alertDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            finish();
+                        }
+                    });
+                    alertDialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            // Leaving Blank
+                        }
+                    });
+                    alertDialog.setIcon(android.R.drawable.ic_dialog_alert);
+                    alertDialog.show();
+                }
                 //Need to do check with total cart $$$ and totalDollars before add
 
                 // Add item to local cart and database cart (combine these two?)
