@@ -9,6 +9,8 @@ import android.os.Parcelable;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -152,8 +154,28 @@ public class MenuActivity extends ListActivity {
             case android.R.id.home:
                 NavUtils.navigateUpFromSameTask(this);
                 return true;
+
+            case R.id.sort_name:
+                // Sort itemList alphabetically by name
+
+                return true;
+
+            case R.id.sort_high:
+                // Sort itemList by price
+
+                return true;
+
+            case R.id.sort_low:
+                // Sort itemList by price
+                itemList = SortHelper.mergeSort(itemList);
+                adapter.notifyDataSetChanged();
+                return true;
+
+            default:
+                // If we got here, the user's action was not recognized.
+                // Invoke the superclass to handle it.
+                return super.onOptionsItemSelected(item);
         }
-        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -174,6 +196,12 @@ public class MenuActivity extends ListActivity {
         listView.invalidateViews();
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        new MenuInflater(this).inflate(R.menu.actionbar_menu, menu);
+        return (super.onCreateOptionsMenu(menu));
+    }
+
     public void onCartPressed(View view){
         Intent intent = new Intent(MenuActivity.this, CartActivity.class);
         intent.putExtra("budgetTotal", budgetTotal.toString());
@@ -185,3 +213,4 @@ public class MenuActivity extends ListActivity {
     }
 
 }
+
