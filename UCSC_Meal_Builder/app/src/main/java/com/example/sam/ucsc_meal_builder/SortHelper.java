@@ -9,53 +9,66 @@ import java.util.ArrayList;
  */
 public class SortHelper {
 
-    public static int repeat = 0;
+    private static ArrayList<Item> merge(ArrayList<Item> left, ArrayList<Item> right) {
 
-    public static ArrayList<Item> merge(ArrayList<Item> left, ArrayList<Item> right) {
+        // Combined result list
         ArrayList<Item> result = new ArrayList<>();
-        while (!left.isEmpty() && !right.isEmpty()) {
-            if (left.get(0).getPrice().compareTo(right.get(0).getPrice()) <= 0) {
-                Item temp = left.get(0);
-                left.remove(0);
-                result.add(temp);
+
+        int leftIndex = 0;
+        int rightIndex = 0;
+        // While neither are empty, pop least greatest value, append to result
+        while (leftIndex < left.size() && rightIndex < right.size()) {
+
+            if (left.get(leftIndex).getPrice().compareTo(right.get(rightIndex).getPrice()) <= 0) {
+                result.add(left.get(leftIndex));
+                leftIndex++;
             } else {
-                Item temp = right.get(0);
-                right.remove(0);
-                result.add(temp);
+                result.add(right.get(rightIndex));
+                rightIndex++;
             }
         }
-        if (!left.isEmpty()) {
-            Item temp = left.get(0);
-            left.remove(0);
-            result.add(temp);
+
+        // Add leftover odd item from either half
+        while (leftIndex < left.size()) {
+            result.add(left.get(leftIndex));
+            leftIndex++;
         }
-        if (!right.isEmpty()) {
-            Item temp = right.get(0);
-            right.remove(0);
-            result.add(temp);
+        while (rightIndex < right.size()) {
+            result.add(right.get(rightIndex));
+            rightIndex++;
         }
+
         return result;
     }
 
     public static ArrayList<Item> mergeSort(ArrayList<Item> itemList) {
-        repeat++;
-        System.out.println(repeat);
+
+        // Two half arrays to split
         ArrayList<Item> left = new ArrayList<>();
         ArrayList<Item> right = new ArrayList<>();
-        ArrayList<Item> result = new ArrayList<>();
+
+        // Return self if list only has one item
         if (itemList.size() == 1) {
             return itemList;
         }
-        int middle = itemList.size()/2;
-        for (int i = 0; i < middle; i++) {
-            left.add(itemList.get(i));
-        }
-        for (int i = middle; i < itemList.size(); i++) {
-            right.add(itemList.get(i));
-        }
-        result = merge(mergeSort(left), mergeSort(right));
 
-        return result;
+        // Calculate middle index and split list into left and right halves
+        int middle = itemList.size()/2;
+        for (int i = 0; i < itemList.size(); i++) {
+            if (i < middle) {
+                left.add(itemList.get(i));
+            }else {
+                right.add(itemList.get(i));
+            }
+        }
+
+        // Call mergeSort on left and right recursively
+        left = mergeSort(left);
+        right = mergeSort(right);
+
+        // Combine using merge
+        return merge(left, right);
+
     }
 }
 

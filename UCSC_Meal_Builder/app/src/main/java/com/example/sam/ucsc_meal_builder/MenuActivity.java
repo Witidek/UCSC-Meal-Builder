@@ -168,7 +168,9 @@ public class MenuActivity extends ListActivity {
             case R.id.sort_low:
                 // Sort itemList by price
                 itemList = SortHelper.mergeSort(itemList);
-                adapter.notifyDataSetChanged();
+                adapter = new ListAdapter(this, itemList);
+                adapter.setBudgetRemaining(budgetRemaining);
+                setListAdapter(adapter);
                 return true;
 
             default:
