@@ -8,61 +8,67 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@android:style/Theme.Holo.Light.DarkActionBar" >
-
-        <activity android:name=".MainActivity"
-                android:label="UCSC Meal Builder">
+        <activity
+            android:name=".MainActivity"
+            android:label="UCSC Meal Builder" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
-        <activity android:name=".BudgetActivity"
+        <activity
+            android:name=".BudgetActivity"
             android:label="Budget"
-            android:screenOrientation="portrait"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
-        <activity android:name=".BudgetActivity2"
+        <activity
+            android:name=".BudgetActivity2"
             android:label="Budget"
-            android:screenOrientation="portrait"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
-        <activity android:name=".RestaurantActivity"
+        <activity
+            android:name=".RestaurantActivity"
             android:label="Restaurants"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName=".MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
-        <activity android:name=".BalanceActivity"
+        <activity
+            android:name=".BalanceActivity"
             android:label="Balance"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName=".MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
-        <activity android:name=".MenuActivity"
+        <activity
+            android:name=".MenuActivity"
             android:label="Menu"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName=".MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
-        <activity android:name=".CartActivity"
+        <activity
+            android:name=".CartActivity"
             android:label="Cart"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName=".MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
-
+        <activity android:name=".FavoriteActivity" >
+        </activity>
     </application>
 
 </manifest>

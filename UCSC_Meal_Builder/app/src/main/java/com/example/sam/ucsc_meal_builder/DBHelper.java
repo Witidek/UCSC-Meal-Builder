@@ -23,7 +23,7 @@ public class DBHelper extends SQLiteAssetHelper{
     // Constructor
     public DBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
-        //setForcedUpgrade(2);
+        setForcedUpgrade(2);
     }
 
     // Returns a list of all restaurants from DB
@@ -216,5 +216,25 @@ public class DBHelper extends SQLiteAssetHelper{
 
         // Close stuff
         db.close();
+    }
+
+    public ArrayList<String> getFavorites() {
+        ArrayList<String> favList = new ArrayList<>();
+
+        // Connect to database
+        SQLiteDatabase db = getReadableDatabase();
+
+        // SELECT name
+        // FROM Favorite
+        Cursor cursor = db.rawQuery("SELECT name FROM Favorite", null);
+
+        while (cursor.moveToNext()) {
+            favList.add(cursor.getString(cursor.getColumnIndex("name")));
+        }
+
+        // Close stuff
+        db.close();
+
+        return favList;
     }
 }
