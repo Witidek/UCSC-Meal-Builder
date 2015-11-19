@@ -1,6 +1,8 @@
 package com.example.sam.ucsc_meal_builder;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
@@ -8,6 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.content.SharedPreferences;
 
 import java.math.BigDecimal;
 
@@ -18,6 +21,9 @@ public class BudgetActivity2 extends Activity {
 
     TextView cashText;
     TextView flexiText;
+    private SharedPreferences sharedPrefs;
+
+
 
     //The rid needs to be carried from the previous
     //(Restaurant)Activity to the next (Menu)Activity
@@ -35,7 +41,10 @@ public class BudgetActivity2 extends Activity {
         intent = getIntent();
         rid = intent.getIntExtra("rid", 0);
 
-        Toast.makeText(getApplicationContext(), "#2!!!!", Toast.LENGTH_SHORT).show();
+        // Load SharedPreferences to get balance
+        sharedPrefs = getSharedPreferences("balance", MODE_PRIVATE);
+
+       // Toast.makeText(getApplicationContext(), "#2!!!!", Toast.LENGTH_SHORT).show();
 
         // Grab TextViews
         cashText = (TextView) findViewById(R.id.cashBudgetText);
@@ -104,18 +113,33 @@ public class BudgetActivity2 extends Activity {
     }
 
     public void onClickArrow(View view) {
-        Intent intent = new Intent(BudgetActivity2.this, MenuActivity.class);
+        BigDecimal totalFlexies = new BigDecimal(sharedPrefs.getString("flexis", "0"));
+        if( totalFlexies.compareTo(flexis) >= 0) {
+            Intent intent = new Intent(BudgetActivity2.this, MenuActivity.class);
 
-        //Send off rid again
-        intent.putExtra("rid", rid);
+            //Send off rid again
+            intent.putExtra("rid", rid);
 
-        //Send off budget values
-        String flexisString = flexiText.getText().toString();
-        String cashstring = cashText.getText().toString();
-        intent.putExtra("whichBudgetActivity",2);
-        intent.putExtra("flexis",flexisString);
-        intent.putExtra("cash",cashstring);
+            //Send off budget values
+            String flexisString = flexiText.getText().toString();
+            String cashstring = cashText.getText().toString();
+            intent.putExtra("whichBudgetActivity", 2);
+            intent.putExtra("flexis", flexisString);
+            intent.putExtra("cash", cashstring);
 
-        startActivity(intent);
+            startActivity(intent);
+        }else{
+            //Toast.makeText(getApplicationContext(), "Exceeds actual Balance!", Toast.LENGTH_SHORT).show();
+            AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+            alertDialog.setTitle("Oh No....!");
+            alertDialog.setMessage("You are over your Balance!");
+            alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    // here you can add functions
+                }
+            });
+            alertDialog.setIcon(android.R.drawable.ic_dialog_alert);
+            alertDialog.show();
+        }
     }
 }

@@ -1,24 +1,22 @@
 package com.example.sam.ucsc_meal_builder;
 
+import android.app.AlertDialog;
 import android.app.ListActivity;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
-import android.os.Parcelable;
 import android.support.v4.app.NavUtils;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 public class MenuActivity extends ListActivity {
 
@@ -92,6 +90,7 @@ public class MenuActivity extends ListActivity {
 
         // Grab menu from database
         itemList = db.getMenu(rid);
+        setTitle(db.getRestaurantName(rid));
 
         // Build ListAdapter
         adapter = new ListAdapter(this, itemList);
@@ -104,24 +103,41 @@ public class MenuActivity extends ListActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Item selectedItem = adapter.getItem(position);
+                if (selectedItem.getPrice().compareTo(budgetRemaining) > 0) {
+                    AlertDialog.Builder alertDialog = new AlertDialog.Builder(MenuActivity.this);
+                    alertDialog.setTitle("You Are Over Your Budget!");
+                    alertDialog.setMessage("Would you like to change your budget?");
+                    alertDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            finish();
+                        }
+                    });
+                    alertDialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            // Leaving Blank
+                        }
+                    });
+                    alertDialog.setIcon(android.R.drawable.ic_dialog_alert);
+                    alertDialog.show();
+                }else {
+                    //Need to do check with total cart $$$ and totalDollars before add
 
-                //Need to do check with total cart $$$ and totalDollars before add
+                    // Add item to local cart and database cart (combine these two?)
+                    cart.addItem(selectedItem);
+                    db.addToCart(selectedItem);
 
-                // Add item to local cart and database cart (combine these two?)
-                cart.addItem(selectedItem);
-                db.addToCart(selectedItem);
+                    // Recalculate budgetRemaining and pass to adapter as well
+                    budgetRemaining = budgetTotal.subtract(cart.getTotal());
+                    adapter.setBudgetRemaining(budgetRemaining);
 
-                // Recalculate budgetRemaining and pass to adapter as well
-                budgetRemaining = budgetTotal.subtract(cart.getTotal());
-                adapter.setBudgetRemaining(budgetRemaining);
+                    // Update subtotal TextView and toast item addition
+                    subtotalText.setText(String.format("Subtotal: %s", cart.getTotal().toString()));
+                    String message = "Added " + adapter.getItem(position).getName() + " to cart";
+                    Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
 
-                // Update subtotal TextView and toast item addition
-                subtotalText.setText(String.format("Subtotal: %s", cart.getTotal().toString()));
-                String message = "Added " + adapter.getItem(position).getName() + " to cart";
-                Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
-
-                // Update ListAdapter
-                adapter.notifyDataSetChanged();
+                    // Update ListAdapter
+                    adapter.notifyDataSetChanged();
+                }
             }
         });
 
@@ -134,8 +150,36 @@ public class MenuActivity extends ListActivity {
             case android.R.id.home:
                 NavUtils.navigateUpFromSameTask(this);
                 return true;
+
+            case R.id.sort_name:
+                // Sort itemList alphabetically by name
+                itemList = SortHelper.sortAlpha(itemList);
+                adapter = new ListAdapter(this, itemList);
+                adapter.setBudgetRemaining(budgetRemaining);
+                setListAdapter(adapter);
+                return true;
+
+            case R.id.sort_high:
+                // Sort itemList by price
+                itemList = SortHelper.sortHigh(itemList);
+                adapter = new ListAdapter(this, itemList);
+                adapter.setBudgetRemaining(budgetRemaining);
+                setListAdapter(adapter);
+                return true;
+
+            case R.id.sort_low:
+                // Sort itemList by price
+                itemList = SortHelper.sortLow(itemList);
+                adapter = new ListAdapter(this, itemList);
+                adapter.setBudgetRemaining(budgetRemaining);
+                setListAdapter(adapter);
+                return true;
+
+            default:
+                // If we got here, the user's action was not recognized.
+                // Invoke the superclass to handle it.
+                return super.onOptionsItemSelected(item);
         }
-        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -156,6 +200,12 @@ public class MenuActivity extends ListActivity {
         listView.invalidateViews();
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        new MenuInflater(this).inflate(R.menu.actionbar_menu, menu);
+        return (super.onCreateOptionsMenu(menu));
+    }
+
     public void onCartPressed(View view){
         Intent intent = new Intent(MenuActivity.this, CartActivity.class);
         intent.putExtra("budgetTotal", budgetTotal.toString());
@@ -167,3 +217,4 @@ public class MenuActivity extends ListActivity {
     }
 
 }
+

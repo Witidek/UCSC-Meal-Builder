@@ -1,13 +1,20 @@
 package com.example.sam.ucsc_meal_builder;
 
+import android.app.ActionBar;
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
+
+import android.content.SharedPreferences;
+
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
+import android.app.AlertDialog;
 
 import java.math.BigDecimal;
 
@@ -25,17 +32,24 @@ public class BudgetActivity extends Activity {
     //(Restaurant)Activity to the next (Menu)Activity
     private Intent intent;
     private int rid;
+    private SharedPreferences sharedPrefs;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_budget);
-        getActionBar().setHomeButtonEnabled(true);
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        ActionBar supportActionBar = getActionBar();
+        supportActionBar.setHomeButtonEnabled(true);
+        supportActionBar.setDisplayHomeAsUpEnabled(true);
+
 
         //Receive rid
         intent = getIntent();
         rid = intent.getIntExtra("rid", 0);
+
+        // Load SharedPreferences to get balance
+        sharedPrefs = getSharedPreferences("balance", MODE_PRIVATE);
 
         // Grab TextViews
         mealText = (TextView) findViewById(R.id.mealBudgetText);
@@ -125,20 +139,38 @@ public class BudgetActivity extends Activity {
     }
 
     public void onClickArrow(View view) {
-        Intent intent = new Intent(BudgetActivity.this, MenuActivity.class);
+        BigDecimal totalMeals = new BigDecimal(sharedPrefs.getInt("meals", 0));
+        BigDecimal totalFlexies = new BigDecimal(sharedPrefs.getString("flexis", "0"));
+        Toast.makeText(getApplicationContext(), totalMeals.toString(), Toast.LENGTH_SHORT).show();
+        if( totalMeals.compareTo(new BigDecimal(meals)) >= 0 && totalFlexies.compareTo(flexis) >= 0) {
 
-        //Send off rid again
-        intent.putExtra("rid", rid);
+            Intent intent = new Intent(BudgetActivity.this, MenuActivity.class);
 
-        //Send off budget values
-        String flexisString = flexiText.getText().toString();
-        meals = Integer.valueOf(mealText.getText().toString());
-        String cashstring = cashText.getText().toString();
-        intent.putExtra("whichBudgetActivity",1);
-        intent.putExtra("flexis",flexisString);
-        intent.putExtra("meals",meals);
-        intent.putExtra("cash",cashstring);
+            //Send off rid again
+            intent.putExtra("rid", rid);
 
-        startActivity(intent);
+            //Send off budget values
+            String flexisString = flexiText.getText().toString();
+            meals = Integer.valueOf(mealText.getText().toString());
+            String cashstring = cashText.getText().toString();
+            intent.putExtra("whichBudgetActivity", 1);
+            intent.putExtra("flexis", flexisString);
+            intent.putExtra("meals", meals);
+            intent.putExtra("cash", cashstring);
+
+            startActivity(intent);
+        }else{
+            //Toast.makeText(getApplicationContext(), "Exceeds actual Balance!", Toast.LENGTH_SHORT).show();
+            AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+            alertDialog.setTitle("Oh No....!");
+            alertDialog.setMessage("You are over your Balance!");
+            alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    // here you can add functions
+                }
+            });
+            alertDialog.setIcon(android.R.drawable.ic_dialog_alert);
+            alertDialog.show();
+        }
     }
 }

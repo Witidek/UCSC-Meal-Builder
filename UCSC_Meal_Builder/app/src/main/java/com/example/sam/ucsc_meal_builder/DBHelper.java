@@ -55,6 +55,26 @@ public class DBHelper extends SQLiteAssetHelper{
         return restaurantList;
     }
 
+    public String getRestaurantName(int rid) {
+        String name;
+
+        // SELECT name
+        // FROM Restaurant
+        // WHERE restaurant_id = rid;
+        SQLiteDatabase db = getReadableDatabase();
+        SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
+        qb.setTables(Restaurant.TABLE);
+        String[] sqlSelect = new String[]{Restaurant.KEY_name};
+        String sqlWhere = "restaurant_id = ?";
+        String[] sqlWhereArgs = new String[]{String.valueOf(rid)};
+        Cursor cursor = qb.query(db, sqlSelect, sqlWhere, sqlWhereArgs, null, null, null);
+
+        cursor.moveToFirst();
+        name = cursor.getString(cursor.getColumnIndex(Restaurant.KEY_name));
+
+        return name;
+    }
+
     // Returns a list of items from a restaurant (menu), given a restaurant id
     public ArrayList<Item> getMenu(int rid) {
         // Create empty item list
