@@ -26,6 +26,7 @@ public class MainActivity extends Activity {
     }
 
     public void onClickFavorites(View view) {
-        Toast.makeText(getApplicationContext(), "Coming soon!", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(MainActivity.this, FavoriteActivity.class);
+        startActivity(intent);
     }
 }

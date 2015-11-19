@@ -23,7 +23,7 @@ public class DBHelper extends SQLiteAssetHelper{
     // Constructor
     public DBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
-        setForcedUpgrade(2);
+        //setForcedUpgrade(2);
     }
 
     // Returns a list of all restaurants from DB
