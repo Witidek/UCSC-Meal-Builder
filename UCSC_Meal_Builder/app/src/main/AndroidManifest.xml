@@ -10,7 +10,7 @@
         android:theme="@android:style/Theme.Holo.Light.DarkActionBar" >
 
         <activity android:name=".MainActivity"
-                android:label="UCSC Meal Builder App">
+                android:label="UCSC Meal Builder">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

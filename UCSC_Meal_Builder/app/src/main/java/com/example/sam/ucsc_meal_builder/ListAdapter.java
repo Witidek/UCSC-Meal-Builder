@@ -59,9 +59,9 @@ public class ListAdapter extends ArrayAdapter<Item> {
 
         // Compare item price with budgetRemaining for color highlighting
         if (items.get(position).getPrice().compareTo(budgetRemaining) > 0) {
-            rowView.setBackgroundColor(Color.GRAY);
+            holder.priceView.setTextColor(Color.RED);
         } else {
-            rowView.setBackgroundColor(Color.WHITE);
+            holder.priceView.setTextColor(Color.BLACK);
         }
 
         return rowView;

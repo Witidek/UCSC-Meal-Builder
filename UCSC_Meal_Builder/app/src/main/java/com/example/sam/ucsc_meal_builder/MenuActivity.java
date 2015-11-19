@@ -4,25 +4,19 @@ import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
-import android.os.Parcelable;
 import android.support.v4.app.NavUtils;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 public class MenuActivity extends ListActivity {
 
@@ -96,6 +90,7 @@ public class MenuActivity extends ListActivity {
 
         // Grab menu from database
         itemList = db.getMenu(rid);
+        setTitle(db.getRestaurantName(rid));
 
         // Build ListAdapter
         adapter = new ListAdapter(this, itemList);
@@ -124,24 +119,25 @@ public class MenuActivity extends ListActivity {
                     });
                     alertDialog.setIcon(android.R.drawable.ic_dialog_alert);
                     alertDialog.show();
+                }else {
+                    //Need to do check with total cart $$$ and totalDollars before add
+
+                    // Add item to local cart and database cart (combine these two?)
+                    cart.addItem(selectedItem);
+                    db.addToCart(selectedItem);
+
+                    // Recalculate budgetRemaining and pass to adapter as well
+                    budgetRemaining = budgetTotal.subtract(cart.getTotal());
+                    adapter.setBudgetRemaining(budgetRemaining);
+
+                    // Update subtotal TextView and toast item addition
+                    subtotalText.setText(String.format("Subtotal: %s", cart.getTotal().toString()));
+                    String message = "Added " + adapter.getItem(position).getName() + " to cart";
+                    Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+
+                    // Update ListAdapter
+                    adapter.notifyDataSetChanged();
                 }
-                //Need to do check with total cart $$$ and totalDollars before add
-
-                // Add item to local cart and database cart (combine these two?)
-                cart.addItem(selectedItem);
-                db.addToCart(selectedItem);
-
-                // Recalculate budgetRemaining and pass to adapter as well
-                budgetRemaining = budgetTotal.subtract(cart.getTotal());
-                adapter.setBudgetRemaining(budgetRemaining);
-
-                // Update subtotal TextView and toast item addition
-                subtotalText.setText(String.format("Subtotal: %s", cart.getTotal().toString()));
-                String message = "Added " + adapter.getItem(position).getName() + " to cart";
-                Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
-
-                // Update ListAdapter
-                adapter.notifyDataSetChanged();
             }
         });
 
@@ -157,17 +153,23 @@ public class MenuActivity extends ListActivity {
 
             case R.id.sort_name:
                 // Sort itemList alphabetically by name
-
+                itemList = SortHelper.sortAlpha(itemList);
+                adapter = new ListAdapter(this, itemList);
+                adapter.setBudgetRemaining(budgetRemaining);
+                setListAdapter(adapter);
                 return true;
 
             case R.id.sort_high:
                 // Sort itemList by price
-
+                itemList = SortHelper.sortHigh(itemList);
+                adapter = new ListAdapter(this, itemList);
+                adapter.setBudgetRemaining(budgetRemaining);
+                setListAdapter(adapter);
                 return true;
 
             case R.id.sort_low:
                 // Sort itemList by price
-                itemList = SortHelper.mergeSort(itemList);
+                itemList = SortHelper.sortLow(itemList);
                 adapter = new ListAdapter(this, itemList);
                 adapter.setBudgetRemaining(budgetRemaining);
                 setListAdapter(adapter);

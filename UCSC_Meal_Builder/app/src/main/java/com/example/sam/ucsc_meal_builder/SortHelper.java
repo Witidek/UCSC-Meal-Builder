@@ -9,7 +9,39 @@ import java.util.ArrayList;
  */
 public class SortHelper {
 
-    private static ArrayList<Item> merge(ArrayList<Item> left, ArrayList<Item> right) {
+    // Enumerator for sorting types
+    private enum SortType {LOW, HIGH, ALPHA};
+
+    // Public methods to initiate sorting
+    public static ArrayList<Item> sortLow(ArrayList<Item> itemList) {
+        return mergeSort(itemList, SortType.LOW);
+    }
+
+    public static ArrayList<Item> sortHigh(ArrayList<Item> itemList) {
+        return mergeSort(itemList, SortType.HIGH);
+    }
+
+    public static ArrayList<Item> sortAlpha(ArrayList<Item> itemList) {
+        return mergeSort(itemList, SortType.ALPHA);
+    }
+
+    // Switch case comparison to compare two items
+    private static boolean sortCompare(Item left, Item right, SortType type) {
+        switch(type) {
+            case LOW:
+                return (left.getPrice().compareTo(right.getPrice()) <= 0);
+            case HIGH:
+                return (left.getPrice().compareTo(right.getPrice()) >= 0);
+            case ALPHA:
+                return (left.getName().compareToIgnoreCase(right.getName()) <= 0);
+            default:
+                // Should never reach here
+                return true;
+        }
+    }
+
+    // Merges two lists together using sortCompare
+    private static ArrayList<Item> merge(ArrayList<Item> left, ArrayList<Item> right, SortType type) {
 
         // Combined result list
         ArrayList<Item> result = new ArrayList<>();
@@ -19,7 +51,7 @@ public class SortHelper {
         // While neither are empty, pop least greatest value, append to result
         while (leftIndex < left.size() && rightIndex < right.size()) {
 
-            if (left.get(leftIndex).getPrice().compareTo(right.get(rightIndex).getPrice()) <= 0) {
+            if (sortCompare(left.get(leftIndex), right.get(rightIndex), type)) {
                 result.add(left.get(leftIndex));
                 leftIndex++;
             } else {
@@ -41,7 +73,8 @@ public class SortHelper {
         return result;
     }
 
-    public static ArrayList<Item> mergeSort(ArrayList<Item> itemList) {
+    // Main sorting method, splits list into many smaller lists, then use merge and sortCompare
+    private static ArrayList<Item> mergeSort(ArrayList<Item> itemList, SortType type) {
 
         // Two half arrays to split
         ArrayList<Item> left = new ArrayList<>();
@@ -63,11 +96,11 @@ public class SortHelper {
         }
 
         // Call mergeSort on left and right recursively
-        left = mergeSort(left);
-        right = mergeSort(right);
+        left = mergeSort(left, type);
+        right = mergeSort(right, type);
 
         // Combine using merge
-        return merge(left, right);
+        return merge(left, right, type);
 
     }
 }
