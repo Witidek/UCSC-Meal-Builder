@@ -6,11 +6,13 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v4.app.NavUtils;
 import android.os.Bundle;
+import android.text.InputType;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,9 +32,12 @@ public class MenuActivity extends ListActivity {
     private int rid;
     private String flexisString;
     private String cashString;
+    private String misBuffer;
     private int numMeals;
     private BigDecimal numFlexis;
     private BigDecimal numCash;
+    private BigDecimal newItem;
+
 
     private TextView budgetText;
     private TextView subtotalText;
@@ -118,9 +123,7 @@ public class MenuActivity extends ListActivity {
                     alertDialog.setIcon(android.R.drawable.ic_dialog_alert);
                     alertDialog.show();
                 }else {
-                    //Need to do check with total cart $$$ and totalDollars before add
 
-                    // Add item to local cart and database cart (combine these two?)
                     cart.addItem(selectedItem);
                     db.addToCart(selectedItem);
 
@@ -138,6 +141,37 @@ public class MenuActivity extends ListActivity {
                 }
             }
         });
+
+    }
+    // Adding Misscellaneous Items to the total
+    public void onClickNewItem (View view){
+        // Pop the alert dialog on click
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(MenuActivity.this);
+        alertDialog.setTitle("Adding Miscellaneous Item");
+        // Gets the input from the user and stores here
+        final EditText input = new EditText(this);
+        // Gets a number value in decimal form
+        // Note: Can go over two decimal places need to look into that
+        input.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        alertDialog.setView(input);
+        alertDialog.setMessage("How much is the item you would like to add?");
+        alertDialog.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                misBuffer = input.getText().toString();
+                newItem = new BigDecimal(misBuffer);
+                Toast.makeText(getApplicationContext(), newItem.toString(), Toast.LENGTH_SHORT).show();
+
+
+            }
+        });
+        alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+
+
+            }
+        });
+        alertDialog.setIcon(android.R.drawable.ic_dialog_alert);
+        alertDialog.show();
 
     }
 
