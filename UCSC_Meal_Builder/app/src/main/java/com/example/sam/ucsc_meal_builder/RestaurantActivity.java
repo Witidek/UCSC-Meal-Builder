@@ -45,12 +45,14 @@ public class RestaurantActivity extends ListActivity {
                 //flexis and cash, open up the other budget activity
                 if (rid == 2 || rid == 4 || rid == 5 || rid ==9){
                     Intent intent = new Intent(RestaurantActivity.this, BudgetActivity2.class);
+                    intent.putExtra("previous", "RestaurantActivity");
                     intent.putExtra("rid", rid);
                     startActivity(intent);
                 }
                 //Otherwise open the reg budget activity
                 else {
                     Intent intent = new Intent(RestaurantActivity.this, BudgetActivity.class);
+                    intent.putExtra("previous", "RestaurantActivity");
                     intent.putExtra("rid", rid);
                     startActivity(intent);
                 }

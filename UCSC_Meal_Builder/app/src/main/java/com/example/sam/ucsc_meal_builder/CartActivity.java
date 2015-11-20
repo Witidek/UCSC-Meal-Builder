@@ -43,11 +43,14 @@ public class CartActivity extends ListActivity {
 
         // Get restaurant_id from intent
         intent = getIntent();
-        rid = intent.getIntExtra("rid", 0);
-        budgetTotal = new BigDecimal(intent.getStringExtra("budgetTotal"));
-        meals = new BigDecimal(intent.getIntExtra("meals", 0));
-        cash = new BigDecimal(intent.getStringExtra("cash"));
-        flexies = new BigDecimal(intent.getStringExtra("flexies"));
+        String previous = intent.getStringExtra("previous");
+        if (previous.equals("MenuActivity")) {
+            rid = intent.getIntExtra("rid", 0);
+            budgetTotal = new BigDecimal(intent.getStringExtra("budgetTotal"));
+            meals = new BigDecimal(intent.getIntExtra("meals", 0));
+            cash = new BigDecimal(intent.getStringExtra("cash"));
+            flexies = new BigDecimal(intent.getStringExtra("flexies"));
+        }
 
         // Load SharedPreferences to get balance
         sharedPrefs = getSharedPreferences("balance", MODE_PRIVATE);

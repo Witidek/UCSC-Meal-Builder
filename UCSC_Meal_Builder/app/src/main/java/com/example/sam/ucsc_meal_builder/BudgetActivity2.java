@@ -116,6 +116,7 @@ public class BudgetActivity2 extends Activity {
         BigDecimal totalFlexies = new BigDecimal(sharedPrefs.getString("flexis", "0"));
         if( totalFlexies.compareTo(flexis) >= 0) {
             Intent intent = new Intent(BudgetActivity2.this, MenuActivity.class);
+            intent.putExtra("previous", "BudgetActivity2");
 
             //Send off rid again
             intent.putExtra("rid", rid);

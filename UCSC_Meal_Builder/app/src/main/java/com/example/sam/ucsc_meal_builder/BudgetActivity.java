@@ -145,6 +145,7 @@ public class BudgetActivity extends Activity {
         if( totalMeals.compareTo(new BigDecimal(meals)) >= 0 && totalFlexies.compareTo(flexis) >= 0) {
 
             Intent intent = new Intent(BudgetActivity.this, MenuActivity.class);
+            intent.putExtra("previous", "BudgetActivity");
 
             //Send off rid again
             intent.putExtra("rid", rid);

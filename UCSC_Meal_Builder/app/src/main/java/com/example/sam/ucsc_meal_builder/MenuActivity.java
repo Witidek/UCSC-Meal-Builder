@@ -34,8 +34,6 @@ public class MenuActivity extends ListActivity {
     private BigDecimal numFlexis;
     private BigDecimal numCash;
 
-    private int whichBudgetActivity;
-
     private TextView budgetText;
     private TextView subtotalText;
 
@@ -53,7 +51,7 @@ public class MenuActivity extends ListActivity {
 
         //Unpack extras
         intent = getIntent();
-        whichBudgetActivity = intent.getIntExtra("whichBudgetActivity",1);
+        String previous = intent.getStringExtra("previous");
         rid = intent.getIntExtra("rid", 0);
 
         flexisString = intent.getStringExtra("flexis");
@@ -61,7 +59,7 @@ public class MenuActivity extends ListActivity {
 
         //If we are coming from BudgetActivity, we are
         //working with meals and not cash.
-        if (whichBudgetActivity == 1) {
+        if (previous.equals("BudgetActivity")) {
             numMeals = intent.getIntExtra("meals", 0);
             cashString = intent.getStringExtra("cash");
             numCash = new BigDecimal(cashString);
@@ -69,7 +67,7 @@ public class MenuActivity extends ListActivity {
         }
         //If we are coming from BudgetActivity2, we are
         //working with cash and not meals.
-        else {
+        else if (previous.equals("BudgetActivity2")) {
             numMeals = 0;
             cashString = intent.getStringExtra("cash");
             numCash = new BigDecimal(cashString);
@@ -151,6 +149,16 @@ public class MenuActivity extends ListActivity {
                 NavUtils.navigateUpFromSameTask(this);
                 return true;
 
+            case R.id.cart_button:
+                onCartPressed();
+                return true;
+
+            case R.id.favorite_button:
+                // prompt to name favorite
+                // save restaurant cart to Favorite table in db
+                Toast.makeText(MenuActivity.this, "favorited", Toast.LENGTH_SHORT).show();
+                return true;
+
             case R.id.sort_name:
                 // Sort itemList alphabetically by name
                 itemList = SortHelper.sortAlpha(itemList);
@@ -206,8 +214,9 @@ public class MenuActivity extends ListActivity {
         return (super.onCreateOptionsMenu(menu));
     }
 
-    public void onCartPressed(View view){
+    public void onCartPressed(){
         Intent intent = new Intent(MenuActivity.this, CartActivity.class);
+        intent.putExtra("previous", "MenuActivity");
         intent.putExtra("budgetTotal", budgetTotal.toString());
         intent.putExtra("meals",numMeals);
         intent.putExtra("cash",cashString);
