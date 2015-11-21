@@ -87,7 +87,7 @@ public class DBHelper extends SQLiteAssetHelper{
         SQLiteDatabase db = getReadableDatabase();
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
         qb.setTables(Item.TABLE);
-        String[] sqlSelect = new String[]{Item.KEY_item_id, Item.KEY_name, Item.KEY_price};
+        String[] sqlSelect = new String[]{Item.KEY_item_id, Item.KEY_name, Item.KEY_price, Item.KEY_course};
         String sqlWhere = "restaurant_id = ?";
         String[] sqlWhereArgs = new String[]{String.valueOf(rid)};
         Cursor cursor = qb.query(db, sqlSelect, sqlWhere, sqlWhereArgs, null, null, null);
@@ -100,7 +100,8 @@ public class DBHelper extends SQLiteAssetHelper{
             BigDecimal price = new BigDecimal(cursor.getInt(cursor.getColumnIndex(Item.KEY_price)));
             price = price.setScale(2, BigDecimal.ROUND_HALF_UP);
             price = price.divide(new BigDecimal(100), BigDecimal.ROUND_HALF_UP);
-            Item item = new Item(id, name, price, rid);
+            String course = cursor.getString(cursor.getColumnIndex(Item.KEY_course));
+            Item item = new Item(id, name, price, rid, course);
             itemList.add(item);
         }
 
@@ -118,13 +119,13 @@ public class DBHelper extends SQLiteAssetHelper{
         ArrayList<Item> itemList = new ArrayList<Item>();
 
         // Connect to readable DB, grab items from Cart table with matching restaurant_id
-        // SELECT Item.item_id, Item.name, Item.price, Item.restaurant_id, Cart.quantity
+        // SELECT Item.item_id, Item.name, Item.price, Item.restaurant_id, Item.course, Cart.quantity
         // FROM Item, Cart
         // WHERE Cart.restaurant_id = rid AND Cart.item_id = Item.item_id;
         SQLiteDatabase db = getReadableDatabase();
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
         qb.setTables(Item.TABLE + ", " + Cart.TABLE);
-        String[] sqlSelect = new String[]{"Item.item_id", "Item.name", "Item.price", "Item.restaurant_id", "Cart.quantity"};
+        String[] sqlSelect = new String[]{"Item.item_id", "Item.name", "Item.price", "Item.restaurant_id", "Item.course", "Cart.quantity"};
         String sqlWhere = "Cart.restaurant_id = ? AND Cart.item_id = Item.item_id";
         String[] sqlWhereArgs = new String[]{String.valueOf(rid)};
         Cursor cursor = qb.query(db, sqlSelect, sqlWhere, sqlWhereArgs, null, null, null);
@@ -138,7 +139,8 @@ public class DBHelper extends SQLiteAssetHelper{
             price = price.setScale(2, BigDecimal.ROUND_HALF_UP);
             price = price.divide(new BigDecimal(100), BigDecimal.ROUND_HALF_UP);
             int quantity = cursor.getInt(cursor.getColumnIndex(Cart.KEY_quantity));
-            Item item = new Item(id, name, price, rid, quantity);
+            String course = cursor.getString(cursor.getColumnIndex(Item.KEY_course));
+            Item item = new Item(id, name, price, rid, course, quantity);
             itemList.add(item);
 
         }

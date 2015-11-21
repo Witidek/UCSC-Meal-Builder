@@ -217,6 +217,14 @@ public class MenuActivity extends ListActivity {
                 setListAdapter(adapter);
                 return true;
 
+            case R.id.sort_course:
+                // Sort itemList by course
+                itemList = SortHelper.sortCourse(itemList);
+                adapter = new ListAdapter(this, itemList);
+                adapter.setBudgetRemaining(budgetRemaining);
+                setListAdapter(adapter);
+                return true;
+
             default:
                 // If we got here, the user's action was not recognized.
                 // Invoke the superclass to handle it.

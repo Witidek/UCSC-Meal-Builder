@@ -24,4 +24,8 @@
         android:title="Lowest first"
         android:showAsAction="never"/>
 
+    <item android:id="@+id/sort_course"
+        android:title="By course"
+        android:showAsAction="never"/>
+
 </menu>

@@ -16,29 +16,33 @@ public class Item {
     public static final String KEY_name = "name";
     public static final String KEY_price = "price";
     public static final String KEY_restaurant_id = "restaurant_id";
+    public static final String KEY_course = "course";
 
     // Fields
     private int itemID;
     private String name;
     private BigDecimal price;
     private int restaurantID;
+    private String course;
     private int quantity;
 
     // Constructor
-    public Item(int id, String n, BigDecimal p, int rid){
+    public Item(int id, String n, BigDecimal p, int rid, String c){
         this.itemID = id;
         this.name = n;
         this.price = p;
         this.restaurantID = rid;
+        this.course = c;
         this.quantity = 0;
     }
 
     // Cart item with quantity constructor
-    public Item(int id, String n, BigDecimal p, int rid, int quantity){
+    public Item(int id, String n, BigDecimal p, int rid, String c, int quantity){
         this.itemID = id;
         this.name = n;
         this.price = p;
         this.restaurantID = rid;
+        this.course = c;
         this.quantity = quantity;
     }
 
@@ -58,6 +62,8 @@ public class Item {
     public int getRestaurantID() {
         return this.restaurantID;
     }
+
+    public String getCourse(){return this.course;}
 
     public int getQuantity() {
         return this.quantity;

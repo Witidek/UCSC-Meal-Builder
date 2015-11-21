@@ -10,7 +10,7 @@ import java.util.ArrayList;
 public class SortHelper {
 
     // Enumerator for sorting types
-    private enum SortType {LOW, HIGH, ALPHA};
+    private enum SortType {LOW, HIGH, ALPHA, COURSE};
 
     // Public methods to initiate sorting
     public static ArrayList<Item> sortLow(ArrayList<Item> itemList) {
@@ -25,6 +25,10 @@ public class SortHelper {
         return mergeSort(itemList, SortType.ALPHA);
     }
 
+    public static ArrayList<Item> sortCourse(ArrayList<Item> itemList) {
+        return mergeSort(itemList, SortType.COURSE);
+    }
+
     // Switch case comparison to compare two items
     private static boolean sortCompare(Item left, Item right, SortType type) {
         switch(type) {
@@ -34,6 +38,8 @@ public class SortHelper {
                 return (left.getPrice().compareTo(right.getPrice()) >= 0);
             case ALPHA:
                 return (left.getName().compareToIgnoreCase(right.getName()) <= 0);
+            case COURSE:
+                return (left.getCourse().compareToIgnoreCase(right.getCourse()) <= 0);
             default:
                 // Should never reach here
                 return true;
