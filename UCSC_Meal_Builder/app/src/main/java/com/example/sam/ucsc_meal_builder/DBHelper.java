@@ -193,6 +193,50 @@ public class DBHelper extends SQLiteAssetHelper{
         db.close();
     }
 
+    //Add a "cart" to favorites
+    public void addToFavorites(Item item, String favName) {
+
+        // Connect to writable DB
+        SQLiteDatabase db = getWritableDatabase();
+
+        // Query to check if item exists in cart
+        // SELECT quantity
+        // FROM Cart
+        // WHERE item_id = item.getItemID();
+        SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
+        qb.setTables("Favorite");
+        String[] sqlSelect = new String[]{Cart.KEY_quantity};
+        String sqlWhere = "item_id = ?";
+        String[] sqlWhereArgs = new String[]{String.valueOf(item.getItemID())};
+        Cursor cursor = qb.query(db, sqlSelect, sqlWhere, sqlWhereArgs, null, null, null);
+
+        if (cursor.moveToFirst()) {
+            // Duplicate found, update row with quantity + 1 using UPDATE query
+            // UPDATE Cart
+            // SET quantity = quantity + 1
+            // WHERE item_id = item.getItemID();
+            int quantity = cursor.getInt(cursor.getColumnIndex(Cart.KEY_quantity));
+            ContentValues values = new ContentValues();
+            values.put("quantity", quantity + 1);
+            db.update(Cart.TABLE, values, sqlWhere, sqlWhereArgs);
+        } else {
+            // No duplicate item found in cart, enter new one with quantity 1 using INSERT query
+            // INSERT INTO Cart VALUES (item.getRestaurantID(), item.getItemID(), 1);
+            ContentValues values = new ContentValues();
+            values.put("favorite_id",1);
+            values.put("name",favName);
+            values.put("restaurant_id", item.getRestaurantID());
+            values.put("item_id", item.getItemID());
+            values.put("quantity", 1);
+            db.insert(Cart.TABLE, null, values);
+        }
+
+        // Close stuff
+        cursor.close();
+        db.close();
+
+    }
+
     public void deleteItem(Item item) {
         // Connect to database
         SQLiteDatabase db = getWritableDatabase();

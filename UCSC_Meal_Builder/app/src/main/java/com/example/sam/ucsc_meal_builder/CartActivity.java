@@ -7,10 +7,14 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
+import android.text.InputType;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -21,6 +25,7 @@ public class CartActivity extends ListActivity {
 
     private Intent intent;
     private int rid;
+    private String favBuffer;
     private BigDecimal budgetTotal;
     private BigDecimal meals;
     private BigDecimal cash;
@@ -90,8 +95,49 @@ public class CartActivity extends ListActivity {
             case android.R.id.home:
                 NavUtils.navigateUpFromSameTask(this);
                 return true;
+
+            case R.id.favorite_button:
+                // prompt to name favorite
+                // Pop the alert dialog on click
+                AlertDialog.Builder alertDialog = new AlertDialog.Builder(CartActivity.this);
+                alertDialog.setTitle("Adding Favorite Item");
+                // Gets the input from the user and stores here
+                final EditText input = new EditText(this);
+                // Gets a number value in decimal form
+                // Note: Can go over two decimal places need to look into that
+                input.setInputType(InputType.TYPE_CLASS_TEXT);
+                alertDialog.setView(input);
+                alertDialog.setMessage("What would you like to name the favorite?");
+                alertDialog.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        favBuffer = input.getText().toString();
+                        //newItem = new BigDecimal(misBuffer);
+                        Toast.makeText(getApplicationContext(), favBuffer, Toast.LENGTH_SHORT).show();
+                        //Actually put it in favorites:
+                        for (int i = 0 ; i < cart.items.size() ; i ++){
+                            db.addToFavorites(cart.getItem(i),favBuffer);
+                        }
+
+                    }
+                });
+                alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+
+
+                    }
+                });
+                alertDialog.setIcon(android.R.drawable.ic_dialog_alert);
+                alertDialog.show();
+                // save restaurant cart to Favorite table in db
+                Toast.makeText(CartActivity.this, "favorited", Toast.LENGTH_SHORT).show();
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+
+
         }
-        return super.onOptionsItemSelected(item);
+
     }
 
     public void onClickClearCart(View view) {
@@ -121,6 +167,12 @@ public class CartActivity extends ListActivity {
         alertDialog.show();
 
 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        new MenuInflater(this).inflate(R.menu.actionbar_menu, menu);
+        return (super.onCreateOptionsMenu(menu));
     }
 
     public void onClickCheckout(View view) {

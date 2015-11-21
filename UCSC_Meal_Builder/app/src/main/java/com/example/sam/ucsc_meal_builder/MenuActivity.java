@@ -187,11 +187,6 @@ public class MenuActivity extends ListActivity {
                 onCartPressed();
                 return true;
 
-            case R.id.favorite_button:
-                // prompt to name favorite
-                // save restaurant cart to Favorite table in db
-                Toast.makeText(MenuActivity.this, "favorited", Toast.LENGTH_SHORT).show();
-                return true;
 
             case R.id.sort_name:
                 // Sort itemList alphabetically by name
