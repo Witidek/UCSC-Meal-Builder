@@ -33,10 +33,14 @@ public class MenuActivity extends ListActivity {
     private String flexisString;
     private String cashString;
     private String misBuffer;
+    private String amount;
     private int numMeals;
+    private int numAmount;
+
     private BigDecimal numFlexis;
     private BigDecimal numCash;
     private BigDecimal newItem;
+
 
 
     private TextView budgetText;
@@ -104,8 +108,9 @@ public class MenuActivity extends ListActivity {
 
         // When an item is clicked, the corresponding item is added to the cart.
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Item selectedItem = adapter.getItem(position);
+            public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
+                final Item selectedItem = adapter.getItem(position);
+                numAmount = 0;
                 if (selectedItem.getPrice().compareTo(budgetRemaining) > 0) {
                     AlertDialog.Builder alertDialog = new AlertDialog.Builder(MenuActivity.this);
                     alertDialog.setTitle("You Are Over Your Budget!");
@@ -123,18 +128,58 @@ public class MenuActivity extends ListActivity {
                     alertDialog.setIcon(android.R.drawable.ic_dialog_alert);
                     alertDialog.show();
                 }else {
+                    // Creates AlertDialog to ask user how much of an item they want
+                    AlertDialog.Builder alertDialog = new AlertDialog.Builder(MenuActivity.this);
+                    final EditText input = new EditText(MenuActivity.this);
+                    input.setInputType(InputType.TYPE_CLASS_NUMBER);
+                    alertDialog.setView(input);
+                    alertDialog.setTitle("How much of this item would you like to add?");
+                    alertDialog.setMessage("Enter the amount here: ");
+                    alertDialog.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            amount = input.getText().toString();
+                            numAmount = Integer.valueOf(amount);
+                            if (selectedItem.getPrice().multiply(new BigDecimal(numAmount)).compareTo(budgetRemaining) < 0) {
+                                for (int i = 0; i < numAmount; i++) {
 
-                    cart.addItem(selectedItem);
-                    db.addToCart(selectedItem);
+                                    cart.addItem(selectedItem);
+                                    db.addToCart(selectedItem);
+                                    // Recalculate budgetRemaining and pass to adapter as well
+                                    budgetRemaining = budgetTotal.subtract(cart.getTotal());
+                                    adapter.setBudgetRemaining(budgetRemaining);
 
-                    // Recalculate budgetRemaining and pass to adapter as well
-                    budgetRemaining = budgetTotal.subtract(cart.getTotal());
-                    adapter.setBudgetRemaining(budgetRemaining);
+                                    // Update subtotal TextView and toast item addition
+                                    subtotalText.setText(String.format("Subtotal: %s", cart.getTotal().toString()));
+                                    String message = "Added " + adapter.getItem(position).getName() + " to cart";
+                                    Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
 
-                    // Update subtotal TextView and toast item addition
-                    subtotalText.setText(String.format("Subtotal: %s", cart.getTotal().toString()));
-                    String message = "Added " + adapter.getItem(position).getName() + " to cart";
-                    Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+                                }
+                            } else {
+                                AlertDialog.Builder alertDialog = new AlertDialog.Builder(MenuActivity.this);
+                                alertDialog.setTitle("You Are Over Your Budget!");
+                                alertDialog.setMessage("Please Enter a different amount");
+                                alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {
+
+                                    }
+                                });
+                                alertDialog.setIcon(android.R.drawable.ic_dialog_alert);
+                                alertDialog.show();
+                            }
+
+                        }
+
+
+                    });
+                    alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            // Leaving Blank
+                        }
+                    });
+                    alertDialog.setIcon(android.R.drawable.ic_dialog_alert);
+                    alertDialog.show();
+
+
 
                     // Update ListAdapter
                     adapter.notifyDataSetChanged();
