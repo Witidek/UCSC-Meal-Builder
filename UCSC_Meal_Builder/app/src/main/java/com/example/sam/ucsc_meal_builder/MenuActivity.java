@@ -129,7 +129,7 @@ public class MenuActivity extends ListActivity {
                     alertDialog.show();
                 }else {
                     // Creates AlertDialog to ask user how much of an item they want
-                    AlertDialog.Builder alertDialog = new AlertDialog.Builder(MenuActivity.this);
+                    final AlertDialog.Builder alertDialog = new AlertDialog.Builder(MenuActivity.this);
                     final EditText input = new EditText(MenuActivity.this);
                     input.setInputType(InputType.TYPE_CLASS_NUMBER);
                     alertDialog.setView(input);
@@ -137,36 +137,38 @@ public class MenuActivity extends ListActivity {
                     alertDialog.setMessage("Enter the amount here: ");
                     alertDialog.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
+
                             amount = input.getText().toString();
-                            numAmount = Integer.valueOf(amount);
-                            if (selectedItem.getPrice().multiply(new BigDecimal(numAmount)).compareTo(budgetRemaining) < 0) {
-                                for (int i = 0; i < numAmount; i++) {
+                            if (!amount.isEmpty()) {
+                                numAmount = Integer.valueOf(amount);
+                                if (selectedItem.getPrice().multiply(new BigDecimal(numAmount)).compareTo(budgetRemaining) < 0) {
+                                    for (int i = 0; i < numAmount; i++) {
 
-                                    cart.addItem(selectedItem);
-                                    db.addToCart(selectedItem);
-                                    // Recalculate budgetRemaining and pass to adapter as well
-                                    budgetRemaining = budgetTotal.subtract(cart.getTotal());
-                                    adapter.setBudgetRemaining(budgetRemaining);
+                                        cart.addItem(selectedItem);
+                                        db.addToCart(selectedItem);
+                                        // Recalculate budgetRemaining and pass to adapter as well
+                                        budgetRemaining = budgetTotal.subtract(cart.getTotal());
+                                        adapter.setBudgetRemaining(budgetRemaining);
 
-                                    // Update subtotal TextView and toast item addition
-                                    subtotalText.setText(String.format("Subtotal: %s", cart.getTotal().toString()));
-                                    String message = "Added " + adapter.getItem(position).getName() + " to cart";
-                                    Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
-
-                                }
-                            } else {
-                                AlertDialog.Builder alertDialog = new AlertDialog.Builder(MenuActivity.this);
-                                alertDialog.setTitle("You Are Over Your Budget!");
-                                alertDialog.setMessage("Please Enter a different amount");
-                                alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int which) {
+                                        // Update subtotal TextView and toast item addition
+                                        subtotalText.setText(String.format("Subtotal: %s", cart.getTotal().toString()));
+                                        String message = "Added " + adapter.getItem(position).getName() + " to cart";
+                                        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
 
                                     }
-                                });
-                                alertDialog.setIcon(android.R.drawable.ic_dialog_alert);
-                                alertDialog.show();
-                            }
+                                } else {
+                                    AlertDialog.Builder alertDialog = new AlertDialog.Builder(MenuActivity.this);
+                                    alertDialog.setTitle("You Are Over Your Budget!");
+                                    alertDialog.setMessage("Please Enter a Different Amount");
+                                    alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int which) {
 
+                                        }
+                                    });
+                                    alertDialog.setIcon(android.R.drawable.ic_dialog_alert);
+                                    alertDialog.show();
+                                }
+                            }
                         }
 
 

@@ -41,7 +41,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="New Item"
+        android:text="Misc Item"
         android:id="@+id/button5"
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
