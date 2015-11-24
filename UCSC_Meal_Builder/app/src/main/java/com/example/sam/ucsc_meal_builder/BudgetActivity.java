@@ -147,17 +147,17 @@ public class BudgetActivity extends Activity {
             Intent intent = new Intent(BudgetActivity.this, MenuActivity.class);
             intent.putExtra("previous", "BudgetActivity");
 
-            //Send off rid again
-            intent.putExtra("rid", rid);
+            Budget budget = new Budget();
 
             //Send off budget values
-            String flexisString = flexiText.getText().toString();
             meals = Integer.valueOf(mealText.getText().toString());
-            String cashstring = cashText.getText().toString();
-            intent.putExtra("whichBudgetActivity", 1);
-            intent.putExtra("flexis", flexisString);
-            intent.putExtra("meals", meals);
-            intent.putExtra("cash", cashstring);
+            flexis = new BigDecimal(flexiText.getText().toString());
+            cash = new BigDecimal(cashText.getText().toString());
+            budget.setRID(rid);
+            budget.setMeals(meals);
+            budget.setFlexis(flexis);
+            budget.setCash(cash);
+            intent.putExtra("budget", budget);
 
             startActivity(intent);
         }else{

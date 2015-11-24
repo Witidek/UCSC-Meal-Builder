@@ -23,6 +23,7 @@ import java.util.ArrayList;
 public class MenuActivity extends ListActivity {
 
     private DBHelper db;
+    private Budget budget;
     private ArrayList<Item> itemList;
     private ListAdapter adapter;
     private ListView listView;
@@ -33,9 +34,9 @@ public class MenuActivity extends ListActivity {
     private String flexisString;
     private String cashString;
     private String misBuffer;
-    private int numMeals;
-    private BigDecimal numFlexis;
-    private BigDecimal numCash;
+    private int meals;
+    private BigDecimal flexis;
+    private BigDecimal cash;
     private BigDecimal newItem;
 
 
@@ -57,29 +58,15 @@ public class MenuActivity extends ListActivity {
         //Unpack extras
         intent = getIntent();
         String previous = intent.getStringExtra("previous");
-        rid = intent.getIntExtra("rid", 0);
+        budget = intent.getParcelableExtra("budget");
 
-        flexisString = intent.getStringExtra("flexis");
-        numFlexis = new BigDecimal(flexisString);
-
-        //If we are coming from BudgetActivity, we are
-        //working with meals and not cash.
-        if (previous.equals("BudgetActivity")) {
-            numMeals = intent.getIntExtra("meals", 0);
-            cashString = intent.getStringExtra("cash");
-            numCash = new BigDecimal(cashString);
-
-        }
-        //If we are coming from BudgetActivity2, we are
-        //working with cash and not meals.
-        else if (previous.equals("BudgetActivity2")) {
-            numMeals = 0;
-            cashString = intent.getStringExtra("cash");
-            numCash = new BigDecimal(cashString);
-        }
+        rid = budget.getRID();
+        meals = budget.getMeals();
+        flexis = budget.getFlexis();
+        cash = budget.getCash();
 
         //Here comes the money
-        budgetTotal = numCash.add(numFlexis.add(new BigDecimal(numMeals * 8)));
+        budgetTotal = cash.add(flexis.add(new BigDecimal(meals * 8)));
         Toast.makeText(getApplicationContext(), budgetTotal.toString(), Toast.LENGTH_SHORT).show();
         budgetRemaining = budgetTotal;
 
@@ -160,7 +147,6 @@ public class MenuActivity extends ListActivity {
                 misBuffer = input.getText().toString();
                 newItem = new BigDecimal(misBuffer);
                 Toast.makeText(getApplicationContext(), newItem.toString(), Toast.LENGTH_SHORT).show();
-
 
             }
         });
@@ -254,11 +240,7 @@ public class MenuActivity extends ListActivity {
     public void onCartPressed(){
         Intent intent = new Intent(MenuActivity.this, CartActivity.class);
         intent.putExtra("previous", "MenuActivity");
-        intent.putExtra("budgetTotal", budgetTotal.toString());
-        intent.putExtra("meals",numMeals);
-        intent.putExtra("cash",cashString);
-        intent.putExtra("flexies",flexisString);
-        intent.putExtra("rid", rid);
+        intent.putExtra("budget", budget);
         startActivity(intent);
     }
 

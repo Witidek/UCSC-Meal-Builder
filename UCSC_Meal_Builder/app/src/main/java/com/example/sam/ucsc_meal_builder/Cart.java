@@ -17,7 +17,10 @@ public class Cart {
 
 
     // Fields
-    ArrayList<Item> items;
+    private ArrayList<Item> items;
+    private int meals;
+    private BigDecimal flexis;
+    private BigDecimal cash;
 
     // Constructor
     public Cart(ArrayList<Item> itemList) {
@@ -43,6 +46,10 @@ public class Cart {
     //Returns item at a specified index
     public Item getItem(int index){
         return items.get(index);
+    }
+
+    public ArrayList<Item> getItemList() {
+        return this.items;
     }
 
     public void addItem(Item i){

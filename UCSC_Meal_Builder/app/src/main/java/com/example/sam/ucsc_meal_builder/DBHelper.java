@@ -23,7 +23,7 @@ public class DBHelper extends SQLiteAssetHelper{
     // Constructor
     public DBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
-        setForcedUpgrade(2);
+        //setForcedUpgrade(2);
     }
 
     // Returns a list of all restaurants from DB
@@ -194,42 +194,49 @@ public class DBHelper extends SQLiteAssetHelper{
     }
 
     //Add a "cart" to favorites
-    public void addToFavorites(Item item, String favName) {
+    public void addToFavorites(ArrayList<Item> itemList, String favName, Budget budget) {
+        int favID;
+        int meals = budget.getMeals();
+        BigDecimal flexis = budget.getFlexis();
+        BigDecimal cash = budget.getCash();
 
         // Connect to writable DB
         SQLiteDatabase db = getWritableDatabase();
 
-        // Query to check if item exists in cart
-        // SELECT quantity
-        // FROM Cart
-        // WHERE item_id = item.getItemID();
-        SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
-        qb.setTables("Favorite");
-        String[] sqlSelect = new String[]{Cart.KEY_quantity};
-        String sqlWhere = "item_id = ?";
-        String[] sqlWhereArgs = new String[]{String.valueOf(item.getItemID())};
-        Cursor cursor = qb.query(db, sqlSelect, sqlWhere, sqlWhereArgs, null, null, null);
+        // SELECT favorite_id
+        // FROM Favorite
+        // ORDER BY favorite_id DESC
+        // LIMIT 1
 
-        if (cursor.moveToFirst()) {
-            // Duplicate found, update row with quantity + 1 using UPDATE query
-            // UPDATE Cart
-            // SET quantity = quantity + 1
-            // WHERE item_id = item.getItemID();
-            int quantity = cursor.getInt(cursor.getColumnIndex(Cart.KEY_quantity));
+        Cursor cursor = db.rawQuery("SELECT favorite_id FROM Favorite ORDER BY favorite_id DESC LIMIT 1", null);
+        cursor.moveToFirst();
+
+        // Case: Empty favorites table, start with favID 0
+        if (cursor.getCount() == 0) {
+            favID = 0;
+        }else {
+            favID = cursor.getInt(cursor.getColumnIndex("favorite_id"));
+            favID++;
+        }
+
+        for (Item item: itemList) {
+            // INSERT INTO Favorite VALUES (null, item.getItemID(), 1);
             ContentValues values = new ContentValues();
-            values.put("quantity", quantity + 1);
-            db.update(Cart.TABLE, values, sqlWhere, sqlWhereArgs);
-        } else {
-            // No duplicate item found in cart, enter new one with quantity 1 using INSERT query
-            // INSERT INTO Cart VALUES (item.getRestaurantID(), item.getItemID(), 1);
-            ContentValues values = new ContentValues();
-            values.put("favorite_id",1);
-            values.put("name",favName);
+            values.put("favorite_id", favID);
+            values.put("name", favName);
             values.put("restaurant_id", item.getRestaurantID());
             values.put("item_id", item.getItemID());
-            values.put("quantity", 1);
-            db.insert(Cart.TABLE, null, values);
+            values.put("quantity", item.getQuantity());
+            db.insert("Favorite", null, values);
         }
+
+        // Insert budget info with corresponding favorite_id in Budget table
+        ContentValues values = new ContentValues();
+        values.put("favorite_id", favID);
+        values.put("meals", meals);
+        values.put("flexis", flexis.scaleByPowerOfTen(2).intValue());
+        values.put("cash", cash.scaleByPowerOfTen(2).intValue());
+        db.insert("Budget", null, values);
 
         // Close stuff
         cursor.close();
@@ -272,15 +279,55 @@ public class DBHelper extends SQLiteAssetHelper{
 
         // SELECT name
         // FROM Favorite
-        Cursor cursor = db.rawQuery("SELECT name FROM Favorite", null);
+        Cursor cursor = db.rawQuery("SELECT * FROM Favorite GROUP BY favorite_id", null);
 
         while (cursor.moveToNext()) {
             favList.add(cursor.getString(cursor.getColumnIndex("name")));
         }
 
         // Close stuff
+        cursor.close();
         db.close();
 
         return favList;
+    }
+
+    public Budget loadFavorite(int favID) {
+        Budget budget = new Budget();
+
+        SQLiteDatabase db = getReadableDatabase();
+
+        Cursor cursor = db.rawQuery("SELECT DISTINCT restaurant_id FROM Favorite WHERE favorite_id = ?", new String[]{Integer.toString(favID)});
+        cursor.moveToFirst();
+        int rid = cursor.getInt(cursor.getColumnIndex("restaurant_id"));
+        clearCart(rid);
+
+        // SELECT *
+        // FROM Favorite
+        // WHERE favorite_id = ?
+        db = getWritableDatabase();
+        cursor = db.rawQuery("SELECT * FROM Favorite WHERE favorite_id = ?", new String[]{Integer.toString(favID)});
+        while (cursor.moveToNext()) {
+            int id = cursor.getInt(cursor.getColumnIndex("item_id"));
+            int quantity = cursor.getInt(cursor.getColumnIndex("quantity"));
+            ContentValues values = new ContentValues();
+            values.put("restaurant_id", rid);
+            values.put("item_id", id);
+            values.put("quantity", quantity);
+            db.insert("Cart", null, values);
+        }
+
+        db = getReadableDatabase();
+        cursor = db.rawQuery("SELECT * FROM Budget WHERE favorite_id = ?", new String[]{Integer.toString(favID)});
+        cursor.moveToFirst();
+        budget.setRID(rid);
+        budget.setMeals(cursor.getInt(cursor.getColumnIndex("meals")));
+        budget.setFlexis(new BigDecimal(cursor.getInt(cursor.getColumnIndex("flexis"))).scaleByPowerOfTen(-2));
+        budget.setCash(new BigDecimal(cursor.getInt(cursor.getColumnIndex("cash"))).scaleByPowerOfTen(-2));
+
+        cursor.close();
+        db.close();
+
+        return budget;
     }
 }
