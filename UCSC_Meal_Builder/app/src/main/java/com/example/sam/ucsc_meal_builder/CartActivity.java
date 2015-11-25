@@ -46,6 +46,11 @@ public class CartActivity extends ListActivity {
         setContentView(R.layout.activity_cart);
         getActionBar().setHomeButtonEnabled(true);
         getActionBar().setDisplayHomeAsUpEnabled(true);
+        getActionBar().setDisplayShowTitleEnabled(false);
+        getActionBar().setDisplayShowCustomEnabled(true);
+        getActionBar().setCustomView(R.layout.ab_title);
+        TextView title = (TextView) findViewById(android.R.id.text1);
+        title.setText("Cart");
 
         // Get restaurant_id from intent
         intent = getIntent();
@@ -121,10 +126,11 @@ public class CartActivity extends ListActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         favBuffer = input.getText().toString();
                         //newItem = new BigDecimal(misBuffer);
-                        Toast.makeText(getApplicationContext(), favBuffer, Toast.LENGTH_SHORT).show();
-                        //Actually put it in favorites:
-                        db.addToFavorites(cart.getItemList(), favBuffer, budget);
-
+                        if(!favBuffer.isEmpty()) {
+                            Toast.makeText(getApplicationContext(), favBuffer, Toast.LENGTH_SHORT).show();
+                            //Actually put it in favorites:
+                            db.addToFavorites(cart.getItemList(), favBuffer, budget);
+                        }
                     }
                 });
                 alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -200,7 +206,7 @@ public class CartActivity extends ListActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        new MenuInflater(this).inflate(R.menu.actionbar_menu, menu);
+        new MenuInflater(this).inflate(R.menu.actionbar_cart, menu);
         return (super.onCreateOptionsMenu(menu));
     }
 

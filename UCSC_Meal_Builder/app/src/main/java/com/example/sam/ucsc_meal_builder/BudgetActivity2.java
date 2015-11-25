@@ -36,6 +36,11 @@ public class BudgetActivity2 extends Activity {
         setContentView(R.layout.activity_budget2);
         getActionBar().setHomeButtonEnabled(true);
         getActionBar().setDisplayHomeAsUpEnabled(true);
+        getActionBar().setDisplayShowTitleEnabled(false);
+        getActionBar().setDisplayShowCustomEnabled(true);
+        getActionBar().setCustomView(R.layout.ab_title);
+        TextView title = (TextView) findViewById(android.R.id.text1);
+        title.setText("Budget");
 
         //Receive rid
         intent = getIntent();

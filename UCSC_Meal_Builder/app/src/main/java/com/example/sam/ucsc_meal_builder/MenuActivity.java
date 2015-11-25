@@ -61,6 +61,9 @@ public class MenuActivity extends ListActivity {
         setContentView(R.layout.activity_menu);
         getActionBar().setHomeButtonEnabled(true);
         getActionBar().setDisplayHomeAsUpEnabled(true);
+        getActionBar().setDisplayShowTitleEnabled(false);
+        getActionBar().setDisplayShowCustomEnabled(true);
+        getActionBar().setCustomView(R.layout.ab_title);
 
         db = new DBHelper(this);
 
@@ -89,7 +92,9 @@ public class MenuActivity extends ListActivity {
 
         // Grab menu from database
         itemList = db.getMenu(rid);
-        setTitle(db.getRestaurantName(rid));
+        TextView title = (TextView) findViewById(android.R.id.text1);
+        title.setText(db.getRestaurantName(rid));
+
 
         // Build ListAdapter
         adapter = new ListAdapter(this, itemList);

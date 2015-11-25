@@ -79,7 +79,14 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
-        <activity android:name=".FavoriteActivity" >
+        <activity android:name=".FavoriteActivity"
+            android:label="Favorite"
+            android:parentActivityName=".MainActivity"
+            android:icon="@mipmap/home"
+            android:screenOrientation="portrait">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
         </activity>
     </application>
 
