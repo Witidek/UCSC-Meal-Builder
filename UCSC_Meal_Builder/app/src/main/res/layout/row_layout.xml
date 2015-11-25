@@ -9,6 +9,8 @@
         android:id="@+id/item_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_toStartOf="@+id/item_price"
         android:text="@+id/item_name"
         android:textSize="20sp" >
     </TextView>

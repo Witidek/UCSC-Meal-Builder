@@ -24,12 +24,13 @@ import java.math.BigDecimal;
 public class CartActivity extends ListActivity {
 
     private Intent intent;
+    private Budget budget;
     private int rid;
     private String favBuffer;
     private BigDecimal budgetTotal;
-    private BigDecimal meals;
+    private int meals;
     private BigDecimal cash;
-    private BigDecimal flexies;
+    private BigDecimal flexis;
     private DBHelper db;
     private ArrayAdapter<Item> adapter;
 
@@ -45,17 +46,28 @@ public class CartActivity extends ListActivity {
         setContentView(R.layout.activity_cart);
         getActionBar().setHomeButtonEnabled(true);
         getActionBar().setDisplayHomeAsUpEnabled(true);
+        getActionBar().setDisplayShowTitleEnabled(false);
+        getActionBar().setDisplayShowCustomEnabled(true);
+        getActionBar().setCustomView(R.layout.ab_title);
+        TextView title = (TextView) findViewById(android.R.id.text1);
+        title.setText("Cart");
 
         // Get restaurant_id from intent
         intent = getIntent();
         String previous = intent.getStringExtra("previous");
-        if (previous.equals("MenuActivity")) {
-            rid = intent.getIntExtra("rid", 0);
-            budgetTotal = new BigDecimal(intent.getStringExtra("budgetTotal"));
-            meals = new BigDecimal(intent.getIntExtra("meals", 0));
-            cash = new BigDecimal(intent.getStringExtra("cash"));
-            flexies = new BigDecimal(intent.getStringExtra("flexies"));
+        if (previous.equals("FavoriteActivity")) {
+            View button = findViewById(R.id.clearCartButton);
+            button.setVisibility(View.GONE);
+            button = findViewById(R.id.deleteFavoriteButton);
+            button.setVisibility(View.VISIBLE);
         }
+
+        budget = intent.getParcelableExtra("budget");
+
+        rid = budget.getRID();
+        meals = budget.getMeals();
+        flexis = budget.getFlexis();
+        cash = budget.getCash();
 
         // Load SharedPreferences to get balance
         sharedPrefs = getSharedPreferences("balance", MODE_PRIVATE);
@@ -68,7 +80,7 @@ public class CartActivity extends ListActivity {
         // Create ListView adapter to display items in cart
         adapter = new ArrayAdapter<Item>(this,
                 android.R.layout.simple_list_item_1,
-                cart.items);
+                cart.getItemList());
         setListAdapter(adapter);
 
         // TextView for total
@@ -76,16 +88,18 @@ public class CartActivity extends ListActivity {
         textView.setText(String.format("Total: $%s", cart.getTotal().toString()));
 
         // onClick event for ListView items
-        ListView listView = getListView();
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                // PROMPT WARNING FOR DELETE FROM CART--------------------------
-                db.deleteItem(adapter.getItem(position));
-                cart.deleteItem(position);
-                adapter.notifyDataSetChanged();
-                textView.setText(String.format("Total: $%s", cart.getTotal().toString()));
-            }
-        });
+        if (previous.equals("MenuActivity")) {
+            ListView listView = getListView();
+            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    // PROMPT WARNING FOR DELETE FROM CART--------------------------
+                    db.deleteItem(adapter.getItem(position));
+                    cart.deleteItem(position);
+                    adapter.notifyDataSetChanged();
+                    textView.setText(String.format("Total: $%s", cart.getTotal().toString()));
+                }
+            });
+        }
     }
 
     @Override
@@ -112,12 +126,11 @@ public class CartActivity extends ListActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         favBuffer = input.getText().toString();
                         //newItem = new BigDecimal(misBuffer);
-                        Toast.makeText(getApplicationContext(), favBuffer, Toast.LENGTH_SHORT).show();
-                        //Actually put it in favorites:
-                        for (int i = 0 ; i < cart.items.size() ; i ++){
-                            db.addToFavorites(cart.getItem(i),favBuffer);
+                        if(!favBuffer.isEmpty()) {
+                            Toast.makeText(getApplicationContext(), favBuffer, Toast.LENGTH_SHORT).show();
+                            //Actually put it in favorites:
+                            db.addToFavorites(cart.getItemList(), favBuffer, budget);
                         }
-
                     }
                 });
                 alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -165,13 +178,35 @@ public class CartActivity extends ListActivity {
         });
         alertDialog.setIcon(android.R.drawable.ic_dialog_alert);
         alertDialog.show();
+    }
 
+    public void onClickDeleteFavorite(View view) {
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+        alertDialog.setTitle("Delete Favorite");
+        alertDialog.setMessage("Are you sure?");
+        alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                cart.clearCart();
+                db.clearCart(rid);
 
+                // Update ListView and total text
+                adapter.notifyDataSetChanged();
+                textView.setText(String.format("Total: $%s", cart.getTotal().toString()));
+            }
+        });
+
+        alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+        alertDialog.setIcon(android.R.drawable.ic_dialog_alert);
+        alertDialog.show();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        new MenuInflater(this).inflate(R.menu.actionbar_menu, menu);
+        new MenuInflater(this).inflate(R.menu.actionbar_cart, menu);
         return (super.onCreateOptionsMenu(menu));
     }
 
@@ -189,20 +224,20 @@ public class CartActivity extends ListActivity {
                 BigDecimal valueMeal = new BigDecimal(8);
                 BigDecimal total = cart.getTotal();
                 BigDecimal amountMeals = total.divideToIntegralValue(valueMeal);
-                BigDecimal compareMeal = amountMeals.min(meals);
+                BigDecimal compareMeal = amountMeals.min(new BigDecimal(meals));
                 BigDecimal remainAmount = total.subtract(compareMeal.multiply(valueMeal));
                 BigDecimal resultflexies;
                 //Toast.makeText(getApplicationContext(), compareMeal.toString(), Toast.LENGTH_SHORT).show();
                 BigDecimal resultMeals = totalMeals.subtract(compareMeal);
-                if(remainAmount.compareTo(flexies) >= 0) {
-                    resultflexies = totalFlexies.subtract(flexies);
+                if(remainAmount.compareTo(flexis) >= 0) {
+                    resultflexies = totalFlexies.subtract(flexis);
                 }else{
                     resultflexies = totalFlexies.subtract(remainAmount);
                 }
 
                 editPrefs.putInt("meals", resultMeals.intValue());
                 // If only using cash or meals don't change flexies or if cash covers it
-                if(flexies.compareTo(new BigDecimal(0)) > 0) {
+                if(flexis.compareTo(new BigDecimal(0)) > 0) {
                     editPrefs.putString("flexis", resultflexies.toString());
                 }
                 editPrefs.commit();

@@ -4,13 +4,15 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/johncena"
+        android:icon="@mipmap/ok"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@android:style/Theme.Holo.Light.DarkActionBar" >
+        android:theme="@style/AppTheme"
+        android:layout_centerHorizontal="true">
         <activity
             android:name=".MainActivity"
-            android:label="UCSC Meal Builder" >
+            android:label="UCSC Meal Builder"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -21,6 +23,7 @@
             android:name=".BudgetActivity"
             android:label="Budget"
             android:parentActivityName=".MainActivity"
+            android:icon="@mipmap/home"
             android:screenOrientation="portrait" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -30,6 +33,7 @@
             android:name=".BudgetActivity2"
             android:label="Budget"
             android:parentActivityName=".MainActivity"
+            android:icon="@mipmap/home"
             android:screenOrientation="portrait" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -38,7 +42,9 @@
         <activity
             android:name=".RestaurantActivity"
             android:label="Restaurants"
-            android:parentActivityName=".MainActivity" >
+            android:parentActivityName=".MainActivity"
+            android:icon="@mipmap/home"
+            android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
@@ -46,7 +52,9 @@
         <activity
             android:name=".BalanceActivity"
             android:label="Balance"
-            android:parentActivityName=".MainActivity" >
+            android:parentActivityName=".MainActivity"
+            android:icon="@mipmap/home"
+            android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
@@ -54,7 +62,9 @@
         <activity
             android:name=".MenuActivity"
             android:label="Menu"
-            android:parentActivityName=".MainActivity" >
+            android:parentActivityName=".MainActivity"
+            android:icon="@mipmap/home"
+            android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
@@ -62,12 +72,21 @@
         <activity
             android:name=".CartActivity"
             android:label="Cart"
-            android:parentActivityName=".MainActivity" >
+            android:parentActivityName=".MainActivity"
+            android:icon="@mipmap/home"
+            android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
-        <activity android:name=".FavoriteActivity" >
+        <activity android:name=".FavoriteActivity"
+            android:label="Favorite"
+            android:parentActivityName=".MainActivity"
+            android:icon="@mipmap/home"
+            android:screenOrientation="portrait">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
         </activity>
     </application>
 

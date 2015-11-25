@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/favorite_button"
+        android:icon="@mipmap/heart"
+        android:title="Favorite"
+        android:showAsAction="ifRoom"/>
+</menu>

@@ -27,6 +27,11 @@ public class RestaurantActivity extends ListActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_restaurant);
         getActionBar().setDisplayHomeAsUpEnabled(true);
+        getActionBar().setDisplayShowTitleEnabled(false);
+        getActionBar().setDisplayShowCustomEnabled(true);
+        getActionBar().setCustomView(R.layout.ab_title);
+        TextView title = (TextView) findViewById(android.R.id.text1);
+        title.setText("Restaurants");
 
         db = new DBHelper(this);
         restaurantList = db.getRestaurants();
@@ -48,9 +53,11 @@ public class RestaurantActivity extends ListActivity {
                     intent.putExtra("previous", "RestaurantActivity");
                     intent.putExtra("rid", rid);
                     startActivity(intent);
-                }
-                //Otherwise open the reg budget activity
-                else {
+                }else if(rid == 3 || rid ==6) {
+                    //Prompts that the restaurants are closed
+                    Toast.makeText(getApplicationContext(),"Currently Closed", Toast.LENGTH_SHORT).show();
+                    //Otherwise open the reg budget activity
+                }else {
                     Intent intent = new Intent(RestaurantActivity.this, BudgetActivity.class);
                     intent.putExtra("previous", "RestaurantActivity");
                     intent.putExtra("rid", rid);
@@ -58,7 +65,7 @@ public class RestaurantActivity extends ListActivity {
                 }
 
                 // When clicked, show a toast with restaurant name
-                Toast.makeText(getApplicationContext(), adapter.getItem(position).getName(), Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getApplicationContext(), adapter.getItem(position).getName(), Toast.LENGTH_SHORT).show();
             }
         });
     }

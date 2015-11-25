@@ -36,6 +36,11 @@ public class BudgetActivity2 extends Activity {
         setContentView(R.layout.activity_budget2);
         getActionBar().setHomeButtonEnabled(true);
         getActionBar().setDisplayHomeAsUpEnabled(true);
+        getActionBar().setDisplayShowTitleEnabled(false);
+        getActionBar().setDisplayShowCustomEnabled(true);
+        getActionBar().setCustomView(R.layout.ab_title);
+        TextView title = (TextView) findViewById(android.R.id.text1);
+        title.setText("Budget");
 
         //Receive rid
         intent = getIntent();
@@ -118,15 +123,15 @@ public class BudgetActivity2 extends Activity {
             Intent intent = new Intent(BudgetActivity2.this, MenuActivity.class);
             intent.putExtra("previous", "BudgetActivity2");
 
-            //Send off rid again
-            intent.putExtra("rid", rid);
+            Budget budget = new Budget();
 
             //Send off budget values
-            String flexisString = flexiText.getText().toString();
-            String cashstring = cashText.getText().toString();
-            intent.putExtra("whichBudgetActivity", 2);
-            intent.putExtra("flexis", flexisString);
-            intent.putExtra("cash", cashstring);
+            flexis = new BigDecimal(flexiText.getText().toString());
+            cash = new BigDecimal(cashText.getText().toString());
+            budget.setRID(rid);
+            budget.setFlexis(flexis);
+            budget.setCash(cash);
+            intent.putExtra("budget", budget);
 
             startActivity(intent);
         }else{
