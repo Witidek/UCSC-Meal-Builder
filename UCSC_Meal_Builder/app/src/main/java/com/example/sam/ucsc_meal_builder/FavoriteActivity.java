@@ -47,7 +47,7 @@ public class FavoriteActivity extends ListActivity {
                 alertDialog.setMessage("Would you like to load or delete this favorite?");
                 alertDialog.setPositiveButton("Load", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        Budget budget = db.loadFavorite(position);
+                        Budget budget = db.loadFavorite(adapter.getItem(position).getFID());
                         Intent intent = new Intent(FavoriteActivity.this, CartActivity.class);
                         intent.putExtra("previous", "FavoriteActivity");
                         intent.putExtra("budget", budget);

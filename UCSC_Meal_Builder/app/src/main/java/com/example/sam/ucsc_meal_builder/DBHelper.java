@@ -8,7 +8,15 @@ import android.database.sqlite.SQLiteQueryBuilder;
 
 import com.readystatesoftware.sqliteasset.SQLiteAssetHelper;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.math.BigDecimal;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 
 /**
@@ -355,6 +363,97 @@ public class DBHelper extends SQLiteAssetHelper{
 
         // Close stuff
         db.close();
+    }
 
+    /*
+        This method pulls the right JSON file and populates the database.
+        urlp = grabs the json file from this address
+        type = specifies if this is a item or a restaurant
+     */
+    public void getJSONFromURL(String urlp, int type){
+        URL url;
+        HttpURLConnection urlConnection = null;
+        try {
+            url = new URL(urlp);
+
+            urlConnection = (HttpURLConnection) url
+                    .openConnection();
+
+            InputStream in = urlConnection.getInputStream();
+
+            InputStreamReader isw = new InputStreamReader(in);
+
+            int data = isw.read();
+            String dataString = "";
+
+            while (data != -1) {
+                char current = (char) data;
+                data = isw.read();
+                //System.out.print(current);
+                dataString += current;
+            }
+            JSONArray jo = new JSONArray(dataString);
+
+            switch(type) {
+                case 0: jsonDBModifierRest(jo); break;
+                case 1: jsonDBModifierItem(jo); break;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                urlConnection.disconnect();
+            } catch (Exception e) {
+                e.printStackTrace(); //If you want further info on failure...
+            }
+        }
+    }
+
+    public void jsonDBModifierRest(JSONArray ja){
+        SQLiteDatabase db = getReadableDatabase();
+
+        db.delete(Restaurant.TABLE, null, null);
+        //db.insert(Restaurant.TABLE, null, )
+        for(int i = 0;i < ja.length(); i++){
+            try {
+                JSONObject inside = ja.getJSONObject(i);
+                //System.out.println("Restarunt");
+                //System.out.println("name = "+inside.get("name"));
+                ContentValues valuesp = new ContentValues();
+                valuesp.put("restaurant_id", (String)inside.get("id"));
+                valuesp.put("name", (String)inside.get("name"));
+
+                db.insert(Restaurant.TABLE, null, valuesp);
+            }catch(JSONException je){
+                System.out.println("JE problem");
+            }
+        }
+
+        db.close();
+    }
+
+    public void jsonDBModifierItem(JSONArray ja){
+        SQLiteDatabase db = getReadableDatabase();
+
+        db.delete(Item.TABLE, null, null);
+        //db.insert(Restaurant.TABLE, null, )
+        for(int i = 0;i < ja.length(); i++){
+            try {
+                JSONObject inside = ja.getJSONObject(i);
+                //System.out.println("Restarunt");
+                //System.out.println("name = "+inside.get("name"));
+                ContentValues valuesp = new ContentValues();
+                valuesp.put("item_id", (String)inside.get("id"));
+                valuesp.put("restaurant_id", (String)inside.get("restaurant_id"));
+                valuesp.put("name", (String)inside.get("name"));
+                valuesp.put("price", (String)inside.get("price"));
+
+                db.insert(Item.TABLE, null, valuesp);
+            }catch(JSONException je){
+                System.out.println("JE problem");
+            }
+        }
+
+        db.close();
     }
 }

@@ -2,8 +2,8 @@ package com.example.sam.ucsc_meal_builder;
 
 import android.app.Activity;
 import android.content.Intent;
-
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.view.View;
 import android.widget.TextView;
 
@@ -12,9 +12,17 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         // Load layout
         setContentView(R.layout.activity_main);
+
+        /*
+            This should really be in its own thread, but i focused on getting it working first.
+         */
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+
+        StrictMode.setThreadPolicy(policy);
+
+
 
         // Manually set title so it is not highlighted with the home button
         getActionBar().setDisplayShowTitleEnabled(false);
@@ -29,6 +37,10 @@ public class MainActivity extends Activity {
             db.clearCart(rid);
         }
 
+        //load data from url database.
+        //GetJSONForDB.execute()
+        //db.getJSONFromURL("http://ucscmealbuilder.com/manage/api.php?type=r", 0);
+        //db.getJSONFromURL("http://ucscmealbuilder.com/manage/api.php?type=i", 1);
     }
 
     public void onClickBuildMeal (View view) {
