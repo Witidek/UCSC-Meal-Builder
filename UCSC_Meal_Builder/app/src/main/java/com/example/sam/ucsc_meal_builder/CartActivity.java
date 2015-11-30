@@ -13,7 +13,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -81,7 +80,7 @@ public class CartActivity extends ListActivity {
 
         // TextView for total
         textView = (TextView) findViewById(R.id.totalText);
-        textView.setText(String.format("Total: $%s", cart.getTotal().toString()));
+        textView.setText(String.format("Total: $%.2f", cart.getTotal()));
 
         // onClick event for ListView items
         if (previous.equals("MenuActivity")) {
@@ -92,7 +91,7 @@ public class CartActivity extends ListActivity {
                     db.deleteItem(adapter.getItem(position));
                     cart.deleteItem(position);
                     adapter.notifyDataSetChanged();
-                    textView.setText(String.format("Total: $%s", cart.getTotal().toString()));
+                    textView.setText(String.format("Total: $%.2f", cart.getTotal()));
                 }
             });
         }
@@ -141,6 +140,10 @@ public class CartActivity extends ListActivity {
                 Toast.makeText(CartActivity.this, "favorited", Toast.LENGTH_SHORT).show();
                 return true;
 
+            case R.id.add_misc_button:
+                onClickNewItem();
+                return true;
+
             default:
                 return super.onOptionsItemSelected(item);
 
@@ -150,7 +153,7 @@ public class CartActivity extends ListActivity {
     }
 
     // Adding Miscellaneous Items to the total
-    public void onClickNewItem (View view){
+    public void onClickNewItem (){
         // Pop the alert dialog on click
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(CartActivity.this);
         alertDialog.setTitle("Adding Miscellaneous Item");
@@ -167,7 +170,7 @@ public class CartActivity extends ListActivity {
                 BigDecimal newItem = new BigDecimal(miscBuffer);
                 cart.addMisc(rid, newItem);
                 adapter.notifyDataSetChanged();
-                textView.setText(String.format("Total: $%s", cart.getTotal().toString()));
+                textView.setText(String.format("Total: $%.2f", cart.getTotal()));
 
             }
         });
@@ -196,7 +199,7 @@ public class CartActivity extends ListActivity {
 
                 // Update ListView and total text
                 adapter.notifyDataSetChanged();
-                textView.setText(String.format("Total: $%s", cart.getTotal().toString()));
+                textView.setText(String.format("Total: $%.2f", cart.getTotal()));
             }
         });
 
@@ -220,7 +223,7 @@ public class CartActivity extends ListActivity {
         // Subtract total from meals and flexis balance
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
         alertDialog.setTitle("Checkout Cart");
-        String confirm ="Total is : $" +  cart.getTotal().toString()+"\n" + "Proceed?" ;
+        String confirm = String.format("Total is : $%.2f\nProceed?", cart.getTotal());
         alertDialog.setMessage(confirm);
         alertDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
@@ -253,7 +256,7 @@ public class CartActivity extends ListActivity {
 
                 // Update ListView and total text
                 adapter.notifyDataSetChanged();
-                textView.setText(String.format("Total: $%s", cart.getTotal().toString()));
+                textView.setText(String.format("Total: $%.2f", cart.getTotal()));
 
             }
         });

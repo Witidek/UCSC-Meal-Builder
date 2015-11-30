@@ -4,4 +4,9 @@
         android:icon="@mipmap/heart"
         android:title="Favorite"
         android:showAsAction="ifRoom"/>
+
+    <item android:id="@+id/add_misc_button"
+        android:icon="@mipmap/plus"
+        android:title="Add Miscellaneous Item"
+        android:showAsAction="ifRoom"/>
 </menu>

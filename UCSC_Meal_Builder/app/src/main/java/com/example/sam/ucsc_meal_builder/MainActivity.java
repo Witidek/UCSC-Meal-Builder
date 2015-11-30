@@ -22,8 +22,6 @@ public class MainActivity extends Activity {
 
         StrictMode.setThreadPolicy(policy);
 
-
-
         // Manually set title so it is not highlighted with the home button
         getActionBar().setDisplayShowTitleEnabled(false);
         getActionBar().setDisplayShowCustomEnabled(true);
