@@ -25,7 +25,11 @@ public class RestaurantActivity extends ListActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Load layout
         setContentView(R.layout.activity_restaurant);
+
+        // Enable home button and manually set title
         getActionBar().setDisplayHomeAsUpEnabled(true);
         getActionBar().setDisplayShowTitleEnabled(false);
         getActionBar().setDisplayShowCustomEnabled(true);
@@ -33,39 +37,38 @@ public class RestaurantActivity extends ListActivity {
         TextView title = (TextView) findViewById(android.R.id.text1);
         title.setText("Restaurants");
 
-        db = new DBHelper(this);
+        // Get DBHelper instance and grab restaurant list
+        db = DBHelper.getInstance(this);
         restaurantList = db.getRestaurants();
 
+        // Construct basic ArrayAdapter for ListView of restaurants
         adapter = new ArrayAdapter<Restaurant>(this,
                 android.R.layout.simple_list_item_1,
                 restaurantList);
         setListAdapter(adapter);
 
+        // onClick listener changes activity to MenuActivity and passes restaurant_id
         ListView listView = getListView();
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                //rid will be passed to the next (Budget)Activity
                 int rid = adapter.getItem(position).getRestaurantID();
-                //If the restaurant is one of those that only accepts
-                //flexis and cash, open up the other budget activity
-                if (rid == 2 || rid == 4 || rid == 5 || rid ==9){
-                    Intent intent = new Intent(RestaurantActivity.this, BudgetActivity2.class);
-                    intent.putExtra("previous", "RestaurantActivity");
-                    intent.putExtra("rid", rid);
-                    startActivity(intent);
-                }else if(rid == 3 || rid ==6) {
+                boolean acceptsMeals = adapter.getItem(position).getAcceptsMeals();
+
+                // Toast for closed restaurants, and start new activity appropriately depending on acceptsMeals
+                if (rid == 3 || rid == 6) {
                     //Prompts that the restaurants are closed
                     Toast.makeText(getApplicationContext(),"Currently Closed", Toast.LENGTH_SHORT).show();
-                    //Otherwise open the reg budget activity
-                }else {
+                }else if (acceptsMeals) {
                     Intent intent = new Intent(RestaurantActivity.this, BudgetActivity.class);
                     intent.putExtra("previous", "RestaurantActivity");
                     intent.putExtra("rid", rid);
                     startActivity(intent);
+                }else {
+                    Intent intent = new Intent(RestaurantActivity.this, BudgetActivity2.class);
+                    intent.putExtra("previous", "RestaurantActivity");
+                    intent.putExtra("rid", rid);
+                    startActivity(intent);
                 }
-
-                // When clicked, show a toast with restaurant name
-                //Toast.makeText(getApplicationContext(), adapter.getItem(position).getName(), Toast.LENGTH_SHORT).show();
             }
         });
     }

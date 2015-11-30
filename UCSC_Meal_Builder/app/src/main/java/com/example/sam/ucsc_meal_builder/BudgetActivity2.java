@@ -33,7 +33,11 @@ public class BudgetActivity2 extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Load layout
         setContentView(R.layout.activity_budget2);
+
+        // Set home button and title
         getActionBar().setHomeButtonEnabled(true);
         getActionBar().setDisplayHomeAsUpEnabled(true);
         getActionBar().setDisplayShowTitleEnabled(false);
@@ -48,8 +52,6 @@ public class BudgetActivity2 extends Activity {
 
         // Load SharedPreferences to get balance
         sharedPrefs = getSharedPreferences("balance", MODE_PRIVATE);
-
-       // Toast.makeText(getApplicationContext(), "#2!!!!", Toast.LENGTH_SHORT).show();
 
         // Grab TextViews
         cashText = (TextView) findViewById(R.id.cashBudgetText);
@@ -134,7 +136,7 @@ public class BudgetActivity2 extends Activity {
             intent.putExtra("budget", budget);
 
             startActivity(intent);
-        }else{
+        }else {
             //Toast.makeText(getApplicationContext(), "Exceeds actual Balance!", Toast.LENGTH_SHORT).show();
             AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
             alertDialog.setTitle("Oh No....!");

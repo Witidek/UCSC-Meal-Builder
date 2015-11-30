@@ -69,6 +69,10 @@ public class Item {
         return this.quantity;
     }
 
+    public void setPrice(BigDecimal p) {
+        this.price = p;
+    }
+
     public void setQuantity(int q) {
         this.quantity = q;
     }

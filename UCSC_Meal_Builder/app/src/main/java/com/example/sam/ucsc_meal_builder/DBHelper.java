@@ -18,12 +18,20 @@ public class DBHelper extends SQLiteAssetHelper{
 
     // DB file found in app/src/main/assets/databases
     private static final String DATABASE_NAME = "mealbuilder.db";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 3;
+    private static DBHelper instance;
 
-    // Constructor
-    public DBHelper(Context context) {
+    // Private singleton constructor
+    private DBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
-        //setForcedUpgrade(2);
+        setForcedUpgrade();
+    }
+
+    public static DBHelper getInstance(Context context){
+        if (instance == null) {
+            instance = new DBHelper(context);
+        }
+        return instance;
     }
 
     // Returns a list of all restaurants from DB
@@ -36,7 +44,7 @@ public class DBHelper extends SQLiteAssetHelper{
         // FROM Restaurant;
         SQLiteDatabase db = getReadableDatabase();
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
-        String[] sqlSelect = new String[]{Restaurant.KEY_restaurant_id, Restaurant.KEY_name};
+        String[] sqlSelect = new String[]{Restaurant.KEY_restaurant_id, Restaurant.KEY_name, Restaurant.KEY_accepts_meals};
         qb.setTables(Restaurant.TABLE);
         Cursor cursor = qb.query(db, sqlSelect, null, null, null, null, null);
 
@@ -44,7 +52,8 @@ public class DBHelper extends SQLiteAssetHelper{
         while (cursor.moveToNext()) {
             int rid = cursor.getInt(cursor.getColumnIndex(Restaurant.KEY_restaurant_id));
             String name = cursor.getString(cursor.getColumnIndex(Restaurant.KEY_name));
-            Restaurant restaurant = new Restaurant(rid, name);
+            boolean acceptsMeals = cursor.getInt(cursor.getColumnIndex(Restaurant.KEY_accepts_meals)) == 1;
+            Restaurant restaurant = new Restaurant(rid, name, acceptsMeals);
             restaurantList.add(restaurant);
         }
 
@@ -271,8 +280,8 @@ public class DBHelper extends SQLiteAssetHelper{
         db.close();
     }
 
-    public ArrayList<String> getFavorites() {
-        ArrayList<String> favList = new ArrayList<>();
+    public ArrayList<Favorite> getFavorites() {
+        ArrayList<Favorite> favList = new ArrayList<>();
 
         // Connect to database
         SQLiteDatabase db = getReadableDatabase();
@@ -282,7 +291,11 @@ public class DBHelper extends SQLiteAssetHelper{
         Cursor cursor = db.rawQuery("SELECT * FROM Favorite GROUP BY favorite_id", null);
 
         while (cursor.moveToNext()) {
-            favList.add(cursor.getString(cursor.getColumnIndex("name")));
+            int fid = cursor.getInt((cursor.getColumnIndex(Favorite.KEY_favorite_id)));
+            int rid = cursor.getInt((cursor.getColumnIndex(Favorite.KEY_restaurant_id)));
+            String name = cursor.getString(cursor.getColumnIndex(Favorite.KEY_name));
+            Favorite fav = new Favorite(fid, rid, name);
+            favList.add(fav);
         }
 
         // Close stuff
@@ -329,5 +342,19 @@ public class DBHelper extends SQLiteAssetHelper{
         db.close();
 
         return budget;
+    }
+
+    public void deleteFavorite(Favorite fav) {
+        // Connect to database
+        SQLiteDatabase db = getWritableDatabase();
+
+        // Construct DELETE query
+        String sqlWhere = "favorite_id = ?";
+        String[] sqlWhereArgs = new String[]{String.valueOf(fav.getFID())};
+        db.delete(Favorite.TABLE, sqlWhere, sqlWhereArgs);
+
+        // Close stuff
+        db.close();
+
     }
 }

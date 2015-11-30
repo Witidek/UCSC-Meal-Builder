@@ -15,7 +15,7 @@ import java.util.ArrayList;
 /**
  * Created by Jason on 11/5/2015.
  */
-public class ListAdapter extends ArrayAdapter<Item> {
+public class MenuAdapter extends ArrayAdapter<Item> {
 
     // Fields
     private final Context context;
@@ -29,8 +29,8 @@ public class ListAdapter extends ArrayAdapter<Item> {
     }
 
     // Constructor
-    public ListAdapter(Context context, ArrayList<Item> items) {
-        super(context, R.layout.row_layout, items);
+    public MenuAdapter(Context context, ArrayList<Item> items) {
+        super(context, R.layout.row_menu, items);
         this.context = context;
         this.items = items;
         this.budgetRemaining = new BigDecimal(0);
@@ -44,7 +44,7 @@ public class ListAdapter extends ArrayAdapter<Item> {
         if (rowView == null) {
             LayoutInflater inflater = (LayoutInflater) context
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            rowView = inflater.inflate(R.layout.row_layout, parent, false);
+            rowView = inflater.inflate(R.layout.row_menu, parent, false);
             ViewHolder holder = new ViewHolder();
             holder.nameView = (TextView) rowView.findViewById(R.id.item_name);
             holder.priceView = (TextView) rowView.findViewById(R.id.item_price);

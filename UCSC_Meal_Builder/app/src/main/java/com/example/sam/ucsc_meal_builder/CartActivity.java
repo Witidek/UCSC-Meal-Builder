@@ -32,7 +32,7 @@ public class CartActivity extends ListActivity {
     private BigDecimal cash;
     private BigDecimal flexis;
     private DBHelper db;
-    private ArrayAdapter<Item> adapter;
+    private CartAdapter adapter;
 
 
     private Cart cart;
@@ -58,8 +58,6 @@ public class CartActivity extends ListActivity {
         if (previous.equals("FavoriteActivity")) {
             View button = findViewById(R.id.clearCartButton);
             button.setVisibility(View.GONE);
-            button = findViewById(R.id.deleteFavoriteButton);
-            button.setVisibility(View.VISIBLE);
         }
 
         budget = intent.getParcelableExtra("budget");
@@ -74,13 +72,11 @@ public class CartActivity extends ListActivity {
         editPrefs = sharedPrefs.edit();
 
         // Grab cart items for specified restaurant from database
-        db = new DBHelper(this);
+        db = DBHelper.getInstance(this);
         cart = db.getCart(rid);
 
         // Create ListView adapter to display items in cart
-        adapter = new ArrayAdapter<Item>(this,
-                android.R.layout.simple_list_item_1,
-                cart.getItemList());
+        adapter = new CartAdapter(this, cart.getItemList());
         setListAdapter(adapter);
 
         // TextView for total
@@ -153,36 +149,45 @@ public class CartActivity extends ListActivity {
 
     }
 
+    // Adding Miscellaneous Items to the total
+    public void onClickNewItem (View view){
+        // Pop the alert dialog on click
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(CartActivity.this);
+        alertDialog.setTitle("Adding Miscellaneous Item");
+        // Gets the input from the user and stores here
+        final EditText input = new EditText(this);
+        // Gets a number value in decimal form
+        // Note: Can go over two decimal places need to look into that
+        input.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        alertDialog.setView(input);
+        alertDialog.setMessage("How much is the item you would like to add?");
+        alertDialog.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                String miscBuffer = input.getText().toString();
+                BigDecimal newItem = new BigDecimal(miscBuffer);
+                cart.addMisc(rid, newItem);
+                adapter.notifyDataSetChanged();
+                textView.setText(String.format("Total: $%s", cart.getTotal().toString()));
+
+            }
+        });
+        alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+
+
+            }
+        });
+        alertDialog.setIcon(android.R.drawable.ic_dialog_alert);
+        alertDialog.show();
+
+    }
+
     public void onClickClearCart(View view) {
         // PROMPT WARNING FOR CLEAR CART------------------------------
         // Clear local cart and database cart
 
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
         alertDialog.setTitle("Clear Cart");
-        alertDialog.setMessage("Are you sure?");
-        alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                cart.clearCart();
-                db.clearCart(rid);
-
-                // Update ListView and total text
-                adapter.notifyDataSetChanged();
-                textView.setText(String.format("Total: $%s", cart.getTotal().toString()));
-            }
-        });
-
-        alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-
-            }
-        });
-        alertDialog.setIcon(android.R.drawable.ic_dialog_alert);
-        alertDialog.show();
-    }
-
-    public void onClickDeleteFavorite(View view) {
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
-        alertDialog.setTitle("Delete Favorite");
         alertDialog.setMessage("Are you sure?");
         alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {

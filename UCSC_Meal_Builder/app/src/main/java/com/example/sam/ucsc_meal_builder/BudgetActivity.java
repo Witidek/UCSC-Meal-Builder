@@ -20,13 +20,13 @@ import java.math.BigDecimal;
 
 public class BudgetActivity extends Activity {
 
-    int meals = 0;
-    BigDecimal flexis = new BigDecimal(0);
-    BigDecimal cash = new BigDecimal(0);
+    private int meals = 0;
+    private BigDecimal flexis = new BigDecimal(0);
+    private BigDecimal cash = new BigDecimal(0);
 
-    TextView mealText;
-    TextView flexiText;
-    TextView cashText;
+    private TextView mealText;
+    private TextView flexiText;
+    private TextView cashText;
 
     //The rid needs to be carried from the previous
     //(Restaurant)Activity to the next (Menu)Activity
@@ -38,7 +38,11 @@ public class BudgetActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Load layout
         setContentView(R.layout.activity_budget);
+
+        // Set home button and title
         getActionBar().setHomeButtonEnabled(true);
         getActionBar().setDisplayHomeAsUpEnabled(true);
         getActionBar().setDisplayShowTitleEnabled(false);
@@ -46,7 +50,6 @@ public class BudgetActivity extends Activity {
         getActionBar().setCustomView(R.layout.ab_title);
         TextView title = (TextView) findViewById(android.R.id.text1);
         title.setText("Budget");
-
 
         //Receive rid
         intent = getIntent();
@@ -65,7 +68,11 @@ public class BudgetActivity extends Activity {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus) {
-                    meals = Integer.valueOf(mealText.getText().toString());
+                    try {
+                        meals = Integer.parseInt(mealText.getText().toString());
+                    }catch (NumberFormatException e) {
+                        // Empty..
+                    }
                 }
             }
         });
@@ -164,7 +171,7 @@ public class BudgetActivity extends Activity {
             intent.putExtra("budget", budget);
 
             startActivity(intent);
-        }else{
+        }else {
             //Toast.makeText(getApplicationContext(), "Exceeds actual Balance!", Toast.LENGTH_SHORT).show();
             AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
             alertDialog.setTitle("Oh No....!");

@@ -19,22 +19,26 @@ import java.math.BigDecimal;
 public class BalanceActivity extends Activity {
 
     // Current meals and flexis value for this session (not auto-saved)
-    int meals;
-    BigDecimal flexis;
+    private int meals;
+    private BigDecimal flexis;
 
     // Variables for the EditText fields
-    TextView mealBalanceText;
-    TextView flexiBalanceText;
+    private TextView mealBalanceText;
+    private TextView flexiBalanceText;
 
     // SharedPreferences allows saving variables in AppData so data is not lost when the app
     // is closed. Each value is saved with a tag serving as its key.
-    SharedPreferences sharedPrefs;
-    SharedPreferences.Editor editPrefs;
+    private SharedPreferences sharedPrefs;
+    private SharedPreferences.Editor editPrefs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Load layout
         setContentView(R.layout.activity_balance);
+
+        // Set home button and title
         getActionBar().setHomeButtonEnabled(true);
         getActionBar().setDisplayHomeAsUpEnabled(true);
         getActionBar().setDisplayShowTitleEnabled(false);
@@ -43,7 +47,7 @@ public class BalanceActivity extends Activity {
         TextView title = (TextView) findViewById(android.R.id.text1);
         title.setText("Balance");
 
-        //balance is a Preference that contains values 'meals' and 'flexis'
+        // Balance is a preference that contains values 'meals' and 'flexis'
         sharedPrefs = getSharedPreferences("balance", MODE_PRIVATE);
         editPrefs = sharedPrefs.edit();
 
@@ -55,7 +59,7 @@ public class BalanceActivity extends Activity {
             editPrefs.putString("flexis", "0");
         }
         // Save shared preferences
-        editPrefs.commit();
+        editPrefs.apply();
 
         // Open shared preferences and fill EditText fields
         meals = sharedPrefs.getInt("meals", 0);
@@ -70,8 +74,13 @@ public class BalanceActivity extends Activity {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus) {
-                    meals = Integer.valueOf(mealBalanceText.getText().toString());
+                    try {
+                        meals = Integer.parseInt(mealBalanceText.getText().toString());
+                    }catch (NumberFormatException e) {
+                        // Empty..
+                    }
                 }
+
             }
         });
         flexiBalanceText.setOnFocusChangeListener(new View.OnFocusChangeListener() {

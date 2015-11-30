@@ -12,7 +12,8 @@
         android:layout_height="match_parent"
         android:id="@android:id/list"
         android:layout_centerHorizontal="true"
-        android:layout_above="@+id/clearCartButton" />
+        android:layout_above="@+id/clearCartButton"
+        android:layout_below="@+id/miscButton"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -35,20 +36,19 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Delete Fav"
-        android:onClick="onClickDeleteFavorite"
-        android:id="@+id/deleteFavoriteButton"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:visibility="gone"/>
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:text="Checkout"
         android:onClick="onClickCheckout"
         android:id="@+id/checkoutButton"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Misc Item"
+        android:id="@+id/miscButton"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:onClick="onClickNewItem" />
 </RelativeLayout>

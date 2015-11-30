@@ -8,7 +8,7 @@ import java.util.ArrayList;
 /**
  * Created by Sam on 10/19/2015.
  */
-public class Restaurant implements Parcelable {
+public class Restaurant {
 
     // DB table name
     public static final String TABLE = "Restaurant";
@@ -16,15 +16,18 @@ public class Restaurant implements Parcelable {
     // DB table column names
     public static final String KEY_restaurant_id = "restaurant_id";
     public static final String KEY_name = "name";
+    public static final String KEY_accepts_meals = "accepts_meals";
 
     // Fields
     private int restaurantID;
     private String name;
+    private boolean acceptsMeals;
 
     // Constructor
-    public Restaurant(int id, String n) {
-        restaurantID = id;
-        name = n;
+    public Restaurant(int id, String n, boolean b) {
+        this.restaurantID = id;
+        this.name = n;
+        this.acceptsMeals = b;
     }
 
     // Methods
@@ -36,37 +39,11 @@ public class Restaurant implements Parcelable {
         return name;
     }
 
+    public boolean getAcceptsMeals() {
+        return acceptsMeals;
+    }
+
     public String toString() {
         return name;
-    }
-
-    // Parcelable method implementations
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel out, int flags) {
-        out.writeInt(restaurantID);
-        out.writeString(name);
-    }
-
-    public static final Parcelable.Creator<Restaurant> CREATOR = new Parcelable.Creator<Restaurant>() {
-        @Override
-        public Restaurant createFromParcel(Parcel in) {
-            return new Restaurant(in);
-        }
-
-        @Override
-        public Restaurant[] newArray(int size) {
-            return new Restaurant[size];
-        }
-    };
-
-    private Restaurant(Parcel in) {
-        restaurantID = in.readInt();
-        name = in.readString();
     }
 }

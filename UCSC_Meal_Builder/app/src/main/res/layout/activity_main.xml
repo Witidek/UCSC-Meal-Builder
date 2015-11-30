@@ -15,7 +15,7 @@
         android:layout_width="wrap_content"
         android:layout_height="80dp"
         android:text="Build A Meal"
-        android:id="@+id/button"
+        android:id="@+id/buildMealButton"
         android:onClick="onClickBuildMeal"
         android:layout_below="@+id/textView"
         android:layout_alignParentRight="true"
@@ -29,26 +29,26 @@
         android:layout_width="wrap_content"
         android:layout_height="80dp"
         android:text="Balance"
-        android:id="@+id/button2"
+        android:id="@+id/balanceButton"
         android:onClick="onClickBalance"
-        android:layout_below="@+id/button"
-        android:layout_alignLeft="@+id/button"
-        android:layout_alignStart="@+id/button"
-        android:layout_alignRight="@+id/button"
-        android:layout_alignEnd="@+id/button"
+        android:layout_below="@+id/buildMealButton"
+        android:layout_alignLeft="@+id/buildMealButton"
+        android:layout_alignStart="@+id/buildMealButton"
+        android:layout_alignRight="@+id/buildMealButton"
+        android:layout_alignEnd="@+id/buildMealButton"
         android:textSize="30sp" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="80dp"
         android:text="Favorites"
-        android:id="@+id/button3"
+        android:id="@+id/favoritesButton"
         android:onClick="onClickFavorites"
-        android:layout_below="@+id/button2"
-        android:layout_alignLeft="@+id/button2"
-        android:layout_alignStart="@+id/button2"
-        android:layout_alignRight="@+id/button2"
-        android:layout_alignEnd="@+id/button2"
+        android:layout_below="@+id/balanceButton"
+        android:layout_alignLeft="@+id/balanceButton"
+        android:layout_alignStart="@+id/balanceButton"
+        android:layout_alignRight="@+id/balanceButton"
+        android:layout_alignEnd="@+id/balanceButton"
         android:textSize="30sp" />
 
     <TextView
@@ -57,7 +57,7 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Brought to you by : Team Champ"
         android:id="@+id/textView5"
-        android:layout_below="@+id/button3"
+        android:layout_below="@+id/favoritesButton"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="53dp" />
 

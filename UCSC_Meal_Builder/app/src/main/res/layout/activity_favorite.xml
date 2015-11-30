@@ -12,11 +12,4 @@
         android:background="#FFFFFF"
         android:drawSelectorOnTop="false"/>
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="New Button"
-        android:onClick="goToCart"
-        android:id="@+id/button4" />
-
 </LinearLayout>

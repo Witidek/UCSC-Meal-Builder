@@ -22,15 +22,18 @@ import java.util.ArrayList;
 
 public class MenuActivity extends ListActivity {
 
+    private static final int mealValue = 8;
+
     private DBHelper db;
     private Budget budget;
     private ArrayList<Item> itemList;
-    private ListAdapter adapter;
+    private MenuAdapter adapter;
     private ListView listView;
     private Cart cart;
 
     private Intent intent;
     private int rid;
+
     private String flexisString;
     private String cashString;
     private String misBuffer;
@@ -47,8 +50,6 @@ public class MenuActivity extends ListActivity {
     private BigDecimal numCash;
     private BigDecimal newItem;
 
-
-
     private TextView budgetText;
     private TextView subtotalText;
 
@@ -58,16 +59,20 @@ public class MenuActivity extends ListActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Load layout
         setContentView(R.layout.activity_menu);
+
+        // Set home button and title
         getActionBar().setHomeButtonEnabled(true);
         getActionBar().setDisplayHomeAsUpEnabled(true);
         getActionBar().setDisplayShowTitleEnabled(false);
         getActionBar().setDisplayShowCustomEnabled(true);
         getActionBar().setCustomView(R.layout.ab_title);
 
-        db = new DBHelper(this);
+        db = DBHelper.getInstance(this);
 
-        //Unpack extras
+        //Unpack budget from intent
         intent = getIntent();
         String previous = intent.getStringExtra("previous");
         budget = intent.getParcelableExtra("budget");
@@ -77,18 +82,18 @@ public class MenuActivity extends ListActivity {
         flexis = budget.getFlexis();
         cash = budget.getCash();
 
-        //Here comes the money
-        budgetTotal = cash.add(flexis.add(new BigDecimal(meals * 8)));
-        Toast.makeText(getApplicationContext(), budgetTotal.toString(), Toast.LENGTH_SHORT).show();
+        // Here comes the money
+        budgetTotal = cash.add(flexis.add(new BigDecimal(meals * mealValue)));
         budgetRemaining = budgetTotal;
+        //Toast.makeText(getApplicationContext(), budgetTotal.toString(), Toast.LENGTH_SHORT).show();
 
 
-        //set budgetText and subtotalText with approp. values
+        // Set budgetText and subtotalText with appropriate values
         cart = db.getCart(rid);
         budgetText = (TextView) findViewById(R.id.budgetText);
         subtotalText = (TextView) findViewById(R.id.subtotalText);
-        budgetText.setText(String.format("Budget: %s", budgetTotal.toString()));
-        subtotalText.setText(String.format("Subtotal: %s", cart.getTotal().toString()));
+        budgetText.setText(String.format("Budget: %.2f", budgetTotal));
+        subtotalText.setText(String.format("Subtotal: %.2f", cart.getTotal()));
 
         // Grab menu from database
         itemList = db.getMenu(rid);
@@ -96,8 +101,8 @@ public class MenuActivity extends ListActivity {
         title.setText(db.getRestaurantName(rid));
 
 
-        // Build ListAdapter
-        adapter = new ListAdapter(this, itemList);
+        // Build MenuAdapter
+        adapter = new MenuAdapter(this, itemList);
         setListAdapter(adapter);
         adapter.setBudgetRemaining(budgetRemaining);
 
@@ -180,41 +185,11 @@ public class MenuActivity extends ListActivity {
 
 
 
-                    // Update ListAdapter
+                    // Update MenuAdapter
                     adapter.notifyDataSetChanged();
                 }
             }
         });
-
-    }
-    // Adding Misscellaneous Items to the total
-    public void onClickNewItem (View view){
-        // Pop the alert dialog on click
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(MenuActivity.this);
-        alertDialog.setTitle("Adding Miscellaneous Item");
-        // Gets the input from the user and stores here
-        final EditText input = new EditText(this);
-        // Gets a number value in decimal form
-        // Note: Can go over two decimal places need to look into that
-        input.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
-        alertDialog.setView(input);
-        alertDialog.setMessage("How much is the item you would like to add?");
-        alertDialog.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                misBuffer = input.getText().toString();
-                newItem = new BigDecimal(misBuffer);
-                Toast.makeText(getApplicationContext(), newItem.toString(), Toast.LENGTH_SHORT).show();
-
-            }
-        });
-        alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-
-
-            }
-        });
-        alertDialog.setIcon(android.R.drawable.ic_dialog_alert);
-        alertDialog.show();
 
     }
 
@@ -234,7 +209,7 @@ public class MenuActivity extends ListActivity {
             case R.id.sort_name:
                 // Sort itemList alphabetically by name
                 itemList = SortHelper.sortAlpha(itemList);
-                adapter = new ListAdapter(this, itemList);
+                adapter = new MenuAdapter(this, itemList);
                 adapter.setBudgetRemaining(budgetRemaining);
                 setListAdapter(adapter);
                 return true;
@@ -242,7 +217,7 @@ public class MenuActivity extends ListActivity {
             case R.id.sort_high:
                 // Sort itemList by price
                 itemList = SortHelper.sortHigh(itemList);
-                adapter = new ListAdapter(this, itemList);
+                adapter = new MenuAdapter(this, itemList);
                 adapter.setBudgetRemaining(budgetRemaining);
                 setListAdapter(adapter);
                 return true;
@@ -250,7 +225,7 @@ public class MenuActivity extends ListActivity {
             case R.id.sort_low:
                 // Sort itemList by price
                 itemList = SortHelper.sortLow(itemList);
-                adapter = new ListAdapter(this, itemList);
+                adapter = new MenuAdapter(this, itemList);
                 adapter.setBudgetRemaining(budgetRemaining);
                 setListAdapter(adapter);
                 return true;
@@ -258,7 +233,7 @@ public class MenuActivity extends ListActivity {
             case R.id.sort_course:
                 // Sort itemList by course
                 itemList = SortHelper.sortCourse(itemList);
-                adapter = new ListAdapter(this, itemList);
+                adapter = new MenuAdapter(this, itemList);
                 adapter.setBudgetRemaining(budgetRemaining);
                 setListAdapter(adapter);
                 return true;

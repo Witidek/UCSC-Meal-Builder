@@ -64,6 +64,18 @@ public class Cart {
         this.items.add(i);
     }
 
+    public void addMisc(int rid, BigDecimal price){
+        // check for existing misc item
+        for (Item item: items) {
+            if (item.getItemID() == 9999) {
+                item.setPrice(price);
+                return;
+            }
+        }
+        Item item = new Item(9999, "Miscellaneous", price, rid, "Misc", 1);
+        this.items.add(item);
+    }
+
     public void deleteItem(int i) {
         this.items.remove(i);
     }
