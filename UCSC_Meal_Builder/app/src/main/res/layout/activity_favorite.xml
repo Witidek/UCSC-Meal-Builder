@@ -15,7 +15,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="New Button"
+        android:text="Delete Favorite"
         android:onClick="goToCart"
         android:id="@+id/button4" />
 
