@@ -10,7 +10,6 @@
         android:layout_width="match_parent"
         android:layout_height="310dp"
         android:background="#FFFFFF"
-        android:listSelector="@android:color/darker_gray"
         android:drawSelectorOnTop="false"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"

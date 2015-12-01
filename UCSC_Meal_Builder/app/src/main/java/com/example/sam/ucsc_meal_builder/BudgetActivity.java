@@ -1,14 +1,10 @@
 package com.example.sam.ucsc_meal_builder;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
-
 import android.content.SharedPreferences;
-
 import android.support.v4.app.NavUtils;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -152,7 +148,7 @@ public class BudgetActivity extends Activity {
     public void onClickArrow(View view) {
         BigDecimal totalMeals = new BigDecimal(sharedPrefs.getInt("meals", 0));
         BigDecimal totalFlexies = new BigDecimal(sharedPrefs.getString("flexis", "0"));
-        Toast.makeText(getApplicationContext(), totalMeals.toString(), Toast.LENGTH_SHORT).show();
+
         if( totalMeals.compareTo(new BigDecimal(meals)) >= 0 && totalFlexies.compareTo(flexis) >= 0) {
 
             Intent intent = new Intent(BudgetActivity.this, MenuActivity.class);
@@ -172,7 +168,6 @@ public class BudgetActivity extends Activity {
 
             startActivity(intent);
         }else {
-            //Toast.makeText(getApplicationContext(), "Exceeds actual Balance!", Toast.LENGTH_SHORT).show();
             AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
             alertDialog.setTitle("Oh No....!");
             alertDialog.setMessage("You are over your Balance!");

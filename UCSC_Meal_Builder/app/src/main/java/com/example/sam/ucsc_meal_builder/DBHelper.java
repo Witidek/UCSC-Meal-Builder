@@ -237,7 +237,7 @@ public class DBHelper extends SQLiteAssetHelper{
         }
 
         for (Item item: itemList) {
-            // INSERT INTO Favorite VALUES (null, item.getItemID(), 1);
+            // INSERT INTO Favorite VALUES (favID, favName, item.getRestaurantID(), item.getItemID(), item.getQuantity());
             ContentValues values = new ContentValues();
             values.put("favorite_id", favID);
             values.put("name", favName);

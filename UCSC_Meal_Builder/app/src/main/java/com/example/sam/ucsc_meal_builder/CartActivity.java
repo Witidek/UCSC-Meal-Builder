@@ -22,27 +22,31 @@ import java.math.BigDecimal;
 
 public class CartActivity extends ListActivity {
 
-    private Intent intent;
-    private Budget budget;
-    private int rid;
-    private String favBuffer;
-    private BigDecimal budgetTotal;
-    private int meals;
-    private BigDecimal cash;
-    private BigDecimal flexis;
     private DBHelper db;
     private CartAdapter adapter;
-
-
+    private Budget budget;
     private Cart cart;
-    private TextView textView;
+
+    private Intent intent;
+    private String previous;
+    private int rid;
+
+    private int meals;
+    private BigDecimal flexis;
+    private BigDecimal cash;
+
+    private TextView subtotalText;
     private SharedPreferences sharedPrefs;
     private SharedPreferences.Editor editPrefs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Load layout
         setContentView(R.layout.activity_cart);
+
+        // Set home button and title
         getActionBar().setHomeButtonEnabled(true);
         getActionBar().setDisplayHomeAsUpEnabled(true);
         getActionBar().setDisplayShowTitleEnabled(false);
@@ -51,20 +55,21 @@ public class CartActivity extends ListActivity {
         TextView title = (TextView) findViewById(android.R.id.text1);
         title.setText("Cart");
 
-        // Get restaurant_id from intent
+        // Unpack budget from intent
         intent = getIntent();
-        String previous = intent.getStringExtra("previous");
-        if (previous.equals("FavoriteActivity")) {
-            View button = findViewById(R.id.clearCartButton);
-            button.setVisibility(View.GONE);
-        }
-
+        previous = intent.getStringExtra("previous");
         budget = intent.getParcelableExtra("budget");
 
         rid = budget.getRID();
         meals = budget.getMeals();
         flexis = budget.getFlexis();
         cash = budget.getCash();
+
+        // If CartActivity was reached from FavoriteActivity, disable clear cart button
+        if (previous.equals("FavoriteActivity")) {
+            View clearCartButton = findViewById(R.id.clearCartButton);
+            clearCartButton.setVisibility(View.GONE);
+        }
 
         // Load SharedPreferences to get balance
         sharedPrefs = getSharedPreferences("balance", MODE_PRIVATE);
@@ -79,10 +84,10 @@ public class CartActivity extends ListActivity {
         setListAdapter(adapter);
 
         // TextView for total
-        textView = (TextView) findViewById(R.id.totalText);
-        textView.setText(String.format("Total: $%.2f", cart.getTotal()));
+        subtotalText = (TextView) findViewById(R.id.totalText);
+        subtotalText.setText(String.format("Total: $%.2f", cart.getTotal()));
 
-        // onClick event for ListView items
+        // onClick event for ListView items only if previous was MenuActivity
         if (previous.equals("MenuActivity")) {
             ListView listView = getListView();
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -91,7 +96,7 @@ public class CartActivity extends ListActivity {
                     db.deleteItem(adapter.getItem(position));
                     cart.deleteItem(position);
                     adapter.notifyDataSetChanged();
-                    textView.setText(String.format("Total: $%.2f", cart.getTotal()));
+                    subtotalText.setText(String.format("Total: $%.2f", cart.getTotal()));
                 }
             });
         }
@@ -106,38 +111,7 @@ public class CartActivity extends ListActivity {
                 return true;
 
             case R.id.favorite_button:
-                // prompt to name favorite
-                // Pop the alert dialog on click
-                AlertDialog.Builder alertDialog = new AlertDialog.Builder(CartActivity.this);
-                alertDialog.setTitle("Adding Favorite Item");
-                // Gets the input from the user and stores here
-                final EditText input = new EditText(this);
-                // Gets a number value in decimal form
-                // Note: Can go over two decimal places need to look into that
-                input.setInputType(InputType.TYPE_CLASS_TEXT);
-                alertDialog.setView(input);
-                alertDialog.setMessage("What would you like to name the favorite?");
-                alertDialog.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        favBuffer = input.getText().toString();
-                        //newItem = new BigDecimal(misBuffer);
-                        if(!favBuffer.isEmpty()) {
-                            Toast.makeText(getApplicationContext(), favBuffer, Toast.LENGTH_SHORT).show();
-                            //Actually put it in favorites:
-                            db.addToFavorites(cart.getItemList(), favBuffer, budget);
-                        }
-                    }
-                });
-                alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-
-
-                    }
-                });
-                alertDialog.setIcon(android.R.drawable.ic_dialog_alert);
-                alertDialog.show();
-                // save restaurant cart to Favorite table in db
-                Toast.makeText(CartActivity.this, "favorited", Toast.LENGTH_SHORT).show();
+                onClickFavorite();
                 return true;
 
             case R.id.add_misc_button:
@@ -152,32 +126,60 @@ public class CartActivity extends ListActivity {
 
     }
 
+    public void onClickFavorite() {
+        // Prompt to name favorite
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(CartActivity.this);
+        alertDialog.setTitle("Adding Favorite Item");
+
+        // Gets the input from the user and stores here
+        final EditText editFavName = new EditText(this);
+        editFavName.setInputType(InputType.TYPE_CLASS_TEXT);
+        alertDialog.setView(editFavName);
+        alertDialog.setMessage("What would you like to name the favorite?");
+        alertDialog.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                String favName = editFavName.getText().toString();
+                if (!favName.isEmpty() && cart.getSize() > 0) {
+                    db.addToFavorites(cart.getItemList(), favName, budget);
+                    String message = String.format("Saved %s to favorites!", favName);
+                    Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                // Empty
+            }
+        });
+        alertDialog.setIcon(android.R.drawable.ic_dialog_alert);
+        alertDialog.show();
+    }
+
     // Adding Miscellaneous Items to the total
     public void onClickNewItem (){
         // Pop the alert dialog on click
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(CartActivity.this);
         alertDialog.setTitle("Adding Miscellaneous Item");
-        // Gets the input from the user and stores here
-        final EditText input = new EditText(this);
-        // Gets a number value in decimal form
-        // Note: Can go over two decimal places need to look into that
-        input.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
-        alertDialog.setView(input);
         alertDialog.setMessage("How much is the item you would like to add?");
+
+        // Gets the input from the user and stores here
+        final EditText editMiscPrice = new EditText(this);
+        editMiscPrice.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        alertDialog.setView(editMiscPrice);
+
         alertDialog.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-                String miscBuffer = input.getText().toString();
-                BigDecimal newItem = new BigDecimal(miscBuffer);
-                cart.addMisc(rid, newItem);
+                String miscPriceString = editMiscPrice.getText().toString();
+                BigDecimal miscPrice = new BigDecimal(miscPriceString);
+                cart.addMisc(rid, miscPrice);
                 adapter.notifyDataSetChanged();
-                textView.setText(String.format("Total: $%.2f", cart.getTotal()));
+                subtotalText.setText(String.format("Total: $%.2f", cart.getTotal()));
 
             }
         });
         alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-
-
+                // Empty
             }
         });
         alertDialog.setIcon(android.R.drawable.ic_dialog_alert);
@@ -186,9 +188,6 @@ public class CartActivity extends ListActivity {
     }
 
     public void onClickClearCart(View view) {
-        // PROMPT WARNING FOR CLEAR CART------------------------------
-        // Clear local cart and database cart
-
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
         alertDialog.setTitle("Clear Cart");
         alertDialog.setMessage("Are you sure?");
@@ -199,13 +198,12 @@ public class CartActivity extends ListActivity {
 
                 // Update ListView and total text
                 adapter.notifyDataSetChanged();
-                textView.setText(String.format("Total: $%.2f", cart.getTotal()));
+                subtotalText.setText(String.format("Total: $%.2f", cart.getTotal()));
             }
         });
-
         alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-
+                // Empty
             }
         });
         alertDialog.setIcon(android.R.drawable.ic_dialog_alert);
@@ -216,6 +214,16 @@ public class CartActivity extends ListActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         new MenuInflater(this).inflate(R.menu.actionbar_cart, menu);
         return (super.onCreateOptionsMenu(menu));
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        // Disable action bar buttons if previous activity was FavoriteActivity
+        if (previous.equals("FavoriteActivity")) {
+            menu.findItem(R.id.favorite_button).setVisible(false);
+            menu.findItem(R.id.add_misc_button).setVisible(false);
+        }
+        return super.onPrepareOptionsMenu(menu);
     }
 
     public void onClickCheckout(View view) {
@@ -235,11 +243,10 @@ public class CartActivity extends ListActivity {
                 BigDecimal compareMeal = amountMeals.min(new BigDecimal(meals));
                 BigDecimal remainAmount = total.subtract(compareMeal.multiply(valueMeal));
                 BigDecimal resultflexies;
-                //Toast.makeText(getApplicationContext(), compareMeal.toString(), Toast.LENGTH_SHORT).show();
                 BigDecimal resultMeals = totalMeals.subtract(compareMeal);
                 if(remainAmount.compareTo(flexis) >= 0) {
                     resultflexies = totalFlexies.subtract(flexis);
-                }else{
+                } else {
                     resultflexies = totalFlexies.subtract(remainAmount);
                 }
 
@@ -250,17 +257,14 @@ public class CartActivity extends ListActivity {
                 }
                 editPrefs.commit();
 
-                // Clear local cart and database cart
-                cart.clearCart();
+                // Clear database cart
                 db.clearCart(rid);
 
-                // Update ListView and total text
-                adapter.notifyDataSetChanged();
-                textView.setText(String.format("Total: $%.2f", cart.getTotal()));
+                // Return to home
+                startActivity(new Intent(CartActivity.this, MainActivity.class));
 
             }
         });
-
         alertDialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 // Leaving Blank
