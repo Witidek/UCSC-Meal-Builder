@@ -107,4 +107,30 @@
         android:layout_alignParentEnd="true"
         android:onClick = "onClickArrow"/>
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Small Text"
+        android:id="@+id/mealBalanceText"
+        android:gravity="center_horizontal"
+        android:layout_below="@+id/editBudgetText"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="12dp"
+        android:layout_toLeftOf="@+id/textView4"
+        android:layout_toStartOf="@+id/textView4" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Small Text"
+        android:id="@+id/flexiBalanceText"
+        android:gravity="center_horizontal"
+        android:layout_alignTop="@+id/mealBalanceText"
+        android:layout_toRightOf="@+id/textView4"
+        android:layout_alignRight="@+id/button8"
+        android:layout_alignEnd="@+id/button8" />
+
 </RelativeLayout>

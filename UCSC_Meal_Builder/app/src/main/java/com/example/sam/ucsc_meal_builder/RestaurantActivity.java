@@ -2,7 +2,6 @@ package com.example.sam.ucsc_meal_builder;
 
 import android.app.ListActivity;
 import android.content.Intent;
-//import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.view.MenuItem;
@@ -12,16 +11,25 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.Toolbar;
 
 import java.util.ArrayList;
 
+/**
+ * This activity can be started from MainActivity, or returned to through android back button from
+ * BudgetActivity or BudgetActivity2. It contains a ListView of the names of restaurants on-campus.
+ */
 public class RestaurantActivity extends ListActivity {
 
     private DBHelper db;
     private ArrayList<Restaurant> restaurantList;
     private ArrayAdapter<Restaurant> adapter;
 
+    /**
+     * Actionbar is loaded and setup, the database is queried for a list of restaurants,
+     * a basic ArrayAdapter is constructed to display names of restaurants in a ListView, and an
+     * on click listener for the ListView takes the user to the next activity which can be either
+     * BudgetActivity or BudgetAcitivity2.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,6 +81,9 @@ public class RestaurantActivity extends ListActivity {
         });
     }
 
+    /**
+     * Enable the home button in top left of actionbar to return to MainActivity when pressed
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {

@@ -1,35 +1,64 @@
 package com.example.sam.ucsc_meal_builder;
 
-import android.widget.Toast;
-
 import java.util.ArrayList;
 
 /**
- * Created by Kevin on 11/17/2015.
+ * A helper class that contains sorting methods. No constructor and no instances of this class
+ * can be made. Used for sorting ArrayLists of items for organization in MenuActivity.
  */
 public class SortHelper {
 
-    // Enumerator for sorting types
+    /** Enumerator for sorting types */
     private enum SortType {LOW, HIGH, ALPHA, COURSE};
 
-    // Public methods to initiate sorting
+    /**
+     * Public sorting method to order the ArrayList starting from item with lowest price to highest.
+     *
+     * @param itemList      ArrayList to be sorted
+     * @return mergeSort()  resulting ArrayList sorted by mergeSort
+     */
     public static ArrayList<Item> sortLow(ArrayList<Item> itemList) {
         return mergeSort(itemList, SortType.LOW);
     }
 
+    /**
+     * Public sorting method to order the ArrayList starting from item with highest price to lowest.
+     *
+     * @param itemList      ArrayList to be sorted
+     * @return mergeSort()  resulting ArrayList sorted by mergeSort
+     */
     public static ArrayList<Item> sortHigh(ArrayList<Item> itemList) {
         return mergeSort(itemList, SortType.HIGH);
     }
 
+    /**
+     * Public sorting method to sort the ArrayList by alphabetical order of item name.
+     *
+     * @param itemList      ArrayList to be sorted
+     * @return mergeSort()  resulting ArrayList sorted by mergeSort
+     */
     public static ArrayList<Item> sortAlpha(ArrayList<Item> itemList) {
         return mergeSort(itemList, SortType.ALPHA);
     }
 
+    /**
+     * Public sorting method to sort the ArrayList by alphabetical order of item's course.
+     *
+     * @param itemList      ArrayList to be sorted
+     * @return mergeSort()  resulting ArrayList sorted by mergeSort
+     */
     public static ArrayList<Item> sortCourse(ArrayList<Item> itemList) {
         return mergeSort(itemList, SortType.COURSE);
     }
 
-    // Switch case comparison to compare two items
+    /**
+     * Switch case comparison to compare two items. Uses item object information to compare
+     * depending on what type of sorting is given.
+     *
+     * @param left   left item to compare
+     * @param right  right item to compare
+     * @param type   what to sort by
+     */
     private static boolean sortCompare(Item left, Item right, SortType type) {
         switch(type) {
             case LOW:
@@ -46,7 +75,14 @@ public class SortHelper {
         }
     }
 
-    // Merges two lists together using sortCompare
+    /**
+     * Sort and merge two half lists together using sortCompare
+     *
+     * @param left     left half of ArrayList
+     * @param right    right half of ArrayList
+     * @param type     what to sort by
+     * @return result  combined left and right into one sorted ArrayList
+     */
     private static ArrayList<Item> merge(ArrayList<Item> left, ArrayList<Item> right, SortType type) {
 
         // Combined result list
@@ -79,7 +115,13 @@ public class SortHelper {
         return result;
     }
 
-    // Main sorting method, splits list into many smaller lists, then use merge and sortCompare
+    /**
+     * Main recursive sorting method, splits list into many smaller lists, then use merge and
+     * sortCompare. Implementation of MergeSort.
+     *
+     * @param itemList  ArrayList to be sorted
+     * @param type      what to sort by
+     */
     private static ArrayList<Item> mergeSort(ArrayList<Item> itemList, SortType type) {
 
         // Two half arrays to split

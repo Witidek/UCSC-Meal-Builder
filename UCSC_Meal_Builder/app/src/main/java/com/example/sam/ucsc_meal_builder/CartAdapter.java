@@ -1,39 +1,47 @@
 package com.example.sam.ucsc_meal_builder;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 
 /**
-* Created by Jason on 11/29/2015.
-*/
+ * A custom ArrayAdapter class to display items in a ListView for CartActivity.
+ */
 public class CartAdapter extends ArrayAdapter<Item> {
 
-    // Fields
+    /** Context this instance was created from */
     private final Context context;
+    /** ArrayList of items to display */
     private final ArrayList<Item> items;
 
-    // Static fields for views within each row
+    /** Static inner class to keep track of layout Views */
     static class ViewHolder {
         public TextView quantityView;
         public TextView nameView;
         public TextView priceView;
     }
 
-    // Constructor
+    /** Constructor for CartAdapter */
     public CartAdapter(Context context, ArrayList<Item> items) {
         super(context, R.layout.row_cart, items);
         this.context = context;
         this.items = items;
     }
 
+    /**
+     * Creates new view or recycles old view to display item quantity aligned left and item price
+     * aligned right in %.2f with item name in the middle with no overlap.
+     *
+     * @param position     row position in ListView
+     * @param convertView  recycled view
+     * @param parent       ViewGroup
+     * @return             the view to be displayed on app
+     */
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 

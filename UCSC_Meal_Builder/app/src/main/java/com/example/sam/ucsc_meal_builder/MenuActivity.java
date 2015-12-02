@@ -20,6 +20,11 @@ import android.widget.Toast;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 
+/**
+ * This activity can be started from BudgetActivity or BudgetActivity2, or returned to through
+ * android back button from CartActivity. It contains a ListView made with MenuAdapter to display
+ * item names and prices.
+ */
 public class MenuActivity extends ListActivity {
 
     private static final int mealValue = 8;
@@ -40,6 +45,12 @@ public class MenuActivity extends ListActivity {
     private BigDecimal budgetTotal;
     private BigDecimal budgetRemaining;
 
+    /**
+     * Actionbar is loaded and setup, the database is queried for a list of items,
+     * a MenuAdapter is constructed to display names and prices of items in a ListView, and an
+     * on click listener for the ListView prompts the user that they will go over budget if the item
+     * is too expensive or ask the user to input their desired quantity of that item.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,7 +70,7 @@ public class MenuActivity extends ListActivity {
         String previous = intent.getStringExtra("previous");
         budget = intent.getParcelableExtra("budget");
 
-        rid = budget.getRID();
+        rid = budget.getRestaurantID();
         int meals = budget.getMeals();
         BigDecimal flexis = budget.getFlexis();
         BigDecimal cash = budget.getCash();
@@ -73,8 +84,8 @@ public class MenuActivity extends ListActivity {
         cart = db.getCart(rid);
         budgetText = (TextView) findViewById(R.id.budgetText);
         subtotalText = (TextView) findViewById(R.id.subtotalText);
-        budgetText.setText(String.format("Budget: %.2f", budgetTotal));
-        subtotalText.setText(String.format("Subtotal: %.2f", cart.getTotal()));
+        budgetText.setText(String.format("Budget: $%.2f", budgetTotal));
+        subtotalText.setText(String.format("Subtotal: $%.2f", cart.getTotal()));
 
         // Grab menu from database
         itemList = db.getMenu(rid);
@@ -136,7 +147,7 @@ public class MenuActivity extends ListActivity {
                                         adapter.setBudgetRemaining(budgetRemaining);
 
                                         // Update subtotal TextView and toast item addition
-                                        subtotalText.setText(String.format("Subtotal: %.2f", cart.getTotal()));
+                                        subtotalText.setText(String.format("Subtotal: $%.2f", cart.getTotal()));
                                         String message = "Added " + adapter.getItem(position).getName() + " to cart";
                                         Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
 
@@ -175,6 +186,10 @@ public class MenuActivity extends ListActivity {
 
     }
 
+    /**
+     * Enable the home button in top left of actionbar to return to MainActivity when pressed,
+     * a drop down menu with sorting options, and a button to start the CartActivity.
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -227,6 +242,10 @@ public class MenuActivity extends ListActivity {
         }
     }
 
+    /**
+     * Re-sync the local cart object with the Cart database table, calculate budgetRemaining, and
+     * recreate the ListView to prevent any formatting errors.
+     */
     @Override
     public void onResume() {
         // Always call the superclass method first
@@ -240,18 +259,25 @@ public class MenuActivity extends ListActivity {
         adapter.setBudgetRemaining(budgetRemaining);
 
         // Update subtotal TextView
-        subtotalText.setText(String.format("Subtotal: %.2f", cart.getTotal()));
+        subtotalText.setText(String.format("Subtotal: $%.2f", cart.getTotal()));
 
         // Redraw ListView
         listView.invalidateViews();
     }
 
+    /**
+     * Enables the actionbar menu and loads the appropriate layout
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         new MenuInflater(this).inflate(R.menu.actionbar_menu, menu);
         return (super.onCreateOptionsMenu(menu));
     }
 
+    /**
+     * Executed when user presses the cart button in the actionbar menu. Passes budget as an intent
+     * and starts up CartActivity.
+     */
     public void onCartPressed(){
         Intent intent = new Intent(MenuActivity.this, CartActivity.class);
         intent.putExtra("previous", "MenuActivity");

@@ -20,7 +20,14 @@ import android.widget.Toast;
 
 import java.math.BigDecimal;
 
+/**
+ * This activity can be started from MenuActivity or FavoriteActivity. It contains a ListView made
+ * with CartAdapter to display item quantities, names and prices. Display and interaction with this
+ * activity changes depending on what the previous activity was.
+ */
 public class CartActivity extends ListActivity {
+
+    private static final BigDecimal mealValue = new BigDecimal(8);
 
     private DBHelper db;
     private CartAdapter adapter;
@@ -39,6 +46,15 @@ public class CartActivity extends ListActivity {
     private SharedPreferences sharedPrefs;
     private SharedPreferences.Editor editPrefs;
 
+    /**
+     * Actionbar is loaded and setup, the database is queried for a list of items in cart,
+     * a CartAdapter is constructed to display quantities, names and prices of items in a ListView,
+     * and an on click listener for the ListView deletes the item at whatever position the user
+     * presses.
+     *
+     * If CartActivity was started from FavoriteActivity then actionbar menu is hidden, clear cart
+     * is hidden, and user will not be able to delete items by pressing ListView rows.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,7 +76,7 @@ public class CartActivity extends ListActivity {
         previous = intent.getStringExtra("previous");
         budget = intent.getParcelableExtra("budget");
 
-        rid = budget.getRID();
+        rid = budget.getRestaurantID();
         meals = budget.getMeals();
         flexis = budget.getFlexis();
         cash = budget.getCash();
@@ -102,6 +118,11 @@ public class CartActivity extends ListActivity {
         }
     }
 
+    /**
+     * Enable the home button in top left of actionbar to return to MainActivity when pressed,
+     * a favorite button which prompts the user to save the cart with a name, and a button to add
+     * a miscellaneous item.
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -121,11 +142,35 @@ public class CartActivity extends ListActivity {
             default:
                 return super.onOptionsItemSelected(item);
 
-
         }
-
     }
 
+    /**
+     * Enables the actionbar menu and loads the appropriate layout
+     */
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        new MenuInflater(this).inflate(R.menu.actionbar_cart, menu);
+        return (super.onCreateOptionsMenu(menu));
+    }
+
+    /**
+     * Hides actionbar menu buttons if previous activity was FavoriteActivity
+     */
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        if (previous.equals("FavoriteActivity")) {
+            menu.findItem(R.id.favorite_button).setVisible(false);
+            menu.findItem(R.id.add_misc_button).setVisible(false);
+        }
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    /**
+     * Prompts user to save the current cart for the current restaurant with a user inputted name.
+     * The cart with the favorite name is then saved to Favorite table the and budget information to
+     * Budget table. Favorites can have duplicate names and the exact same carts.
+     */
     public void onClickFavorite() {
         // Prompt to name favorite
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(CartActivity.this);
@@ -139,7 +184,7 @@ public class CartActivity extends ListActivity {
         alertDialog.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 String favName = editFavName.getText().toString();
-                if (!favName.isEmpty() && cart.getSize() > 0) {
+                if (!favName.isEmpty() && !cart.isEmpty()) {
                     db.addToFavorites(cart.getItemList(), favName, budget);
                     String message = String.format("Saved %s to favorites!", favName);
                     Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
@@ -155,7 +200,11 @@ public class CartActivity extends ListActivity {
         alertDialog.show();
     }
 
-    // Adding Miscellaneous Items to the total
+    /**
+     * Prompts the user to enter a numerical decimal value for an extra cost. This does not check
+     * against the budget and this item will not be saved into any favorite. Trying to add a second
+     * miscellaneous item when one already exists will simply overwrite the existing item's price.
+     */
     public void onClickNewItem (){
         // Pop the alert dialog on click
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(CartActivity.this);
@@ -187,6 +236,10 @@ public class CartActivity extends ListActivity {
 
     }
 
+    /**
+     * Prompts user for confirmation and upon confirmation deletes all rows in Cart table for this
+     * restaurant as well as clearing the local cart object and ListView.
+     */
     public void onClickClearCart(View view) {
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
         alertDialog.setTitle("Clear Cart");
@@ -210,24 +263,13 @@ public class CartActivity extends ListActivity {
         alertDialog.show();
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        new MenuInflater(this).inflate(R.menu.actionbar_cart, menu);
-        return (super.onCreateOptionsMenu(menu));
-    }
-
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        // Disable action bar buttons if previous activity was FavoriteActivity
-        if (previous.equals("FavoriteActivity")) {
-            menu.findItem(R.id.favorite_button).setVisible(false);
-            menu.findItem(R.id.add_misc_button).setVisible(false);
-        }
-        return super.onPrepareOptionsMenu(menu);
-    }
-
+    /**
+     * Prompts for the user for confirmation and upon confirmation will try and optimize meal and
+     * flexis spending usage through a priority pattern where meals are used first, then flexis,
+     * and cash last. The cart is also cleared at the end, and the user will return to MainActivity.
+     */
     public void onClickCheckout(View view) {
-        // PROMPT CONFIRMATION FOR CHECKOUT----------------------------
+
         // Subtract total from meals and flexis balance
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
         alertDialog.setTitle("Checkout Cart");
@@ -235,34 +277,62 @@ public class CartActivity extends ListActivity {
         alertDialog.setMessage(confirm);
         alertDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-                BigDecimal totalMeals = new BigDecimal(sharedPrefs.getInt("meals", 0));
-                BigDecimal totalFlexies = new BigDecimal(sharedPrefs.getString("flexis", "0"));
-                BigDecimal valueMeal = new BigDecimal(8);
-                BigDecimal total = cart.getTotal();
-                BigDecimal amountMeals = total.divideToIntegralValue(valueMeal);
-                BigDecimal compareMeal = amountMeals.min(new BigDecimal(meals));
-                BigDecimal remainAmount = total.subtract(compareMeal.multiply(valueMeal));
-                BigDecimal resultflexies;
-                BigDecimal resultMeals = totalMeals.subtract(compareMeal);
-                if(remainAmount.compareTo(flexis) >= 0) {
-                    resultflexies = totalFlexies.subtract(flexis);
-                } else {
-                    resultflexies = totalFlexies.subtract(remainAmount);
+                // Load meals and flexis balances
+                BigDecimal mealsBalance = new BigDecimal(sharedPrefs.getInt("meals", 0));
+                BigDecimal flexisBalance = new BigDecimal(sharedPrefs.getString("flexis", "0"));
+
+                // Get cart total
+                BigDecimal totalRemaining = cart.getTotal();
+
+                // Keep track of how much used from each currency type
+                BigDecimal mealsUsed = new BigDecimal(0);
+                BigDecimal flexisUsed = new BigDecimal(0);
+
+                // Divide total by mealValue (8) and floor it
+                mealsUsed = totalRemaining.divideToIntegralValue(mealValue);
+
+                // Use min of mealsBudget and mealsUsed calculated in previous line
+                mealsUsed = mealsUsed.min(new BigDecimal(meals));
+
+                // Subtract mealsUsed * mealValue from totalRemaining
+                totalRemaining = totalRemaining.subtract(mealsUsed.multiply(mealValue));
+
+                // Check edge case for 1 missing meal
+                if (totalRemaining.compareTo(flexis) > 0) {
+                    mealsUsed = mealsUsed.add(new BigDecimal(1));
+                    totalRemaining = totalRemaining.subtract(mealValue);
                 }
 
-                editPrefs.putInt("meals", resultMeals.intValue());
-                // If only using cash or meals don't change flexies or if cash covers it
-                if(flexis.compareTo(new BigDecimal(0)) > 0) {
-                    editPrefs.putString("flexis", resultflexies.toString());
-                }
-                editPrefs.commit();
+                // Only continue calculating flexis if there is totalRemaining left
+                if (totalRemaining.compareTo(new BigDecimal(0)) > 0) {
+                    // Calculate flexis used next
+                    if (totalRemaining.compareTo(flexis) > 0) {
+                        flexisUsed = flexis;
+                    } else {
+                        flexisUsed = totalRemaining;
+                    }
 
-                // Clear database cart
+                    // Check cash just in case
+                    if (totalRemaining.compareTo(cash) > 0) {
+                        // Should never reach here!
+                        Toast.makeText(CartActivity.this, "Bad calculation!", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                // Subtract stuff used from balance, save changes
+                BigDecimal mealsResult = mealsBalance.subtract(mealsUsed);
+                BigDecimal flexisResult = flexisBalance.subtract(flexisUsed);
+                editPrefs.putInt("meals", mealsResult.intValue());
+                editPrefs.putString("flexis", flexisResult.toString());
+                editPrefs.apply();
+
+                // Clear cart in DB
                 db.clearCart(rid);
+                String message = String.format("Done! Spent %d meals and %.2f flexis!", mealsUsed.intValue(), flexisUsed);
+                Toast.makeText(CartActivity.this, message, Toast.LENGTH_SHORT).show();
 
                 // Return to home
                 startActivity(new Intent(CartActivity.this, MainActivity.class));
-
             }
         });
         alertDialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -272,7 +342,5 @@ public class CartActivity extends ListActivity {
         });
         alertDialog.setIcon(android.R.drawable.ic_dialog_alert);
         alertDialog.show();
-
-
     }
 }

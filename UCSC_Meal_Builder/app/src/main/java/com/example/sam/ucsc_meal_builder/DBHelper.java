@@ -20,21 +20,30 @@ import java.net.URL;
 import java.util.ArrayList;
 
 /**
- * Created by Jason on 10/20/2015.
+ * https://github.com/jgilfelt/android-sqlite-asset-helper
+ *
+ * A helper class to manage a local database. It clones an existing database from a file into the
+ * app, allows SQL queries to be performed on the app database, and provides methods for updating
+ * the database either through SQL upgrade scripts, or through a complete overwrite cloning a
+ * database file. All interactions with the database using SQL or JSON can be found in the methods
+ * of this class. This class only exists as a singleton which is instantiated at app startup.
  */
-public class DBHelper extends SQLiteAssetHelper{
+public class DBHelper extends SQLiteAssetHelper {
 
-    // DB file found in app/src/main/assets/databases
+    /** DB file that is cloned, found in app/src/main/assets/databases */
     private static final String DATABASE_NAME = "mealbuilder.db";
+    /** Version number when incremented signals SQLiteAssetHelper to clone new database from file */
     private static final int DATABASE_VERSION = 3;
+    /** Singleton instance of this class */
     private static DBHelper instance;
 
-    // Private singleton constructor
+    /** Private constructor for singleton */
     private DBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
         setForcedUpgrade();
     }
 
+    /** Access method for the singleton instance */
     public static DBHelper getInstance(Context context){
         if (instance == null) {
             instance = new DBHelper(context);
@@ -42,14 +51,19 @@ public class DBHelper extends SQLiteAssetHelper{
         return instance;
     }
 
-    // Returns a list of all restaurants from DB
+    /**
+     * Returns a list of all restaurants from DB as Restaurant objects.
+     *
+     * SELECT restaurant_id, name
+     * FROM Restaurant;
+     *
+     * @return restaurantList  ArrayList of Restaurant objects
+     */
     public ArrayList<Restaurant> getRestaurants() {
         // Create empty restaurant list
         ArrayList<Restaurant> restaurantList = new ArrayList<Restaurant>();
 
         // Connect to readable DB, grab restaurants from Restaurant table
-        // SELECT restaurant_id, name
-        // FROM Restaurant;
         SQLiteDatabase db = getReadableDatabase();
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
         String[] sqlSelect = new String[]{Restaurant.KEY_restaurant_id, Restaurant.KEY_name, Restaurant.KEY_accepts_meals};
@@ -72,12 +86,20 @@ public class DBHelper extends SQLiteAssetHelper{
         return restaurantList;
     }
 
+    /**
+     * Matches a name to the restaurantID given. Only used to set title in MenuActivity.
+     *
+     * SELECT name
+     * FROM Restaurant
+     * WHERE restaurant_id = rid;
+     *
+     * @param rid    restaurantID to look up
+     * @return name  name of restaurant
+     */
     public String getRestaurantName(int rid) {
         String name;
 
-        // SELECT name
-        // FROM Restaurant
-        // WHERE restaurant_id = rid;
+        // Connect to readable DB, look up name with rid
         SQLiteDatabase db = getReadableDatabase();
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
         qb.setTables(Restaurant.TABLE);
@@ -86,21 +108,29 @@ public class DBHelper extends SQLiteAssetHelper{
         String[] sqlWhereArgs = new String[]{String.valueOf(rid)};
         Cursor cursor = qb.query(db, sqlSelect, sqlWhere, sqlWhereArgs, null, null, null);
 
+        // Only one should exist, so only take first in cursor
         cursor.moveToFirst();
         name = cursor.getString(cursor.getColumnIndex(Restaurant.KEY_name));
 
         return name;
     }
 
-    // Returns a list of items from a restaurant (menu), given a restaurant id
+    /**
+     * Grabs all rows from Item table with corresponding rid and returns an ArrayList of Item
+     * objects. Used to fill and display a menu in MenuActivity so Item.quantity is disregarded.
+     *
+     * SELECT item_id, name, price
+     * FROM Item
+     * WHERE restaurant_id = rid;
+     *
+     * @param rid        restaurantID to look up
+     * @return itemList  ArrayList of items from restaurant
+     */
     public ArrayList<Item> getMenu(int rid) {
         // Create empty item list
         ArrayList<Item> itemList = new ArrayList<Item>();
 
         // Connect to readable DB, grab restaurants from Restaurant table
-        // SELECT item_id, name, price
-        // FROM Item
-        // WHERE restaurant_id = rid;
         SQLiteDatabase db = getReadableDatabase();
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
         qb.setTables(Item.TABLE);
@@ -129,6 +159,17 @@ public class DBHelper extends SQLiteAssetHelper{
         return itemList;
     }
 
+    /**
+     * Loads a cart of items from the database into a Cart object from the restaurantID. Called
+     * each time the Cart object needs to be in sync with the database. Quantity is recognized.
+     *
+     * SELECT Item.item_id, Item.name, Item.price, Item.restaurant_id, Item.course, Cart.quantity
+     * FROM Item, Cart
+     * WHERE Cart.restaurant_id = rid AND Cart.item_id = Item.item_id;
+     *
+     * @param rid    unique ID denoting which restaurant
+     * @return cart  cart object correpsonding to rid
+     */
     // Returns a cart object with list of items from a specific restaurant cart
     public Cart getCart(int rid) {
         // Create empty stuff
@@ -136,9 +177,6 @@ public class DBHelper extends SQLiteAssetHelper{
         ArrayList<Item> itemList = new ArrayList<Item>();
 
         // Connect to readable DB, grab items from Cart table with matching restaurant_id
-        // SELECT Item.item_id, Item.name, Item.price, Item.restaurant_id, Item.course, Cart.quantity
-        // FROM Item, Cart
-        // WHERE Cart.restaurant_id = rid AND Cart.item_id = Item.item_id;
         SQLiteDatabase db = getReadableDatabase();
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
         qb.setTables(Item.TABLE + ", " + Cart.TABLE);
@@ -170,15 +208,31 @@ public class DBHelper extends SQLiteAssetHelper{
         return cart;
     }
 
-    // Add an item to cart
+    /**
+     * To add an item to the cart database, a check must be made to see if the item already exists.
+     *
+     * SELECT quantity
+     * FROM Cart
+     * WHERE item_id = item.getItemID();
+     *
+     * If a duplicate item is already found, it will be updated with quantity = quantity + 1
+     *
+     * UPDATE Cart
+     * SET quantity = quantity + 1
+     * WHERE item_id = item.getItemID();
+     *
+     * If no duplicate is found then add the item with starting quantity of one.
+     *
+     * INSERT INTO Cart
+     * VALUES (item.getRestaurantID(), item.getItemID(), 1);
+     *
+     * @param item  item object to insert or update in DB
+     */
     public void addToCart(Item item) {
         // Connect to writable DB
         SQLiteDatabase db = getWritableDatabase();
 
         // Query to check if item exists in cart
-        // SELECT quantity
-        // FROM Cart
-        // WHERE item_id = item.getItemID();
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
         qb.setTables(Cart.TABLE);
         String[] sqlSelect = new String[]{Cart.KEY_quantity};
@@ -188,16 +242,12 @@ public class DBHelper extends SQLiteAssetHelper{
 
         if (cursor.moveToFirst()) {
             // Duplicate found, update row with quantity + 1 using UPDATE query
-            // UPDATE Cart
-            // SET quantity = quantity + 1
-            // WHERE item_id = item.getItemID();
             int quantity = cursor.getInt(cursor.getColumnIndex(Cart.KEY_quantity));
             ContentValues values = new ContentValues();
             values.put("quantity", quantity + 1);
             db.update(Cart.TABLE, values, sqlWhere, sqlWhereArgs);
         } else {
             // No duplicate item found in cart, enter new one with quantity 1 using INSERT query
-            // INSERT INTO Cart VALUES (item.getRestaurantID(), item.getItemID(), 1);
             ContentValues values = new ContentValues();
             values.put("restaurant_id", item.getRestaurantID());
             values.put("item_id", item.getItemID());
@@ -210,7 +260,28 @@ public class DBHelper extends SQLiteAssetHelper{
         db.close();
     }
 
-    //Add a "cart" to favorites
+    /**
+     * Saves a cart as a favorite by entering each item with quantity into the Favorite table. A
+     * row is inserted into Budget table with matching favoriteID to keep track of currency values.
+     * FavoriteID is unique for each favorite, but is not unique in the Favorite table because
+     * each row corresponds to one unique item. Due to this, favoriteID must be checked and
+     * incremented manually here.
+     *
+     * SELECT favorite_id
+     * FROM Favorite
+     * ORDER BY favorite_id DESC
+     * LIMIT 1
+     *
+     * After the greatest favorite_id is found, increment by one for the new favorite. Loop through
+     * the list of items given and insert each item as a row.
+     *
+     * INSERT INTO Favorite
+     * VALUES (favID, favName, item.getRestaurantID(), item.getItemID(), item.getQuantity());
+     *
+     * @param itemList  cart ArrayList of items
+     * @param favName   user inputted name for favorite
+     * @param budget    currency values to be saved in Budget table
+     */
     public void addToFavorites(ArrayList<Item> itemList, String favName, Budget budget) {
         int favID;
         int meals = budget.getMeals();
@@ -219,11 +290,6 @@ public class DBHelper extends SQLiteAssetHelper{
 
         // Connect to writable DB
         SQLiteDatabase db = getWritableDatabase();
-
-        // SELECT favorite_id
-        // FROM Favorite
-        // ORDER BY favorite_id DESC
-        // LIMIT 1
 
         Cursor cursor = db.rawQuery("SELECT favorite_id FROM Favorite ORDER BY favorite_id DESC LIMIT 1", null);
         cursor.moveToFirst();
@@ -236,8 +302,8 @@ public class DBHelper extends SQLiteAssetHelper{
             favID++;
         }
 
+        // Add each item
         for (Item item: itemList) {
-            // INSERT INTO Favorite VALUES (favID, favName, item.getRestaurantID(), item.getItemID(), item.getQuantity());
             ContentValues values = new ContentValues();
             values.put("favorite_id", favID);
             values.put("name", favName);
@@ -258,9 +324,16 @@ public class DBHelper extends SQLiteAssetHelper{
         // Close stuff
         cursor.close();
         db.close();
-
     }
 
+    /**
+     * Deletes the row in Cart corresponding to the item given.
+     *
+     * DELETE FROM Cart
+     * WHERE item_id = item.getItemID();
+     *
+     * @param item  object to delete in DB
+     */
     public void deleteItem(Item item) {
         // Connect to database
         SQLiteDatabase db = getWritableDatabase();
@@ -274,7 +347,14 @@ public class DBHelper extends SQLiteAssetHelper{
         db.close();
     }
 
-    // Delete all Cart row items with matching restaurant_id
+    /**
+     * Deletes all rows from Cart for a single restaurant
+     *
+     * DELETE FROM Cart
+     * WHERE restaurant_id = rid;
+     *
+     * @param rid  restaurantID denoting which restaurant's cart to delete
+     */
     public void clearCart(int rid) {
         // Connect to database
         SQLiteDatabase db = getWritableDatabase();
@@ -288,14 +368,23 @@ public class DBHelper extends SQLiteAssetHelper{
         db.close();
     }
 
+    /**
+     * Queries for all unique favorites in Favorite table. This is only used to populate the
+     * favorite list in FavoriteActivity in which only the name is displayed. No cart items are
+     * returned or used.
+     *
+     * SELECT name
+     * FROM Favorite
+     * GROUP BY favorite_id;
+     *
+     * @return favList  ArrayList of all favorites
+     */
     public ArrayList<Favorite> getFavorites() {
         ArrayList<Favorite> favList = new ArrayList<>();
 
         // Connect to database
         SQLiteDatabase db = getReadableDatabase();
 
-        // SELECT name
-        // FROM Favorite
         Cursor cursor = db.rawQuery("SELECT * FROM Favorite GROUP BY favorite_id", null);
 
         while (cursor.moveToNext()) {
@@ -313,9 +402,24 @@ public class DBHelper extends SQLiteAssetHelper{
         return favList;
     }
 
+    /**
+     * Look up favorite with favID, clear the cart of the restaurant the favorite belongs to, and
+     * then copy the cart items from Favorite to Cart.
+     *
+     * SELECT *
+     * FROM Favorite
+     * WHERE favorite_id = favID;
+     *
+     * Also looks up corresponding row in Budget table and returns a budget object.
+     *
+     * SELECT *
+     * FROM Budget
+     * WHERE favorite_id = favID;
+     *
+     * @param favID    unique ID for favorite to look up
+     * @return budget  currency values linked to the saved cart (favorite)
+     */
     public Budget loadFavorite(int favID) {
-        Budget budget = new Budget();
-
         SQLiteDatabase db = getReadableDatabase();
 
         Cursor cursor = db.rawQuery("SELECT DISTINCT restaurant_id FROM Favorite WHERE favorite_id = ?", new String[]{Integer.toString(favID)});
@@ -323,9 +427,7 @@ public class DBHelper extends SQLiteAssetHelper{
         int rid = cursor.getInt(cursor.getColumnIndex("restaurant_id"));
         clearCart(rid);
 
-        // SELECT *
-        // FROM Favorite
-        // WHERE favorite_id = ?
+        // Copy item rows from Favorite to Cart
         db = getWritableDatabase();
         cursor = db.rawQuery("SELECT * FROM Favorite WHERE favorite_id = ?", new String[]{Integer.toString(favID)});
         while (cursor.moveToNext()) {
@@ -338,13 +440,15 @@ public class DBHelper extends SQLiteAssetHelper{
             db.insert("Cart", null, values);
         }
 
+        // Look up budget
         db = getReadableDatabase();
         cursor = db.rawQuery("SELECT * FROM Budget WHERE favorite_id = ?", new String[]{Integer.toString(favID)});
         cursor.moveToFirst();
-        budget.setRID(rid);
-        budget.setMeals(cursor.getInt(cursor.getColumnIndex("meals")));
-        budget.setFlexis(new BigDecimal(cursor.getInt(cursor.getColumnIndex("flexis"))).scaleByPowerOfTen(-2));
-        budget.setCash(new BigDecimal(cursor.getInt(cursor.getColumnIndex("cash"))).scaleByPowerOfTen(-2));
+
+        int meals = cursor.getInt(cursor.getColumnIndex("meals"));
+        BigDecimal flexis = new BigDecimal(cursor.getInt(cursor.getColumnIndex("flexis"))).scaleByPowerOfTen(-2);
+        BigDecimal cash = new BigDecimal(cursor.getInt(cursor.getColumnIndex("cash"))).scaleByPowerOfTen(-2);
+        Budget budget = new Budget(rid, meals, flexis, cash);
 
         cursor.close();
         db.close();
@@ -352,23 +456,42 @@ public class DBHelper extends SQLiteAssetHelper{
         return budget;
     }
 
+    /**
+     * Deletes all rows in Favorite table corresponding to the favorite parameter as well as the
+     * matching row in Budget table.
+     *
+     * DELETE FROM Favorite
+     * WHERE favorite_id = fav.getFavoriteID();
+     *
+     * DELETE FROM Budget
+     * WHERE favorite_id = fav.getFavoriteID();
+     *
+     * @param fav  object to delete in DB
+     */
     public void deleteFavorite(Favorite fav) {
         // Connect to database
         SQLiteDatabase db = getWritableDatabase();
 
         // Construct DELETE query
         String sqlWhere = "favorite_id = ?";
-        String[] sqlWhereArgs = new String[]{String.valueOf(fav.getFID())};
+        String[] sqlWhereArgs = new String[]{String.valueOf(fav.getFavoriteID())};
         db.delete(Favorite.TABLE, sqlWhere, sqlWhereArgs);
+
+        // Construct DELETE query
+        db = getWritableDatabase();
+        sqlWhere = "favorite_id = ?";
+        sqlWhereArgs = new String[]{String.valueOf(fav.getFavoriteID())};
+        db.delete(Budget.TABLE, sqlWhere, sqlWhereArgs);
 
         // Close stuff
         db.close();
     }
 
-    /*
-        This method pulls the right JSON file and populates the database.
-        urlp = grabs the json file from this address
-        type = specifies if this is a item or a restaurant
+    /**
+     * This method pulls the right JSON file and populates the database.
+     *
+     * @param urlp  grabs the json file from this address
+     * @param type  specifies if this is a item or a restaurant
      */
     public void getJSONFromURL(String urlp, int type){
         URL url;

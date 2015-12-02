@@ -157,4 +157,30 @@
         android:layout_toStartOf="@+id/cashBudgetText"
         android:onClick="decrementCash" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Small Text"
+        android:id="@+id/mealBalanceText"
+        android:gravity="center_horizontal"
+        android:layout_marginTop="12dp"
+        android:layout_below="@+id/editBudgetText"
+        android:layout_toLeftOf="@+id/mealBudgetText"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Small Text"
+        android:id="@+id/flexiBalanceText"
+        android:gravity="center_horizontal"
+        android:layout_alignTop="@+id/mealBalanceText"
+        android:layout_alignLeft="@+id/incrementMeals"
+        android:layout_alignStart="@+id/incrementMeals"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
 </RelativeLayout>

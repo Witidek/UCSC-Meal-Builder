@@ -3,22 +3,21 @@ package com.example.sam.ucsc_meal_builder;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.support.v4.app.NavUtils;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.math.BigDecimal;
 
+/**
+ * This activity can be started from MainActivity. It contains two fields where the user can input
+ * numerical values for their meals and flexis balance. These values are stored in sharedPreferences
+ * to ensure the app can remember the values even when the app is not active.
+ */
 public class BalanceActivity extends Activity {
 
-    // Current meals and flexis value for this session (not auto-saved)
     private int meals;
     private BigDecimal flexis;
 
@@ -31,6 +30,10 @@ public class BalanceActivity extends Activity {
     private SharedPreferences sharedPrefs;
     private SharedPreferences.Editor editPrefs;
 
+    /**
+     * Actionbar is loaded and setup, TextViews are filled, and listeners are attached to each
+     * TextView to capture changes for meals and flexis.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -98,26 +101,42 @@ public class BalanceActivity extends Activity {
 
     }
 
+    /**
+     * Enable the home button in top left of actionbar to return to MainActivity when pressed
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             // Respond to the action bar's Up/Home button
             case android.R.id.home:
-                NavUtils.navigateUpFromSameTask(this);
+                meals = Integer.valueOf(mealBalanceText.getText().toString());
+                flexis = new BigDecimal(flexiBalanceText.getText().toString());
+                if (meals < 0 || flexis.compareTo(new BigDecimal(0))==-1) {
+                    // Negative values, should never reach here
+                    Toast.makeText(getApplicationContext(), "Cannot use negative.", Toast.LENGTH_SHORT).show();
+                }else {
+                    editPrefs.putInt("meals", meals);
+                    editPrefs.putString("flexis", flexis.toString());
+                    editPrefs.commit();
+                    NavUtils.navigateUpFromSameTask(this);
+                }
                 return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
-    // Save SharedPreference changes when android back button is pressed
+    /**
+     * Saves meals and flexis from TextView values to sharedPreferences when android back button
+     * is pressed.
+     */
     @Override
     public void onBackPressed() {
         meals = Integer.valueOf(mealBalanceText.getText().toString());
         flexis = new BigDecimal(flexiBalanceText.getText().toString());
         if (meals < 0 || flexis.compareTo(new BigDecimal(0))==-1) {
+            // Negative values, should never reach here
             Toast.makeText(getApplicationContext(), "Cannot use negative.", Toast.LENGTH_SHORT).show();
-        }
-        else {
+        }else {
             editPrefs.putInt("meals", meals);
             editPrefs.putString("flexis", flexis.toString());
             editPrefs.commit();
@@ -125,6 +144,9 @@ public class BalanceActivity extends Activity {
         }
     }
 
+    /**
+     * Increments meals value by one and updates the related TextView.
+     */
     public void incrementMeals (View view) {
         meals = Integer.valueOf(mealBalanceText.getText().toString());
         meals += 1;
@@ -133,6 +155,10 @@ public class BalanceActivity extends Activity {
         editPrefs.commit();
     }
 
+    /**
+     * Decrements meals value by one and updates the related TextView. Does not allow value to
+     * drop below zero.
+     */
     public void decrementMeals(View view) {
         meals = Integer.valueOf(mealBalanceText.getText().toString());
         if (meals > 0) meals -= 1;
@@ -141,6 +167,9 @@ public class BalanceActivity extends Activity {
         editPrefs.commit();
     }
 
+    /**
+     * Increments flexis value by one and updates the related TextView
+     */
     public void incrementFlexis (View view) {
         flexis = new BigDecimal(flexiBalanceText.getText().toString());
         flexis = flexis.add(new BigDecimal(1));
@@ -149,6 +178,10 @@ public class BalanceActivity extends Activity {
         editPrefs.commit();
     }
 
+    /**
+     * Decrements flexis value by one and updates the related TextView. Does not allow value to
+     * drop below zero.
+     */
     public void decrementFlexis(View view) {
         flexis = new BigDecimal(flexiBalanceText.getText().toString());
         if (flexis.compareTo(new BigDecimal(1)) != -1) {

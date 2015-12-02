@@ -9,11 +9,16 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.app.AlertDialog;
 
 import java.math.BigDecimal;
 
+/**
+ * This activity can be started from RestaurantActivity, or returned to through android back button
+ * from MenuActivity. It contains three fields where the user can input numerical values for their
+ * meals, flexis, and cash budget to build a meal. This activity is chosen when the restaurant
+ * selected accepts 55-meal equivalency.
+ */
 public class BudgetActivity extends Activity {
 
     private int meals = 0;
@@ -24,13 +29,14 @@ public class BudgetActivity extends Activity {
     private TextView flexiText;
     private TextView cashText;
 
-    //The rid needs to be carried from the previous
-    //(Restaurant)Activity to the next (Menu)Activity
     private Intent intent;
     private int rid;
     private SharedPreferences sharedPrefs;
 
-
+    /**
+     * Actionbar is loaded and setup, TextViews are filled, and listeners are attached to each
+     * TextView to capture changes for meals, flexis, and cash.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,6 +64,14 @@ public class BudgetActivity extends Activity {
         mealText = (TextView) findViewById(R.id.mealBudgetText);
         flexiText = (TextView) findViewById(R.id.flexiBudgetText);
         cashText = (TextView) findViewById(R.id.cashBudgetText);
+        TextView mealBalanceText = (TextView) findViewById(R.id.mealBalanceText);
+        TextView flexiBalanceText = (TextView) findViewById(R.id.flexiBalanceText);
+
+        int mealBalance = sharedPrefs.getInt("meals", 0);
+        BigDecimal flexiBalance = new BigDecimal(sharedPrefs.getString("flexis", ""));
+
+        mealBalanceText.setText(String.format("Meals: %d", mealBalance));
+        flexiBalanceText.setText(String.format("Flexis: $%.2f", flexiBalance));
 
         // Save number values to local variable when EditText focus is lost (done editing)
         mealText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -95,6 +109,9 @@ public class BudgetActivity extends Activity {
         cashText.setText(String.format("%.2f", cash));
     }
 
+    /**
+     * Enable the home button in top left of actionbar to return to MainActivity when pressed
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -106,24 +123,38 @@ public class BudgetActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Increments meals value by one and updates the related TextView.
+     */
     public void incrementMeals (View view) {
         meals = Integer.valueOf(mealText.getText().toString());
         meals += 1;
         mealText.setText(String.format("%d", meals));
     }
 
+    /**
+     * Decrements meals value by one and updates the related TextView. Does not allow value to
+     * drop below zero.
+     */
     public void decrementMeals(View view) {
         meals = Integer.valueOf(mealText.getText().toString());
         if (meals > 0) meals -= 1;
         mealText.setText(String.format("%d", meals));
     }
 
+    /**
+     * Increments flexis value by one and updates the related TextView
+     */
     public void incrementFlexis (View view) {
         flexis = new BigDecimal(flexiText.getText().toString());
         flexis = flexis.add(new BigDecimal(1));
         flexiText.setText(String.format("%.2f", flexis));
     }
 
+    /**
+     * Decrements flexis value by one and updates the related TextView. Does not allow value to
+     * drop below zero.
+     */
     public void decrementFlexis(View view) {
         flexis = new BigDecimal(flexiText.getText().toString());
         if (flexis.compareTo(new BigDecimal(1)) != -1) {
@@ -131,12 +162,20 @@ public class BudgetActivity extends Activity {
         }
         flexiText.setText(String.format("%.2f", flexis));
     }
+
+    /**
+     * Increments cash value by one and updates the related TextView
+     */
     public void incrementCash (View view) {
         cash = new BigDecimal(cashText.getText().toString());
         cash = cash.add(new BigDecimal(1));
         cashText.setText(String.format("%.2f", cash));
     }
 
+    /**
+     * Decrements cash value by one and updates the related TextView. Does not allow value to
+     * drop below zero.
+     */
     public void decrementCash(View view) {
         cash = new BigDecimal(cashText.getText().toString());
         if (cash.compareTo(new BigDecimal(1)) != -1) {
@@ -145,25 +184,25 @@ public class BudgetActivity extends Activity {
         cashText.setText(String.format("%.2f", cash));
     }
 
+    /**
+     * Check user inputted meals and flexis values with current balance. If not over balance,
+     * construct a Budget object filled with captured meals, flexis, and cash values from TextViews,
+     * and send it in an intent to MenuActivity.
+     */
     public void onClickArrow(View view) {
         BigDecimal totalMeals = new BigDecimal(sharedPrefs.getInt("meals", 0));
         BigDecimal totalFlexies = new BigDecimal(sharedPrefs.getString("flexis", "0"));
 
-        if( totalMeals.compareTo(new BigDecimal(meals)) >= 0 && totalFlexies.compareTo(flexis) >= 0) {
+        if (totalMeals.compareTo(new BigDecimal(meals)) >= 0 && totalFlexies.compareTo(flexis) >= 0) {
 
             Intent intent = new Intent(BudgetActivity.this, MenuActivity.class);
             intent.putExtra("previous", "BudgetActivity");
-
-            Budget budget = new Budget();
 
             //Send off budget values
             meals = Integer.valueOf(mealText.getText().toString());
             flexis = new BigDecimal(flexiText.getText().toString());
             cash = new BigDecimal(cashText.getText().toString());
-            budget.setRID(rid);
-            budget.setMeals(meals);
-            budget.setFlexis(flexis);
-            budget.setCash(cash);
+            Budget budget = new Budget(rid, meals, flexis, cash);
             intent.putExtra("budget", budget);
 
             startActivity(intent);

@@ -13,22 +13,24 @@ import java.util.ArrayList;
 
 
 /**
- * Created by Jason on 11/5/2015.
+ * A custom ArrayAdapter class to display items in a ListView for MenuActivity.
  */
 public class MenuAdapter extends ArrayAdapter<Item> {
 
-    // Fields
+    /** Context this instance was created from */
     private final Context context;
+    /** ArrayList of items to display */
     private final ArrayList<Item> items;
+    /** Additional information to do a custom view */
     private BigDecimal budgetRemaining;
 
-    // Static fields for views within each row
+    /** Static inner class to keep track of layout Views */
     static class ViewHolder {
         public TextView nameView;
         public TextView priceView;
     }
 
-    // Constructor
+    /** Constructor for MenuAdapter */
     public MenuAdapter(Context context, ArrayList<Item> items) {
         super(context, R.layout.row_menu, items);
         this.context = context;
@@ -36,6 +38,16 @@ public class MenuAdapter extends ArrayAdapter<Item> {
         this.budgetRemaining = new BigDecimal(0);
     }
 
+    /**
+     * Creates new view or recycles old view to display item name aligned left and item price
+     * aligned right in %.2f with no overlap.
+     * Item price text color changes to red if the item price exceeds budgetRemaining.
+     *
+     * @param position     row position in ListView
+     * @param convertView  recycled view
+     * @param parent       ViewGroup
+     * @return             the view to be displayed on app
+     */
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
@@ -67,7 +79,9 @@ public class MenuAdapter extends ArrayAdapter<Item> {
         return rowView;
     }
 
-    // Set budgetRemaining for comparison purposes
+    /**
+     * @param budget  set remaining budget for price comparisons
+     */
     public void setBudgetRemaining(BigDecimal budget) {
         this.budgetRemaining = budget;
     }
